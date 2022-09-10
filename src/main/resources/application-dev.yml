@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:
+  # .env import
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    # local - create
+    # update - dev
+    # none - prod
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+
