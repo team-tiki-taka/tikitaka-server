@@ -2,8 +2,10 @@ package com.tikitaka.naechinso.exception;
 
 import com.tikitaka.naechinso.constant.ErrorCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class InternalServerException extends BusinessException {
     private String message;
 

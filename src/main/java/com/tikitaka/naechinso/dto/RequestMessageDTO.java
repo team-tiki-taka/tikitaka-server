@@ -1,0 +1,19 @@
+package com.tikitaka.naechinso.dto;
+
+import lombok.*;
+
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Builder
+@ToString
+public class RequestMessageDTO {
+    String type;
+    String contentType;
+    String countryCode;
+    String from;
+    String content;
+    List<MessageDTO> messages;
+}
