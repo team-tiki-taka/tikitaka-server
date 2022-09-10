@@ -14,6 +14,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.*;
 
+/**
+ * Swagger 사용 환경을 위한 설정 파일
+ * */
 @Configuration
 @EnableWebMvc
 public class SwaggerConfig {
