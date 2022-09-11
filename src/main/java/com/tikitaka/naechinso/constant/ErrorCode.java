@@ -27,6 +27,10 @@ public enum ErrorCode {
     UNAUTHORIZED_USER(UNAUTHORIZED, "AUTH005", "현재 내 계정 정보가 존재하지 않습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "AUTH006", "로그아웃 된 사용자입니다"),
     FORBIDDEN_USER(FORBIDDEN, "AUTH007", "권한이 없는 유저입니다"),
+
+    MISMATCH_VERIFICATION_CODE(UNAUTHORIZED, "AUTH009", "인증번호가 일치하지 않습니다"),
+    EXPIRED_VERIFICATION_CODE(UNAUTHORIZED, "AUTH010", "인증번호가 만료되었습니다"),
+
     LOGIN_FAILED(UNAUTHORIZED, "AUTH008", "로그인에 실패했습니다"),
 
     /* OAuth 관련 오류 */
@@ -41,6 +45,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "U003","해당 유저 정보를 찾을 수 없습니다"),
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
 
+    /* Validation 오류 */
+    PARAMETER_NOT_VALID(BAD_REQUEST, "P000", "인자가 유효하지 않습니다"),
 
     /* Database 관련 오류 */
     DUPLICATE_RESOURCE(CONFLICT, "D001", "데이터가 이미 존재합니다"),

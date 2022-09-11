@@ -13,4 +13,6 @@ public interface RedisService {
 
     String getValues(String key);
     void deleteValues(String key);
+
+    boolean hasKey(String key);
 }

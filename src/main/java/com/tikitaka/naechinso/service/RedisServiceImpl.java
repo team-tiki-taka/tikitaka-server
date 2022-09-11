@@ -38,4 +38,9 @@ public class RedisServiceImpl implements RedisService {
     public void deleteValues(String key) {
         redisTemplate.delete(key);
     }
+
+    @Override
+    public boolean hasKey(String key) {
+        return redisTemplate.hasKey(key);
+    }
 }

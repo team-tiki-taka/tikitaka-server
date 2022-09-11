@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
-public class MessageDTO {
+public class NaverSmsMessageDTO {
     String to;
     String content;
 }
