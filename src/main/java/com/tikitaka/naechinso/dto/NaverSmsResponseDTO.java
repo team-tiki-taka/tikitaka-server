@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @ToString
-public class ResponseMessageDTO {
+public class NaverSmsResponseDTO {
     String requestId;
     LocalDateTime requestTime;
     String statusCode;

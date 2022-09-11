@@ -9,11 +9,11 @@ import java.util.List;
 @Getter
 @Builder
 @ToString
-public class RequestMessageDTO {
+public class NaverSmsRequestDTO {
     String type;
     String contentType;
     String countryCode;
     String from;
     String content;
-    List<MessageDTO> messages;
+    List<NaverSmsMessageDTO> messages;
 }
