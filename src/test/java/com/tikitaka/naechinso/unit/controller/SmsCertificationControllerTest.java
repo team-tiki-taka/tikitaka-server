@@ -1,10 +1,10 @@
 //package com.tikitaka.naechinso.unit.controller;
 //
-//import com.tikitaka.naechinso.controller.SmsCertificationController;
-//import com.tikitaka.naechinso.dto.SmsVerificationCodeRequestDTO;
-//import com.tikitaka.naechinso.service.RedisService;
-//import com.tikitaka.naechinso.service.SmsCertificationService;
-//import com.tikitaka.naechinso.service.SmsCertificationServiceImpl;
+//import com.tikitaka.naechinso.domain.sms.SmsCertificationController;
+//import com.tikitaka.naechinso.domain.sms.dto.SmsVerificationCodeRequestDTO;
+//import com.tikitaka.naechinso.global.config.redis.RedisService;
+//import com.tikitaka.naechinso.domain.sms.SmsCertificationService;
+//import com.tikitaka.naechinso.domain.sms.SmsCertificationServiceImpl;
 //import org.hibernate.service.spi.InjectService;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.DisplayName;
