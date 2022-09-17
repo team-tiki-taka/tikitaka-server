@@ -3,7 +3,7 @@ name: dev-spring-springboot
 on:
   push:
     branches:
-      - master # (1).브랜치 이름
+      - dev # (1).브랜치 이름
   workflow_dispatch: # (2).수동 실행
 
 jobs:
