@@ -1,6 +1,9 @@
 package com.tikitaka.naechinso.global.config.security;
 
 
+import com.tikitaka.naechinso.global.config.security.jwt.JwtAccessDeniedHandler;
+import com.tikitaka.naechinso.global.config.security.jwt.JwtAuthenticationEntryPoint;
+import com.tikitaka.naechinso.global.config.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +19,7 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /** 인증 및 Security 관련 설정 클래스입니다
- * @author gengminy (220728) */
+ * @author gengminy (220919) */
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
@@ -27,9 +30,9 @@ public class SecurityConfig {
             "/v2/api-docs",
             "/webjars/**"
     };
-//    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 
     @Bean
@@ -40,8 +43,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 //예외처리 핸들러
                 .exceptionHandling()
-//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -56,14 +59,8 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
                 .and()
                 .headers().frameOptions().disable();
-//                .and()
-//                .oauth2Login()
-//                .defaultSuccessUrl("/login-success")
-//                .successHandler(oAuth2AuthenticationSuccessHandler)
-//                .userInfoEndpoint()
-//                .userService(customOAuth2Service);
 
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
         // 검토 필요
     }

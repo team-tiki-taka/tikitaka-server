@@ -1,7 +1,12 @@
 package com.tikitaka.naechinso.domain.sms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
+import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
+import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.InternalServerException;
+import com.tikitaka.naechinso.infra.sms.SmsService;
 import com.tikitaka.naechinso.infra.sms.dto.NaverSmsMessageDTO;
 import com.tikitaka.naechinso.infra.sms.dto.NaverSmsRequestDTO;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationRequestDTO;
@@ -30,32 +35,22 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class SmsCertificationServiceImpl implements SmsCertificationService {
 
-    private final WebClient webClient;
+    private final SmsService smsService;
     private final RedisService redisService;
-
+    private final JwtTokenProvider jwtTokenProvider;
     private final String VERIFICATION_PREFIX = "sms:";
     private final int VERIFICATION_TIME_LIMIT = 3 * 60;
 
     @Value("${SPRING_PROFILE}")
     private String springProfile;
-    @Value("${NAVER_ACCESS_KEY}")
-    private String accessKey;
-    @Value("${NAVER_SECRET_KEY}")
-    private String secretKey;
-    @Value("${NAVER_SMS_ID}")
-    private String serviceId;
-    @Value("${NAVER_SMS_PHONE_NUMBER}")
-    private String senderNumber;
 
     /**
      * 인증번호가 담긴 메세지를 전송한다
      * @param to 수신자
-     * @return 네이버 api 서버 메세지 응답
+     * @return 전송 성공시 메세지
      */
     @Override
     public String sendVerificationMessage(String to) {
-        final String smsURL = "https://sens.apigw.ntruss.com/sms/v2/services/"+ serviceId +"/messages";
-        final Long time = System.currentTimeMillis();
         //랜덤 6자리 인증번호
         final String verificationCode = generateVerificationCode();
         //3분 제한시간
@@ -73,43 +68,26 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
         //[prod] 실 배포 환경에서는 문자를 전송합니다
         try {
             //네이버 sms 메세지 dto
-            final NaverSmsMessageDTO naverSmsMessageDTO = new NaverSmsMessageDTO(to, generateMessageWithCode(verificationCode));
-            List<NaverSmsMessageDTO> messages = new ArrayList<>();
-            messages.add(naverSmsMessageDTO);
-            final NaverSmsRequestDTO naverSmsRequestDTO = NaverSmsRequestDTO.builder()
-                    .type("SMS")
-                    .contentType("COMM")
-                    .countryCode("82")
-                    .from(senderNumber)
-                    .content(naverSmsMessageDTO.getContent())
-                    .messages(messages)
-                    .build();
-            final String body = new ObjectMapper().writeValueAsString(naverSmsRequestDTO);
-
-//            final ResponseMessageDTO responseMessageDTO =
-            webClient.post().uri(smsURL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("x-ncp-apigw-timestamp", time.toString())
-                    .header("x-ncp-iam-access-key", accessKey)
-                    .header("x-ncp-apigw-signature-v2", makeSignature(time))
-                    .accept(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(body))
-                    .retrieve()
-                    .bodyToMono(NaverSmsResponseDTO.class).block();
-
-            //redis 에 3분 제한의 인증번호 토큰 저장
-            redisService.setValues(VERIFICATION_PREFIX + to, verificationCode, verificationTimeLimit);
-
-            return "메세지 전송 성공";
-//            return responseMessageDTO;
+            if (smsService.sendMessage(to, generateMessageWithCode(verificationCode))) {
+                //전송 성공하면 redis 에 3분 제한의 인증번호 토큰 저장
+                redisService.setValues(VERIFICATION_PREFIX + to, verificationCode, verificationTimeLimit);
+                return "메세지 전송 성공";
+            } else {
+                throw new BadRequestException(ErrorCode._BAD_REQUEST, "메세지 전송에 실패하였습니다");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new BadRequestException(ErrorCode._BAD_REQUEST, "메세지 발송에 실패하였습니다");
         }
     }
 
+    /**
+     * 인증번호를 검증한다
+     * @param smsCertificationRequestDto {phoneNumber: 휴대폰 번호, code: 인증번호}
+     * @return 전송 성공시 메세지
+     */
     @Override
-    public String verifyCode(SmsCertificationRequestDTO smsCertificationRequestDto) {
+    public TokenResponseDTO verifyCode(SmsCertificationRequestDTO smsCertificationRequestDto) {
         String phoneNumber = smsCertificationRequestDto.getPhoneNumber();
         String code = smsCertificationRequestDto.getCode();
         String key = VERIFICATION_PREFIX + phoneNumber;
@@ -124,47 +102,22 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
             throw new UnauthorizedException(ErrorCode.MISMATCH_VERIFICATION_CODE);
         }
 
-        //필터를 모두 통과, 인증이 완료되었으니 redis 에서 전화번호 삭제
-        redisService.deleteValues(key);
-        return "인증에 성공하였습니다";
-    }
-
-
-    /**
-     * sms 전송을 위한 서명을 추가한다
-     * @param currentTime 현재 시간
-     * @return 서명
-     */
-    @Override
-    public String makeSignature(Long currentTime) {
-        String space = " ";
-        String newLine = "\n";
-        String method = "POST";
-        String url = "/sms/v2/services/" + this.serviceId + "/messages";
-        String timestamp = currentTime.toString();
-        String accessKey = this.accessKey;
-        String secretKey = this.secretKey;
-
+        //redis 인증 필터 성공하면
         try {
+            //인증한 휴대폰 번호로 토큰 생성
+            TokenResponseDTO tokenResponseDTO
+                    = jwtTokenProvider.generateToken(
+                            /** !!@#!!@#!#!@ 임시 dto 수정 반드시 필요 */
+                            new JwtDTO(phoneNumber)
+            );
 
-            String message = method +
-                    space +
-                    url +
-                    newLine +
-                    timestamp +
-                    newLine +
-                    accessKey;
+            //jwt 생성 하면 모든 로직 종료, redis 에서 전화번호 삭제
+            redisService.deleteValues(key);
 
-            SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(signingKey);
-
-            byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
-            String encodeBase64String = Base64.encodeBase64String(rawHmac);
-
-            return encodeBase64String;
+            //토큰 반환
+            return tokenResponseDTO;
         } catch (Exception e) {
-            throw new BadRequestException(ErrorCode._BAD_REQUEST, e.getMessage());
+            throw new InternalServerException("jwt 토큰 생성 에러");
         }
     }
 

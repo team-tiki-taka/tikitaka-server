@@ -1,5 +1,7 @@
-package com.tikitaka.naechinso.global.config.security;
+package com.tikitaka.naechinso.global.config.security.jwt;
 
+import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
+import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
@@ -15,10 +17,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +41,63 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "role"; //권한 정보 컬럼명
 
+    public String generateAccessToken(JwtDTO jwtDTO) {
+        //권한 가져오기
 
+        final String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
+        final Date now = new Date();
+        final Date accessTokenExpiresIn = new Date(now.getTime() + JWT_EXPIRATION_MS);
+
+
+        final String accessToken = Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer("naechinso")
+                .setIssuedAt(now) // 생성일자 지정(현재)
+                .setSubject(jwtDTO.getPhoneNumber()) // 사용자(principal => phoneNumber)
+                .claim(AUTHORITIES_KEY, jwtDTO.getAuthorities()) //권한 설정
+                .setExpiration(accessTokenExpiresIn) // 만료일자
+                .signWith(SignatureAlgorithm.HS512, encodedKey) // signature에 들어갈 secret 값 세팅
+                .compact();
+
+        return accessToken;
+    }
+
+    public String generateRefreshToken(JwtDTO jwtDTO) {
+        final String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
+        final Date now = new Date();
+        final Date refreshTokenExpiresIn = new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_MS);
+
+        final String refreshToken = Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer("naechinso")
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(SignatureAlgorithm.HS512, encodedKey)
+                .compact();
+
+        //redis에 해당 userId 의 리프레시 토큰 등록
+        redisService.setValues(
+                jwtDTO.getPhoneNumber(),
+                refreshToken,
+                Duration.ofMillis(REFRESH_TOKEN_EXPIRATION_MS)
+        );
+
+        return refreshToken;
+    }
+
+    /** Jwt 토큰 생성
+     * @param jwtDto 인증 요청하는 유저 정보
+     */
+    public TokenResponseDTO generateToken(JwtDTO jwtDto)
+            throws HttpServerErrorException.InternalServerError {
+        //권한 가져오기
+        final String accessToken = generateAccessToken(jwtDto);
+        final String refreshToken = generateRefreshToken(jwtDto);
+
+        return TokenResponseDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
