@@ -6,6 +6,10 @@ spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
   jpa:
     # local - create
