@@ -20,6 +20,14 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      #Create dotenv file
+      - name: Make env file
+        run: |
+          touch ./.env
+          echo "$ENV_PROPERTIES" > ./.env
+        env:
+          ENV_PROPERTIES_DEV: ${{ secrets.ENV_PROPERTIES }}
+
       #Grant gradlew Permission
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
