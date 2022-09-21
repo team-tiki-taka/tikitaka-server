@@ -4,9 +4,6 @@ server:
 spring:
   profiles:
     active: local
-  # .env import
-#  config:
-#    import: optional:file:.env[.properties]
   # Using POSTGRESQL
   datasource:
     driver-class-name: org.postgresql.Driver
