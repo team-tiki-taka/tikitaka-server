@@ -25,13 +25,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SmsServiceImpl implements SmsService {
     private final WebClient webClient;
-    @Value("${NAVER_ACCESS_KEY}")
+    @Value("${naver.sms.access-key}")
     private String accessKey;
-    @Value("${NAVER_SECRET_KEY}")
+    @Value("${naver.sms.secret-key}")
     private String secretKey;
-    @Value("${NAVER_SMS_ID}")
+    @Value("${naver.sms.id}")
     private String serviceId;
-    @Value("${NAVER_SMS_PHONE_NUMBER}")
+    @Value("${naver.sms.phone}")
     private String senderNumber;
 
     /**

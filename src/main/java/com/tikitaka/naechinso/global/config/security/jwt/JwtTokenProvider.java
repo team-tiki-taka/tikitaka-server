@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
     private final RedisService redisService;
     /** 토큰 비밀 키 */
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${jwt.secret-key}")
     private String JWT_SECRET;
 
     /** 토큰 유효 시간 (ms) */
