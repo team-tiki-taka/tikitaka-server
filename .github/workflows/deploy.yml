@@ -55,6 +55,7 @@ jobs:
           cp Procfile deploy/Procfile
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
+          cp .env deploy/.env
           cd deploy && zip -r deploy.zip .
 
       - name: Beanstalk Deploy
