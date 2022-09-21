@@ -3,7 +3,7 @@ name: beanstalk-springboot-deploy
 on:
   push:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 jobs:
