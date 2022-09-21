@@ -23,10 +23,13 @@ jobs:
       #Create dotenv file
       - name: Make env properties
         run: |
+          touch ./src/main/resources/application-dev.yml
           touch ./src/main/resources/application-prod.yml
-          echo "$ENV_PROPERTIES" > ./src/main/resources/application-prod.yml
+          echo "$ENV_PROPERTIES_DEV" > ./src/main/resources/application-dev.yml
+          echo "$ENV_PROPERTIES_PROD" > ./src/main/resources/application-prod.yml
         env:
-          ENV_PROPERTIES: ${{ secrets.ENV_PROPERTIES }}
+          ENV_PROPERTIES_DEV: ${{ secrets.ENV_PROPERTIES_DEV }}
+          ENV_PROPERTIES_PROD: ${{ secrets.ENV_PROPERTIES_PROD }}
 
       #Grant gradlew Permission
       - name: Grant execute permission for gradlew
