@@ -41,7 +41,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
     private final String VERIFICATION_PREFIX = "sms:";
     private final int VERIFICATION_TIME_LIMIT = 3 * 60;
 
-    @Value("${SPRING_PROFILE}")
+    @Value("${spring.profiles.active}")
     private String springProfile;
 
     /**

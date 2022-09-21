@@ -21,10 +21,10 @@ jobs:
           distribution: 'temurin'
 
       #Create dotenv file
-      - name: Make env file
+      - name: Make env properties
         run: |
-          touch ./.env
-          echo "$ENV_PROPERTIES" > ./.env
+          touch ./src/main/resources/application-dev.yml
+          echo "$ENV_PROPERTIES" > ./src/main/resources/application-dev.yml
         env:
           ENV_PROPERTIES: ${{ secrets.ENV_PROPERTIES }}
 
@@ -55,7 +55,6 @@ jobs:
           cp Procfile deploy/Procfile
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
-          cp .env deploy/.env
           cd deploy && zip -r deploy.zip .
 
       - name: Beanstalk Deploy

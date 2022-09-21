@@ -3,15 +3,12 @@ server:
 
 spring:
   profiles:
-    active: ${SPRING_PROFILE}
+    active: local
   # .env import
-  config:
-    import: optional:file:.env[.properties]
+#  config:
+#    import: optional:file:.env[.properties]
   # Using POSTGRESQL
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
