@@ -3,7 +3,7 @@ name: beanstalk-springboot-deploy
 on:
   push:
     branches:
-      - main
+      - dev
   workflow_dispatch:
 
 jobs:
@@ -24,12 +24,9 @@ jobs:
       - name: Make env properties
         run: |
           touch ./src/main/resources/application-dev.yml
-          touch ./src/main/resources/application-prod.yml
           echo "$ENV_PROPERTIES_DEV" > ./src/main/resources/application-dev.yml
-          echo "$ENV_PROPERTIES_PROD" > ./src/main/resources/application-prod.yml
         env:
           ENV_PROPERTIES_DEV: ${{ secrets.ENV_PROPERTIES_DEV }}
-          ENV_PROPERTIES_PROD: ${{ secrets.ENV_PROPERTIES_PROD }}
 
       #Grant gradlew Permission
       - name: Grant execute permission for gradlew
@@ -63,10 +60,10 @@ jobs:
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: naechinso
-          environment_name: Naechinso-env-1
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          application_name: ${{ secrets.EB_APPLICATION_NAME_DEV }}
+          environment_name: ${{ secrets.EB_ENVIRONMENT_NAME_DEV }}
           version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
