@@ -1,4 +1,4 @@
-name: beanstalk-springboot-deploy
+name: dev-beanstalk-springboot-deploy
 
 on:
   push:
