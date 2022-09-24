@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
 //    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
 //    protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
 //        log.error("handleMethodArgumentTypeMismatchException", e);
-//        final ErrorResponse response = ErrorResponse.of(();
+//        final ErrorResponse response = ErrorResponse.of(e);
 //        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 //    }
 

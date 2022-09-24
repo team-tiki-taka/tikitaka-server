@@ -1,6 +1,9 @@
 package com.tikitaka.naechinso.domain.sms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tikitaka.naechinso.domain.member.MemberRepository;
+import com.tikitaka.naechinso.domain.member.MemberService;
+import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
@@ -28,6 +31,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -38,6 +42,8 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
     private final SmsService smsService;
     private final RedisService redisService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final String VERIFICATION_PREFIX = "sms:";
     private final int VERIFICATION_TIME_LIMIT = 3 * 60;
 
@@ -104,19 +110,19 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
         //redis 인증 필터 성공하면
         try {
-            //인증한 휴대폰 번호로 토큰 생성
-            TokenResponseDTO tokenResponseDTO
-                    = jwtTokenProvider.generateToken(
-                            /** !!@#!!@#!#!@ 임시 dto 수정 반드시 필요 */
-                            new JwtDTO(phoneNumber)
-            );
-
-            //jwt 생성 하면 모든 로직 종료, redis 에서 전화번호 삭제
             redisService.deleteValues(key);
 
-            //토큰 반환
-            return tokenResponseDTO;
+            //가입 안된 회원일 경우 null 리턴
+            Optional<Member> checkMember = memberRepository.findByPhone(phoneNumber);
+            if (checkMember.isEmpty()) {
+                return null;
+            }
+
+            //이미 가입한 회원이면
+            //인증한 휴대폰 번호로 로그인 후 토큰 생성 및 반환
+            return memberService.login(phoneNumber);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new InternalServerException("jwt 토큰 생성 에러");
         }
     }

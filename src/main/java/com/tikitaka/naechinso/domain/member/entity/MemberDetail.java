@@ -30,7 +30,7 @@ public class MemberDetail extends BaseEntity {
 //    private Member recommender;
 
     @Column(name = "mem_height")
-    private int height;
+    private Integer height;
 
     @Column(name = "mem_address")
     private String address;

@@ -1,13 +1,10 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
-import com.tikitaka.naechinso.global.config.entity.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 멤버 공통 정보를 담당하는 엔티티입니다
@@ -34,31 +31,32 @@ public class Member extends BaseEntity {
     @Column(name = "mem_name")
     private String name;
 
-    @Column(name = "mem_sex")
-    private String sex;
+    @Column(name = "mem_gender")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "mem_age")
     private int age;
 
-    @Column(name = "mem_service_yn")
+    @Column(name = "mem_accpets_service")
     @Builder.Default
-    private boolean service_yn = false;
+    private boolean acceptsService = false;
 
-    @Column(name = "mem_info_yn")
+    @Column(name = "mem_accpets_info")
     @Builder.Default
-    private boolean info_yn = false;
+    private boolean acceptsInfo = false;
 
-    @Column(name = "mem_religion_yn")
+    @Column(name = "mem_accpets_religion")
     @Builder.Default
-    private boolean religion_yn = false;
+    private boolean acceptsReligion = false;
 
-    @Column(name = "mem_location_yn")
+    @Column(name = "mem_accpets_location")
     @Builder.Default
-    private boolean location_yn = false;
+    private boolean acceptsLocation = false;
 
-    @Column(name = "mem_marketing_yn")
+    @Column(name = "mem_accpets_marketing")
     @Builder.Default
-    private boolean marketing_yn = false;
+    private boolean acceptsMarketing = false;
 
     @Column(name = "mem_job_name")
     private String jobName;

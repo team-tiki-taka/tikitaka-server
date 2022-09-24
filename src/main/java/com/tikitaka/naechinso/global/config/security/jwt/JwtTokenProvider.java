@@ -113,8 +113,8 @@ public class JwtTokenProvider {
                         .collect(Collectors.toList());
 
         //Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        UserDetails principal = new User(claims.getSubject(), null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
 

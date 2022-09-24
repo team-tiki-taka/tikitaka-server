@@ -21,7 +21,7 @@ public class SmsCertificationController {
     private final SmsCertificationService smsCertificationService;
 
     @PostMapping("/send")
-    public CommonApiResponse<String> sendMessageWithVerificationCode( @Valid  @RequestBody SmsVerificationCodeRequestDTO dto) {
+    public CommonApiResponse<String> sendMessageWithVerificationCode(@Valid  @RequestBody SmsVerificationCodeRequestDTO dto) {
         String result = smsCertificationService.sendVerificationMessage(dto.getPhoneNumber());
         return CommonApiResponse.of(result);
     }
