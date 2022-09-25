@@ -29,6 +29,7 @@ public class LoginServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> { throw new UsernameNotFoundException(phone + "-> DB에 없는 유저"); });
 
         return new UserAccount(member);
+//        return new User(member.getPhone(), "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 //
 //    //DB에 존재하는 유저일 경우 UserDetails로 만들어서 반환

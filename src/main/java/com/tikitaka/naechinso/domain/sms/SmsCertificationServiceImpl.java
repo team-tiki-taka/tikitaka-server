@@ -110,8 +110,6 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
         //redis 인증 필터 성공하면
         try {
-            redisService.deleteValues(key);
-
             //가입 안된 회원일 경우 null 리턴
             Optional<Member> checkMember = memberRepository.findByPhone(phoneNumber);
             if (checkMember.isEmpty()) {
@@ -119,8 +117,14 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
             }
 
             //이미 가입한 회원이면
-            //인증한 휴대폰 번호로 로그인 후 토큰 생성 및 반환
-            return memberService.login(phoneNumber);
+            //인증한 휴대폰 번호로 로그인 후 토큰 생성
+            TokenResponseDTO tokenResponseDTO = memberService.login(phoneNumber);
+
+            //redis 에서 번호 제거
+            redisService.deleteValues(key);
+
+            //토큰 반환
+            return tokenResponseDTO;
         } catch (Exception e) {
             e.printStackTrace();
             throw new InternalServerException("jwt 토큰 생성 에러");

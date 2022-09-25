@@ -55,8 +55,10 @@ public class SecurityConfig {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(SwaggerPatterns).permitAll()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/user/**").authenticated()
-                .anyRequest().permitAll()
+                .antMatchers("/member/login").permitAll()
+                .antMatchers("/member/join").permitAll()
+                .antMatchers("/sms/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();
 

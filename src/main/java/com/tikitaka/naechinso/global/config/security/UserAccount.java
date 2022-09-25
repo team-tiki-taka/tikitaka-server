@@ -14,7 +14,7 @@ public class UserAccount extends User {
     private Member member;
 
     public UserAccount(Member member) {
-        super(member.getPhone(), null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        super(member.getPhone(), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
         this.member = member;
     }
 }
