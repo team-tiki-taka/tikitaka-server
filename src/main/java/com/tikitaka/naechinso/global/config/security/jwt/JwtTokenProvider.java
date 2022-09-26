@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.global.config.security.jwt;
 
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
+import com.tikitaka.naechinso.global.config.security.UserDetailServiceImpl;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
@@ -12,25 +13,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
     private final RedisService redisService;
+    private final UserDetailServiceImpl loginService;
     /** 토큰 비밀 키 */
     @Value("${jwt.secret-key}")
     private String JWT_SECRET;
@@ -106,15 +102,8 @@ public class JwtTokenProvider {
             throw new UnauthorizedException(ErrorCode.INVALID_AUTH_TOKEN);
         }
 
-        //권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-
-        //Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        UserDetails principal = loginService.loadUserByUsername(claims.getSubject());
+        return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 
 
@@ -141,6 +130,32 @@ public class JwtTokenProvider {
             log.error("지원하지 않는 JWT 토큰입니다");
         } catch (IllegalArgumentException ex) {
             log.error("JWT 토큰이 비어있습니다");
+        }
+        return false;
+    }
+
+    /**
+     * JWT 유효성 검사 오버로딩, 에러 커스텀을 위한 함수
+     * @param token 검사하려는 JWT 토큰
+     * @returns boolean
+     * */
+    public boolean validateToken(String token, HttpServletRequest request) {
+        final String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
+        try {
+            Jwts.parser().setSigningKey(encodedKey).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException | MalformedJwtException ex) {
+            log.error("잘못된 JWT 서명입니다");
+            request.setAttribute("exception", ErrorCode.INVALID_SIGNATURE.getCode());
+        } catch (ExpiredJwtException ex) {
+            log.error("만료된 JWT 토큰입니다");
+            request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
+        } catch (UnsupportedJwtException ex) {
+            log.error("지원하지 않는 JWT 토큰입니다");
+            request.setAttribute("exception", ErrorCode.UNSUPPORTED_TOKEN.getCode());
+        } catch (IllegalArgumentException ex) {
+            log.error("JWT 토큰이 비어있습니다");
+            request.setAttribute("exception", ErrorCode.NO_TOKEN.getCode());
         }
         return false;
     }

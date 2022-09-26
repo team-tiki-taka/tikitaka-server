@@ -4,7 +4,7 @@ import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinRequestDto;
 import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinResponseDto;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
-import com.tikitaka.naechinso.global.config.security.MemberAccountAdapter;
+import com.tikitaka.naechinso.global.config.security.MemberAdapter;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
@@ -52,13 +52,7 @@ public class MemberService {
                 .orElseThrow(() -> new BadRequestException(ErrorCode.USER_NOT_FOUND));
 
         UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(new MemberAccountAdapter(checkMember), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
-
-//        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-//        //    authenticate 메서드가 실행이 될 때
-//        //    LoginServiceImpl의 loadUserByUsername 메서드가 실행됨
-//        Authentication authentication
-//                = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+                = new UsernamePasswordAuthenticationToken(new MemberAdapter(checkMember), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
@@ -66,8 +60,6 @@ public class MemberService {
                 = jwtTokenProvider.generateToken(new JwtDTO(phone));
 
         //리프레시 토큰 저장 로직 아래에
-
-
         return tokenResponseDTO;
     }
 

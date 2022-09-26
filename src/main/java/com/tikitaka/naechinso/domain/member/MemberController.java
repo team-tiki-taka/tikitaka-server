@@ -5,19 +5,12 @@ import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinResponseDto;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
-import com.tikitaka.naechinso.global.config.security.LoginServiceImpl;
-import com.tikitaka.naechinso.global.config.security.MemberAccountAdapter;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -32,21 +25,11 @@ public class MemberController {
 
     @GetMapping("/")
     @ApiOperation(value = "유저 자신의 정보를 가져온다 (AccessToken 필요)")
-    public CommonApiResponse<Member> getMyInformation(HttpServletRequest request, @ApiIgnore @AuthenticationPrincipal MemberAccountAdapter accountAdapter) {
-
-        System.out.println("SecurityContextHolder.getContext() = " + SecurityContextHolder.getContext());
-        System.out.println("SecurityContextHolder.getContext().getAuthentication() = " + SecurityContextHolder.getContext().getAuthentication());
-
-
-        Member member = accountAdapter.getMember();
-
+    public CommonApiResponse<MemberCommonJoinResponseDto> getMyInformation(HttpServletRequest request, @AuthMember Member member) {
         if (member == null) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
-
-//        return CommonApiResponse.of(MemberCommonJoinResponseDto.of(userDetails));
-        return CommonApiResponse.of(member);
-
+        return CommonApiResponse.of(MemberCommonJoinResponseDto.of(member));
     }
 
 

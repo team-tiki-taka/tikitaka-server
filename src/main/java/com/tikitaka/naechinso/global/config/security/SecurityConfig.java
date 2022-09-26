@@ -26,7 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private static final String[] SwaggerPatterns = {
             "/swagger-resources/**",
-            "/swagger-ui.html",
+            "/swagger-ui/**",
             "/v2/api-docs",
             "/webjars/**"
     };

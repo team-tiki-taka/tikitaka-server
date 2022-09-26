@@ -7,12 +7,19 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 
+/**
+ * UserDetails 를 구현한 어댑터
+ * Spring Security Authentication 사용 시
+ * Member Entity 를 가져오기 편하게 하기 위해 구현
+ * @author gengminy 220926
+ * */
 @Getter
-public class MemberAccountAdapter extends User {
+public class MemberAdapter extends User {
     private Member member;
 
-    public MemberAccountAdapter(Member member) {
+    public MemberAdapter(Member member) {
         super(member.getPhone(), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
         this.member = member;
     }
+
 }
