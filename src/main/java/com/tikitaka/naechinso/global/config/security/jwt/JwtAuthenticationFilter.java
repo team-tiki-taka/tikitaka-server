@@ -1,10 +1,13 @@
 package com.tikitaka.naechinso.global.config.security.jwt;
 
+import com.tikitaka.naechinso.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,33 +26,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try {
-            String jwt = resolveToken(request); //request에서 jwt 토큰을 꺼낸다.
 
-            if (jwt == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+        //Spring Security 에 저장되어 있지 않으면 헤더에서 jwt 토큰을 가지고옴
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                String jwt = resolveToken(request); //request에서 jwt 토큰을 꺼낸다.
 
-            System.out.println("jwt = " + jwt); //test
-
-            if (StringUtils.isNotBlank(jwt) && jwtTokenService.validateToken(jwt)) {
-                Authentication authentication = jwtTokenService.getAuthentication(jwt); //authentication 획득
-//              authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //기본적으로 제공한 details 세팅
-
-                //Security 세션에서 계속 사용하기 위해 SecurityContext에 Authentication 등록
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                if (StringUtils.isBlank(jwt)) {
-                    request.setAttribute("unauthorization", "401 인증키 없음.");
+                if (jwt == null) {
+                    log.error("jwt 값을 가져올 수 없습니다");
+                    request.setAttribute("exception", ErrorCode.NO_TOKEN.getCode());
+                    filterChain.doFilter(request, response);
+                    return;
                 }
 
-                if (jwtTokenService.validateToken(jwt)) {
-                    request.setAttribute("unauthorization", "401-001 인증키 만료.");
+//                // 만료 10분 전 리프레시 토큰으로 reissue
+//                if (canRefresh(claims, 6000 * 10)) {
+//                    String refreshedToken = jwt.refreshToken(authorizationToken);
+//                    response.setHeader(headerkey, refreshedToken);
+//                }
+
+                if (StringUtils.isNotBlank(jwt) && jwtTokenService.validateToken(jwt)) {
+                    Authentication authentication = jwtTokenService.getAuthentication(jwt); //authentication 획득
+
+                    //Security 세션에서 계속 사용하기 위해 SecurityContext에 Authentication 등록
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    if (StringUtils.isBlank(jwt)) {
+                        request.setAttribute("exception", ErrorCode.NO_TOKEN.getCode());
+                    }
+
+                    if (!jwtTokenService.validateToken(jwt, request)){
+
+                    }
                 }
+            } catch (Exception ex) {
+                logger.error("Security Context에 해당 토큰을 등록할 수 없습니다", ex);
             }
-        } catch (Exception ex) {
-            logger.error("Security Context에 해당 토큰을 등록할 수 없습니다", ex);
+        }
+        else {
+            log.debug("SecurityContextHolder not populated with security token, as it already contained: '{}'",
+                    SecurityContextHolder.getContext().getAuthentication());
         }
 
         filterChain.doFilter(request, response);

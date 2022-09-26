@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -43,6 +44,17 @@ public class ErrorResponse {
                 .code(errorCode.getCode())
                 .errors(ErrorField.of(bindingResult))
                 .build();
+    }
+
+    //filter chain 을 위한 JSON 생성자
+    public static JSONObject jsonOf(ErrorCode errorCode) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("timestamp", LocalDateTime.now());
+        jsonObject.put("success", "false");
+        jsonObject.put("message", errorCode.getDetail());
+        jsonObject.put("status", errorCode.getHttpStatus().value());
+        jsonObject.put("code", errorCode.getCode());
+        return jsonObject;
     }
 
     @Getter

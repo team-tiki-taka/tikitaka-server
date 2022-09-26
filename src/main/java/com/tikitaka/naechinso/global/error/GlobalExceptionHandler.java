@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
 //    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
 //    protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
 //        log.error("handleMethodArgumentTypeMismatchException", e);
-//        final ErrorResponse response = ErrorResponse.of(();
+//        final ErrorResponse response = ErrorResponse.of(e);
 //        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 //    }
 
