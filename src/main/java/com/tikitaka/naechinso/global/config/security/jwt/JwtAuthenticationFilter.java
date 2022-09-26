@@ -38,8 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.isNotBlank(jwt) && jwtTokenService.validateToken(jwt)) {
                 Authentication authentication = jwtTokenService.getAuthentication(jwt); //authentication 획득
 
-                ((UsernamePasswordAuthenticationToken) authentication).setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)); //기본적으로 제공한 details 세팅
+//                ((UsernamePasswordAuthenticationToken) authentication).setDetails(
+//                        new WebAuthenticationDetailsSource().buildDetails(request)); //기본적으로 제공한 details 세팅
 
                 //Security 세션에서 계속 사용하기 위해 SecurityContext에 Authentication 등록
                 SecurityContextHolder.getContext().setAuthentication(authentication);

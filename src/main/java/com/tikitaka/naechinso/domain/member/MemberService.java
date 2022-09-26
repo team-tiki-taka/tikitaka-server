@@ -3,9 +3,8 @@ package com.tikitaka.naechinso.domain.member;
 import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinRequestDto;
 import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinResponseDto;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
-import com.tikitaka.naechinso.global.config.security.UserAccount;
+import com.tikitaka.naechinso.global.config.security.MemberAccountAdapter;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
@@ -13,7 +12,6 @@ import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -54,7 +52,7 @@ public class MemberService {
                 .orElseThrow(() -> new BadRequestException(ErrorCode.USER_NOT_FOUND));
 
         UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(new UserAccount(checkMember), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                = new UsernamePasswordAuthenticationToken(new MemberAccountAdapter(checkMember), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
 //        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
 //        //    authenticate 메서드가 실행이 될 때
