@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+/**
+ * ControllerAdvice 에서는 Spring Security 예외를 잡아낼 수 없기 때문에
+ * AuthenticationEntryPoint 구현체를 통해 예외처리를 커스텀한다
+ * @author gengminy 220926
+ * */
 @Slf4j
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -22,8 +28,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException e
     ) throws IOException {
+
         String exception = (String)request.getAttribute("exception");
 
+        //토큰이 없을 경우
         if(exception == null || exception.equals(ErrorCode.NO_TOKEN.getCode())) {
             setResponse(response, ErrorCode.NO_TOKEN);
         }

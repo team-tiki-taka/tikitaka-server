@@ -34,8 +34,7 @@ public class Point extends BaseEntity {
     @Column(name = "poi_type")
     private String type;
 
-//
-//    @ManyToOne
-//    @PrimaryKeyJoinColumn
-//    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mem_id")
+    private MemberDetail member;
 }

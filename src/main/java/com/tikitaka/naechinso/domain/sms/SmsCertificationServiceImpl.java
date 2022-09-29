@@ -90,7 +90,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
     /**
      * 인증번호를 검증한다
      * @param smsCertificationRequestDto {phoneNumber: 휴대폰 번호, code: 인증번호}
-     * @return 전송 성공시 메세지
+     * @return TokenResponseDTO { accessToken, refreshToken }
      */
     @Override
     public TokenResponseDTO verifyCode(SmsCertificationRequestDTO smsCertificationRequestDto) {
@@ -110,10 +110,29 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
         //redis 인증 필터 성공하면
         try {
+            /* VERIFY FLOW
+            * -> 아직 MemberDetail 작성한 회원이 아닐 경우
+            * 1. 이미 추천사를 받은 신규회원
+            * 2. 추천사를 받아야 하는 신규회원
+            * 3. 추천사 써주려는 신규회원
+            * 4. 추천 요청을 받아서 추천사를 써주는 신규회원
+            * * 입력이 다 되었는지 검증, 안되면 register 토큰 발급
+            *
+            * -> MemberDetail 검증 완료된 회원
+            * 5. 즉시 마이페이지 이동
+            * */
+
+
             //가입 안된 회원일 경우 null 리턴
             Optional<Member> checkMember = memberRepository.findByPhone(phoneNumber);
             if (checkMember.isEmpty()) {
                 return null;
+            }
+
+            if (checkMember.get().getDetail() != null) {
+                System.out.println("checkMember.get().getDetail() = " + checkMember.get().getDetail());
+            } else {
+                System.out.println("detail is null");
             }
 
             //이미 가입한 회원이면

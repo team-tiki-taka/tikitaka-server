@@ -2,8 +2,11 @@ package com.tikitaka.naechinso.domain.member.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 /**
@@ -16,61 +19,57 @@ import javax.validation.constraints.*;
 @Builder
 @ToString
 public class MemberDetailJoinRequestDto {
-    @NotBlank(message = "전화번호를 입력해주세요")
-    @Pattern(regexp = "[0-9]{10,11}", message = "하이픈 없는 10~11자리 숫자를 입력해주세요")
-    private String phone;
+    //추천인 정보
+    //
+    @ApiModelProperty(example = "180")
+    @Positive(message = "키는 양수여야 합니다")
+    private int height;
 
-    @NotBlank(message = "이름을 입력해주세요")
-    private String name;
+    @ApiModelProperty(example = "서울시 강남구")
+    @NotBlank(message = "주소 정보를 입력해야 합니다")
+    private String address;
 
-    @NotNull(message = "성별을 입력해주세요")
-    private Gender gender;
+    @NotBlank(message = "종교 정보를 입력해야 합니다")
+    private String religion;
 
-    @Min(value = 25, message = "25-33세까지만 가입 가능합니다")
-    @Max(value = 33, message = "25-33세까지만 가입 가능합니다")
-    private int age;
+    @NotBlank(message = "음주 정보를 입력해야 합니다")
+    private String drink;
 
-    @NotNull(message = "서비스 이용약관 동의가 필요합니다")
-    @AssertTrue(message = "서비스 이용약관 동의가 필요합니다")
-    private boolean acceptsService;
+    @NotBlank(message = "흡연 정보를 입력해야 합니다")
+    private String smoke;
 
-    @NotNull(message = "개인정보 이용 동의가 필요합니다")
-    @AssertTrue(message = "개인정보 이용 동의가 필요합니다")
-    private boolean acceptsInfo;
+    @ApiModelProperty(example = "ESTJ")
+    @Length(max = 4, message = "올바를 MBTI 정보를 입력하세요")
+    private String mbti = "";
 
-    @NotNull(message = "종교 정보 제공 동의가 필요합니다")
-    @AssertTrue(message = "종교 정보 제공 동의가 필요합니다")
-    private boolean acceptsReligion;
+    @NotBlank(message = "성격 정보를 입력해야 합니다")
+    private String personality;
 
-    @NotNull(message = "위치 정보 제공 동의 여부가 필요합니다")
-    private boolean acceptsLocation;
+    @NotBlank(message = "자기 소개를 입력해야 합니다")
+    private String introduce = "";
 
-    @NotNull(message = "마케팅 동의 여부가 필요합니다")
-    private boolean acceptsMarketing;
+    @NotBlank(message = "취미 정보를 입력해야 합니다")
+    private String hobby = "";
 
-    @NotBlank(message = "직장명을 입력해주세요")
-    private String jobName;
+    @NotBlank(message = "연애 스타일을 입력해야 합니다")
+    private String style = "";
 
-    @NotBlank(message = "직장 부서를 입력해주세요")
-    private String jobPart;
+    @NotBlank(message = "사진을 업로드해야 합니다")
+    private String picture;
 
-    @NotBlank(message = "직장 위치를 입력해주세요")
-    private String jobLocation;
+    @ApiModelProperty(example = "서울")
+    private String school;
+
+    @ApiModelProperty(example = "컴퓨터공학과")
+    private String major;
+
+    @ApiModelProperty(example = "대학교")
+    private String eduLevel;
+
 
     public static Member toCommonMember(MemberDetailJoinRequestDto dto) {
         Member member = Member.builder()
-                .phone(dto.phone)
-                .name(dto.name)
-                .gender(dto.gender)
-                .age(dto.age)
-                .acceptsService(dto.acceptsService)
-                .acceptsInfo(dto.acceptsInfo)
-                .acceptsReligion(dto.acceptsReligion)
-                .acceptsLocation(dto.acceptsLocation)
-                .acceptsMarketing(dto.acceptsMarketing)
-                .jobName(dto.jobName)
-                .jobPart(dto.jobPart)
-                .jobLocation(dto.jobLocation)
+
                 .build();
 
         return member;
