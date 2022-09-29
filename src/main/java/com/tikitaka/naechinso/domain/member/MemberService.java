@@ -1,7 +1,7 @@
 package com.tikitaka.naechinso.domain.member;
 
 import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinRequestDto;
-import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinResponseDto;
+import com.tikitaka.naechinso.domain.member.dto.MemberCommonResponseDto;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.MemberAdapter;
@@ -30,7 +30,7 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public MemberCommonJoinResponseDto joinCommonMember(MemberCommonJoinRequestDto dto) {
+    public MemberCommonResponseDto joinCommonMember(MemberCommonJoinRequestDto dto) {
 
         //이미 존재하는 유저일 경우 400
         Optional<Member> checkMember = memberRepository.findByPhone(dto.getPhone());
@@ -41,7 +41,7 @@ public class MemberService {
         Member member = MemberCommonJoinRequestDto.toCommonMember(dto);
         memberRepository.save(member);
 
-        MemberCommonJoinResponseDto res = MemberCommonJoinResponseDto.of(member);
+        MemberCommonResponseDto res = MemberCommonResponseDto.of(member);
         return res;
     }
 

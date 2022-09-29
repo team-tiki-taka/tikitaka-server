@@ -1,10 +1,14 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.point.entity.Point;
+import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 멤버 공통 정보를 담당하는 엔티티입니다
@@ -38,23 +42,23 @@ public class Member extends BaseEntity {
     @Column(name = "mem_age")
     private int age;
 
-    @Column(name = "mem_accpets_service")
+    @Column(name = "mem_accepts_service")
     @Builder.Default
     private boolean acceptsService = false;
 
-    @Column(name = "mem_accpets_info")
+    @Column(name = "mem_accepts_info")
     @Builder.Default
     private boolean acceptsInfo = false;
 
-    @Column(name = "mem_accpets_religion")
+    @Column(name = "mem_accepts_religion")
     @Builder.Default
     private boolean acceptsReligion = false;
 
-    @Column(name = "mem_accpets_location")
+    @Column(name = "mem_accepts_location")
     @Builder.Default
     private boolean acceptsLocation = false;
 
-    @Column(name = "mem_accpets_marketing")
+    @Column(name = "mem_accepts_marketing")
     @Builder.Default
     private boolean acceptsMarketing = false;
 
@@ -72,12 +76,13 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "mem_detail")
     private MemberDetail detail;
 
+    //소개해준 사람들 -> recommend 로 넣으면 됨
+    //mapped by 에는 연관관계 엔티티의 필드명을 적어줌
+    @OneToMany(mappedBy = "sender")
+    private List<Recommend> recommends = new ArrayList<>();
 
+    //소개해준 사람들 -> recommend 로 넣으면 됨
+    @OneToOne(mappedBy = "receiver")
+    private Recommend recommend_received;
 
-
-//    //소개해준 사람들
-//    @OneToMany
-//    @JoinColumn
-//    @Builder.Default
-//    private List<Member> receivers = new ArrayList<>();
 }
