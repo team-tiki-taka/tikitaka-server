@@ -37,4 +37,7 @@ public class RecommendRequestDTO {
 
     @NotBlank(message = "친구의 매력을 입력해주세요")
     private String appeal;
+
+
+
 }

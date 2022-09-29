@@ -1,8 +1,10 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
+import com.tikitaka.naechinso.domain.member.dto.MemberDetailJoinRequestDto;
 import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import com.tikitaka.naechinso.global.config.entity.BaseTimeEntity;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -70,7 +72,8 @@ public class MemberDetail extends BaseEntity {
     private String picture;
 
     @Column(name = "mem_point")
-    private Long point;
+    @Builder.Default
+    private Long point = 0L;
 
     @Column(name = "mem_school")
     private String school;
@@ -91,4 +94,45 @@ public class MemberDetail extends BaseEntity {
     @MapsId
     @JoinColumn(name = "mem_id")
     private Member member;
+
+
+    public static MemberDetail of(MemberDetailJoinRequestDto dto) {
+        return MemberDetail.builder()
+                .height(dto.getHeight())
+                .address(dto.getAddress())
+                .religion(dto.getReligion())
+                .drink(dto.getDrink())
+                .smoke(dto.getSmoke())
+                .mbti(dto.getMbti())
+                .personality(dto.getPersonality())
+                .introduce(dto.getIntroduce())
+                .hobby(dto.getHobby())
+                .style(dto.getStyle())
+                .picture(dto.getPicture())
+                .school(dto.getSchool())
+                .major(dto.getMajor())
+                .eduLevel(dto.getEduLevel())
+                .build();
+    }
+
+    public static MemberDetail of(Member member, MemberDetailJoinRequestDto dto) {
+        return MemberDetail.builder()
+                .height(dto.getHeight())
+                .address(dto.getAddress())
+                .religion(dto.getReligion())
+                .drink(dto.getDrink())
+                .smoke(dto.getSmoke())
+                .mbti(dto.getMbti())
+                .personality(dto.getPersonality())
+                .introduce(dto.getIntroduce())
+                .hobby(dto.getHobby())
+                .style(dto.getStyle())
+                .picture(dto.getPicture())
+                .school(dto.getSchool())
+                .major(dto.getMajor())
+                .eduLevel(dto.getEduLevel())
+                .member(member)
+                .build();
+    }
+
 }

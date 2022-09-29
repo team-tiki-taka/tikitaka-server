@@ -25,13 +25,25 @@ public class RecommendService {
 
     /**
      * 추천사를 작성한다
-     * @param sender 로그인 여부 및 추천인 정보 가져옴
+     * @param member 로그인한 사용자인지 가져옴
      * @param dto 추천하려는 사람의 정보 dto
      * */
     public RecommendListResponseDTO recommendMember(
-            Member sender,
+            Member member,
             RecommendRequestDTO dto)
     {
+        Member sender;
+        //작성자가 회원일 경우 그대로 저장
+        if (member != null && member.getDetail() != null) {
+            sender = member;
+        }
+        //작성자가 회원이 아닐 경우
+        else {
+            sender = member.builder()
+
+                    .build();
+        }
+
         //작성자가 회원일 경우,
         //추천할 사람이 이미 가입하여 요청했을 경우,
         //둘 모두 회원이 아닐 경우

@@ -85,4 +85,10 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "receiver")
     private Recommend recommend_received;
 
+
+    public void setDetail(MemberDetail memberDetail) {
+        this.detail = memberDetail;
+    }
+
+
 }
