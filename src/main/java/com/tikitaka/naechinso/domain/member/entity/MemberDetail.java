@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.dto.MemberDetailJoinRequestDto;
 import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
@@ -88,11 +89,13 @@ public class MemberDetail extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Point> points = new ArrayList<>();
 
+    // MemberDetail 을 소유한 Member 와 연결
     // Member Entity 와 1:1 조인
     // Member PK 그대로 사용
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "mem_id")
+    @JsonIgnore
     private Member member;
 
 

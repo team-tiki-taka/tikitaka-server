@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.sms;
 
+import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationSuccessResponseDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationRequestDTO;
@@ -27,8 +28,8 @@ public class SmsCertificationController {
     }
 
     @PostMapping("/verify")
-    public CommonApiResponse<TokenResponseDTO> verifyCode(@RequestBody @Valid SmsCertificationRequestDTO dto) {
-        TokenResponseDTO token = smsCertificationService.verifyCode(dto);
-        return CommonApiResponse.of(token);
+    public CommonApiResponse<SmsCertificationSuccessResponseDTO> verifyCode(@RequestBody @Valid SmsCertificationRequestDTO dto) {
+        SmsCertificationSuccessResponseDTO responseDTO = smsCertificationService.verifyCode(dto);
+        return CommonApiResponse.of(responseDTO);
     }
 }

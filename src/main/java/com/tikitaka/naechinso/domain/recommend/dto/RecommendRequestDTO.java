@@ -1,13 +1,14 @@
 package com.tikitaka.naechinso.domain.recommend.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.annotation.Enum;
 import lombok.*;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.validation.constraints.*;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,29 +16,50 @@ import javax.validation.constraints.Pattern;
 @Builder
 @ToString
 public class RecommendRequestDTO {
-    @NotBlank(message = "친구의 전화번호를 입력해주세요")
-    @Pattern(regexp = "[0-9]{10,11}", message = "하이픈 없는 10~11자리 숫자를 입력해주세요")
-    private String phone;
-
-    @NotBlank(message = "친구의 이름을 입력해주세요")
+    @NotBlank(message = "유저 이름을 입력해주세요")
     private String name;
 
-    @Enum(enumClass = Gender.class, message = "친구의 성별 입력이 올바르지 않습니다. M 또는 W가 필요합니다")
+    @Enum(enumClass = Gender.class, message = "유저의 성별 입력이 올바르지 않습니다. M 또는 W가 필요합니다")
     private Gender gender;
 
     @Min(value = 25, message = "25-33세까지만 추천 및 가입 가능합니다")
     @Max(value = 33, message = "25-33세까지만 추천 및 가입 가능합니다")
     private int age;
 
-    @NotBlank(message = "만나게 된 계기를 입력해주세요")
-    private String meet;
+    @NotNull(message = "서비스 이용약관 동의가 필요합니다")
+    @AssertTrue(message = "서비스 이용약관 동의가 필요합니다")
+    private boolean acceptsService;
 
-    @NotBlank(message = "친구의 성격 키워드를 입력해주세요")
-    private String personality;
+    @NotNull(message = "개인정보 이용 동의가 필요합니다")
+    @AssertTrue(message = "개인정보 이용 동의가 필요합니다")
+    private boolean acceptsInfo;
 
-    @NotBlank(message = "친구의 매력을 입력해주세요")
-    private String appeal;
+    @NotNull(message = "종교 정보 제공 동의가 필요합니다")
+    @AssertTrue(message = "종교 정보 제공 동의가 필요합니다")
+    private boolean acceptsReligion;
+
+    @NotNull(message = "위치 정보 제공 동의 여부가 필요합니다")
+    private boolean acceptsLocation;
+
+    @NotNull(message = "마케팅 동의 여부가 필요합니다")
+    private boolean acceptsMarketing;
+
+    //링크 식별을 위한 uuid
+    @Builder.Default
+    private String uuid = UUID.randomUUID().toString();
 
 
-
+    public Member toReceiver(String phone) {
+        return Member.builder()
+                .name(this.getName())
+                .name(this.name)
+                .gender(this.gender)
+                .age(this.age)
+                .acceptsService(this.acceptsService)
+                .acceptsInfo(this.acceptsInfo)
+                .acceptsReligion(this.acceptsReligion)
+                .acceptsLocation(this.acceptsLocation)
+                .acceptsMarketing(this.acceptsMarketing)
+                .build();
+    }
 }

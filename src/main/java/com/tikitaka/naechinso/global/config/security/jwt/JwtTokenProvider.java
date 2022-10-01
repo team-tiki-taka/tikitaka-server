@@ -32,9 +32,8 @@ public class JwtTokenProvider {
     private String JWT_SECRET;
 
     /** 토큰 유효 시간 (ms) */
-    private static final long JWT_EXPIRATION_MS = 1000L * 60 * 30; //30분
+    private static final long JWT_EXPIRATION_MS = 1000L * 60 * 40; //40분
     private static final long REFRESH_TOKEN_EXPIRATION_MS = 1000L * 60 * 60 * 24 * 7; //7일
-
     private static final String AUTHORITIES_KEY = "role"; //권한 정보 컬럼명
 
     public String generateAccessToken(JwtDTO jwtDTO) {
@@ -94,6 +93,17 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    /** 회원가입 전용 Register Token 생성
+     * @param jwtDto 인증 요청하는 유저 정보
+     */
+    public String generateRegisterToken(JwtDTO jwtDto)
+            throws HttpServerErrorException.InternalServerError {
+        //권한 가져오기
+        final String registerToken = generateAccessToken(jwtDto);
+        return registerToken;
+    }
+
 
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
