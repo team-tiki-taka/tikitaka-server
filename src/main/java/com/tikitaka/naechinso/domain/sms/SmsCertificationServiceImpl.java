@@ -137,7 +137,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
             //이미 가입한 회원이면
             //인증한 휴대폰 번호로 로그인 후 토큰 생성
             TokenResponseDTO tokenResponseDTO
-                    = jwtTokenProvider.generateToken(new JwtDTO(phoneNumber));
+                    = jwtTokenProvider.generateToken(new JwtDTO(phoneNumber, checkMember.get().getRole().getDetail()));
 
             //액세스 + 리프레시 토큰 반환
             return SmsCertificationSuccessResponseDTO.builder()

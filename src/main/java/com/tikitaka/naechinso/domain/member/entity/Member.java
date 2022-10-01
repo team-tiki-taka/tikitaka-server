@@ -2,6 +2,7 @@ package com.tikitaka.naechinso.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
@@ -31,6 +32,11 @@ public class Member extends BaseEntity {
 
     @Column(name = "mem_phone")
     private String phone;
+
+    @Column(name = "mem_role", columnDefinition = "Text default 'ROLE_USER'")
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
 
     @Column(name = "mem_name")
     private String name;

@@ -50,7 +50,7 @@ public class ErrorResponse {
     public static JSONObject jsonOf(ErrorCode errorCode) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("timestamp", LocalDateTime.now());
-        jsonObject.put("success", "false");
+        jsonObject.put("success", false);
         jsonObject.put("message", errorCode.getDetail());
         jsonObject.put("status", errorCode.getHttpStatus().value());
         jsonObject.put("code", errorCode.getCode());

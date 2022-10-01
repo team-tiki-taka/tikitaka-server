@@ -32,6 +32,7 @@ public class JwtTokenProvider {
     private String JWT_SECRET;
 
     /** 토큰 유효 시간 (ms) */
+    private static final long REGISTER_TOKEN_EXPIRATION_MS =  1000L * 60 * 60; //60분
     private static final long JWT_EXPIRATION_MS = 1000L * 60 * 40; //40분
     private static final long REFRESH_TOKEN_EXPIRATION_MS = 1000L * 60 * 60 * 24 * 7; //7일
     private static final String AUTHORITIES_KEY = "role"; //권한 정보 컬럼명
@@ -49,7 +50,7 @@ public class JwtTokenProvider {
                 .setIssuer("naechinso")
                 .setIssuedAt(now) // 생성일자 지정(현재)
                 .setSubject(jwtDTO.getPhoneNumber()) // 사용자(principal => phoneNumber)
-                .claim(AUTHORITIES_KEY, jwtDTO.getAuthorities()) //권한 설정
+                .claim(AUTHORITIES_KEY, jwtDTO.getRole()) //권한 설정
                 .setExpiration(accessTokenExpiresIn) // 만료일자
                 .signWith(SignatureAlgorithm.HS512, encodedKey) // signature에 들어갈 secret 값 세팅
                 .compact();
@@ -95,24 +96,40 @@ public class JwtTokenProvider {
     }
 
     /** 회원가입 전용 Register Token 생성
-     * @param jwtDto 인증 요청하는 유저 정보
+     * @param jwtDTO 인증 요청하는 유저 정보
      */
-    public String generateRegisterToken(JwtDTO jwtDto)
+    public String generateRegisterToken(JwtDTO jwtDTO)
             throws HttpServerErrorException.InternalServerError {
-        //권한 가져오기
-        final String registerToken = generateAccessToken(jwtDto);
+        final String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
+        final Date now = new Date();
+        final Date registerTokenExpiresIn = new Date(now.getTime() + REGISTER_TOKEN_EXPIRATION_MS);
+
+        //권한 정보를 제외하고 생성
+        final String registerToken = Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer("naechinso")
+                .setIssuedAt(now) // 생성일자 지정(현재)
+                .setSubject(jwtDTO.getPhoneNumber()) // 사용자(principal => phoneNumber)
+                .setExpiration(registerTokenExpiresIn) // 만료일자
+                .signWith(SignatureAlgorithm.HS512, encodedKey) // signature 에 들어갈 secret 값 세팅
+                .compact();
+
         return registerToken;
     }
 
 
-    public Authentication getAuthentication(String accessToken) {
+    public Authentication getAuthentication(HttpServletRequest request, String accessToken) {
         Claims claims = parseClaims(accessToken);
 
+        System.out.println("claims = " + claims); //
+
         if (claims.get(AUTHORITIES_KEY) == null) {
+            request.setAttribute("exception", ErrorCode.INVALID_AUTH_TOKEN.getCode());
             throw new UnauthorizedException(ErrorCode.INVALID_AUTH_TOKEN);
         }
 
         UserDetails principal = loginService.loadUserByUsername(claims.getSubject());
+
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 
@@ -149,7 +166,7 @@ public class JwtTokenProvider {
      * @param token 검사하려는 JWT 토큰
      * @returns boolean
      * */
-    public boolean validateToken(String token, HttpServletRequest request) {
+    public boolean validateToken(HttpServletRequest request, String token) {
         final String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
         try {
             Jwts.parser().setSigningKey(encodedKey).parseClaimsJws(token);

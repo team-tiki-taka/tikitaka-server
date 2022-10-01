@@ -74,7 +74,22 @@ public class RecommendController {
 
 //    //제일 아래에 있어야함
 //    @GetMapping("/{uuid}")
-//    @ApiOperation(value = "추천 요청 uuid 를 가진 추천사 엔티티를 가져온다")
+//    @ApiOperation(value = "추천 요청받은 uuid 를 가진 추천사 정보를 가져온다")
+//    public CommonApiResponse<RecommendDTO> getRecommendByUuid(
+//            HttpServletRequest request,
+//            @PathVariable("uuid") String uuid,
+//            @Valid @RequestBody RecommendRequestDTO dto)
+//    {
+//        String registerToken = request.getHeader("Authorization");
+//        String phone = parseRegisterToken(registerToken);
+//
+////        RecommendDTO recommendDTO = recommendService.findAllRecommendRequestsByUuid(uuid);
+//        return CommonApiResponse.of(recommendDTO);
+//    }
+
+    //    //제일 아래에 있어야함
+//    @PatchMapping("/{uuid}")
+//    @ApiOperation(value = "요청받은 uuid 추천사에 추천인을 등록한다")
 //    public CommonApiResponse<RecommendDTO> getRecommendByUuid(
 //            HttpServletRequest request,
 //            @PathVariable("uuid") String uuid,

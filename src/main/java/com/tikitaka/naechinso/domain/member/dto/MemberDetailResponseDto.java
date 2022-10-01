@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.domain.member.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
 import com.tikitaka.naechinso.global.error.ErrorCode;
@@ -25,6 +26,8 @@ public class MemberDetailResponseDto {
 //    private Member member;
     //추천인 정보
     private String phone;
+
+    private Role role;
 
     private String name;
 
@@ -84,6 +87,7 @@ public class MemberDetailResponseDto {
         //멤버 정보가 연결되어 있으면 가져옴
         if (member != null) {
             dtoBuilder.phone(member.getPhone())
+                    .role(member.getRole())
                     .name(member.getName())
                     .gender(member.getGender())
                     .age(member.getAge());
