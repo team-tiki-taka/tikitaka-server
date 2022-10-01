@@ -1,7 +1,7 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
-import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
@@ -76,19 +76,19 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "mem_detail")
     private MemberDetail detail;
 
-    //소개해준 사람들 -> recommend 로 넣으면 됨
+    //내가 소개해준 사람들
     //mapped by 에는 연관관계 엔티티의 필드명을 적어줌
     @OneToMany(mappedBy = "sender")
+    @JsonIgnore
     private List<Recommend> recommends = new ArrayList<>();
 
-    //소개해준 사람들 -> recommend 로 넣으면 됨
-    @OneToOne(mappedBy = "receiver")
-    private Recommend recommend_received;
+    //나를 소개해준 사람들
+    @OneToMany(mappedBy = "receiver")
+    @JsonIgnore //순환참조 방지, 엔티티 프로퍼티 가려줌
+    private List<Recommend> recommend_received = new ArrayList<>();
 
 
     public void setDetail(MemberDetail memberDetail) {
         this.detail = memberDetail;
     }
-
-
 }

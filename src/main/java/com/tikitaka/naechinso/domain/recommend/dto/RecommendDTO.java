@@ -16,9 +16,9 @@ public class RecommendDTO {
 
     private String phone;
 
-    private Member sender;
+    private Long senderId;
 
-    private Member receiver;
+    private Long receiverId;
 
     private String name;
 
@@ -30,14 +30,28 @@ public class RecommendDTO {
 
 
     public static RecommendDTO of(Recommend recommend) {
+        Long senderId;
+        Long receiverId;
+        if (recommend.getSender() == null) {
+            senderId = null;
+        } else {
+            senderId = recommend.getSender().getId();
+        }
+
+        if (recommend.getReceiver() == null) {
+            receiverId = null;
+        } else {
+            receiverId = recommend.getReceiver().getId();
+        }
+
         return RecommendDTO.builder()
-                .phone(recommend.getPhone())
-                .sender(recommend.getSender())
-                .receiver(recommend.getReceiver())
-                .name(recommend.getName())
-                .gender(recommend.getGender())
-                .meet(recommend.getMeet())
-                .appeal(recommend.getAppeal())
+                .phone(recommend.getReceiverPhone())
+                .senderId(senderId)
+                .receiverId(receiverId)
+                .name(recommend.getReceiverName())
+                .gender(recommend.getReceiverGender())
+                .meet(recommend.getReceiverMeet())
+                .appeal(recommend.getReceiverAppeal())
                 .build();
     }
 }

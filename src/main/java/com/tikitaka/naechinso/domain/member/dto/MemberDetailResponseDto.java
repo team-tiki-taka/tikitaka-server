@@ -3,6 +3,8 @@ package com.tikitaka.naechinso.domain.member.dto;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
+import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -76,7 +78,22 @@ public class MemberDetailResponseDto {
     }
 
     private static MemberDetailResponseDto buildDetail(MemberDetail detail) {
-        return MemberDetailResponseDto.builder()
+        MemberDetailResponseDtoBuilder dtoBuilder = MemberDetailResponseDto.builder();
+        Member member = detail.getMember();
+
+        //멤버 정보가 연결되어 있으면 가져옴
+        if (member != null) {
+            dtoBuilder.phone(member.getPhone())
+                    .name(member.getName())
+                    .gender(member.getGender())
+                    .age(member.getAge());
+
+        } else {
+            //없으면 에러
+            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        return dtoBuilder
                 .height(detail.getHeight())
                 .address(detail.getAddress())
                 .religion(detail.getReligion())

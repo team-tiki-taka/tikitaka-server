@@ -66,12 +66,4 @@ public class MemberDetailJoinRequestDto {
     @ApiModelProperty(example = "대학교")
     private String eduLevel;
 
-
-    public static Member toCommonMember(MemberDetailJoinRequestDto dto) {
-        Member member = Member.builder()
-
-                .build();
-
-        return member;
-    }
 }

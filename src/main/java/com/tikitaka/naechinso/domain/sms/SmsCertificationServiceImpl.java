@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.MemberService;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.domain.recommend.RecommendRepository;
+import com.tikitaka.naechinso.domain.recommend.RecommendService;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendListResponseDTO;
+import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationSuccessResponseDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
@@ -43,7 +48,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
     private final RedisService redisService;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
+    private final RecommendService recommendService;
     private final String VERIFICATION_PREFIX = "sms:";
     private final int VERIFICATION_TIME_LIMIT = 3 * 60;
 
@@ -89,13 +94,13 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
     /**
      * 인증번호를 검증한다
-     * @param smsCertificationRequestDto {phoneNumber: 휴대폰 번호, code: 인증번호}
+     * @param requestDTO {phoneNumber: 휴대폰 번호, code: 인증번호}
      * @return TokenResponseDTO { accessToken, refreshToken }
      */
     @Override
-    public TokenResponseDTO verifyCode(SmsCertificationRequestDTO smsCertificationRequestDto) {
-        String phoneNumber = smsCertificationRequestDto.getPhoneNumber();
-        String code = smsCertificationRequestDto.getCode();
+    public SmsCertificationSuccessResponseDTO verifyCode(SmsCertificationRequestDTO requestDTO) {
+        String phoneNumber = requestDTO.getPhoneNumber();
+        String code = requestDTO.getCode();
         String key = VERIFICATION_PREFIX + phoneNumber;
 
         //redis 에 해당 번호의 키가 없는 경우는 인증번호(3분) 만료로 처리
@@ -110,40 +115,37 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
         //redis 인증 필터 성공하면
         try {
-            /* VERIFY FLOW
-            * -> 아직 MemberDetail 작성한 회원이 아닐 경우
-            * 1. 이미 추천사를 받은 신규회원
-            * 2. 추천사를 받아야 하는 신규회원
-            * 3. 추천사 써주려는 신규회원
-            * 4. 추천 요청을 받아서 추천사를 써주는 신규회원
-            * * 입력이 다 되었는지 검증, 안되면 register 토큰 발급
-            *
-            * -> MemberDetail 검증 완료된 회원
-            * 5. 즉시 마이페이지 이동
-            * */
+            //redis 에서 번호 제거
+            redisService.deleteValues(key);
 
+            //추천 받은 정보가 있는지
+            Boolean recommendReceived = recommendService.existsByReceiverPhone(phoneNumber);
+            List<RecommendDTO> recommendDTOList = recommendService.findAllBySenderPhone(phoneNumber);
 
-            //가입 안된 회원일 경우 null 리턴
+            //가입 안된 회원일 경우 registerToken 리턴
             Optional<Member> checkMember = memberRepository.findByPhone(phoneNumber);
             if (checkMember.isEmpty()) {
-                return null;
-            }
+                String registerToken = jwtTokenProvider.generateRegisterToken(new JwtDTO(phoneNumber));
 
-            if (checkMember.get().getDetail() != null) {
-                System.out.println("checkMember.get().getDetail() = " + checkMember.get().getDetail());
-            } else {
-                System.out.println("detail is null");
+                return SmsCertificationSuccessResponseDTO.builder()
+                        .registerToken(registerToken)
+                        .recommendRequests(recommendDTOList)
+                        .recommendReceived(recommendReceived)
+                        .build();
             }
 
             //이미 가입한 회원이면
             //인증한 휴대폰 번호로 로그인 후 토큰 생성
-            TokenResponseDTO tokenResponseDTO = memberService.login(phoneNumber);
+            TokenResponseDTO tokenResponseDTO
+                    = jwtTokenProvider.generateToken(new JwtDTO(phoneNumber));
 
-            //redis 에서 번호 제거
-            redisService.deleteValues(key);
-
-            //토큰 반환
-            return tokenResponseDTO;
+            //액세스 + 리프레시 토큰 반환
+            return SmsCertificationSuccessResponseDTO.builder()
+                    .accessToken(tokenResponseDTO.getAccessToken())
+                    .refreshToken(tokenResponseDTO.getRefreshToken())
+                    .recommendRequests(recommendDTOList)
+                    .recommendReceived(recommendReceived)
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
             throw new InternalServerException("jwt 토큰 생성 에러");

@@ -13,18 +13,27 @@ import java.util.List;
 @Builder
 @ToString
 public class RecommendListResponseDTO {
-    List<RecommendDTO> recommends = new ArrayList<>();
+    List<RecommendDTO> recommend = new ArrayList<>();
+    List<RecommendDTO> recommendReceived = new ArrayList<>();
 
 
     public static RecommendListResponseDTO of(Member member) {
-        List<RecommendDTO> recommendDTOList = new ArrayList<>();
+        List<RecommendDTO> recommendList = new ArrayList<>();
+        List<RecommendDTO> recommendReceivedList = new ArrayList<>();
 
         member.getRecommends().stream().forEach(recommend ->
-            recommendDTOList.add(RecommendDTO.of(recommend))
+                recommendList.add(RecommendDTO.of(recommend))
+        );
+
+        member.getRecommend_received().stream().forEach(recommend ->
+                recommendReceivedList.add(RecommendDTO.of(recommend))
         );
 
         return RecommendListResponseDTO.builder()
-                .recommends(recommendDTOList)
+                .recommend(recommendList)
+                .recommendReceived(recommendReceivedList)
                 .build();
     }
+
+
 }

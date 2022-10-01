@@ -2,13 +2,20 @@ package com.tikitaka.naechinso.domain.recommend;
 
 import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendJoinRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendListResponseDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
+import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.BadRequestException;
+import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,52 +26,83 @@ public class RecommendService {
     private final RecommendRepository recommendRepository;
     private final MemberRepository memberRepository;
 
-    public RecommendListResponseDTO getRecommendList(Member member) {
+    public RecommendListResponseDTO readRecommendList(Member authMember) {
+        Member member = memberRepository.findByPhone(authMember.getPhone())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         return RecommendListResponseDTO.of(member);
     }
 
-    /**
-     * 추천사를 작성한다
-     * @param member 로그인한 사용자인지 가져옴
-     * @param dto 추천하려는 사람의 정보 dto
-     * */
-    public RecommendListResponseDTO recommendMember(
-            Member member,
-            RecommendRequestDTO dto)
-    {
-        Member sender;
-        //작성자가 회원일 경우 그대로 저장
-        if (member != null && member.getDetail() != null) {
-            sender = member;
-        }
-        //작성자가 회원이 아닐 경우
-        else {
-            sender = member.builder()
+    public RecommendDTO createRecommendJoin(String senderPhone, RecommendJoinRequestDTO dto) {
+            //멤버가 이미 있으면 종료
+            Optional<Member> checkSender = memberRepository.findByPhone(senderPhone);
+            if (checkSender.isPresent()) {
+                throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
+            }
 
+            Member sender = dto.toSender(senderPhone);
+
+            Member receiver = memberRepository.findByPhone(dto.getReceiverPhone())
+                    .orElse(null);
+
+            Recommend recommend = Recommend.builder()
+                    .sender(sender)
+                    .senderPhone(senderPhone)
+                    .senderName(dto.getName())
+                    .senderAge(dto.getAge())
+                    .senderGender(dto.getGender())
+                    .senderJobName(dto.getJobName())
+                    .senderJobPart(dto.getJobPart())
+                    .senderJobLocation(dto.getJobLocation())
+                    .receiver(receiver)
+                    .receiverPhone(dto.getReceiverPhone())
+                    .receiverName(dto.getReceiverName())
+                    .receiverAge(dto.getReceiverAge())
+                    .receiverAppeal(dto.getAppeal())
+                    .receiverGender(dto.getReceiverGender())
+                    .receiverMeet(dto.getMeet())
+                    .receiverPersonality(dto.getPersonality())
                     .build();
-        }
 
-        //작성자가 회원일 경우,
-        //추천할 사람이 이미 가입하여 요청했을 경우,
-        //둘 모두 회원이 아닐 경우
+            memberRepository.save(sender);
+            recommendRepository.save(recommend);
 
-        Optional<Member> checkMember = memberRepository.findByPhone(dto.getPhone());
-        Member receiver;
-        //상대가 이미 있는 유저면 FK 로 저장
-        if (checkMember.isPresent()) {
-            receiver = checkMember.get();
-        }
-        //상대가 없는 유저면 새로 만든 후 FK 저장
-        else {
-            receiver = Member.builder()
-                    .build();
-        }
-
-        Recommend recommend = Recommend.builder()
-                .sender(sender)
-                .phone(receiver.getPhone())
-
-                .build();
-        return RecommendListResponseDTO.of(receiver);
+            return RecommendDTO.of(recommend);
     }
+
+    public RecommendDTO createRecommendRequest(String receiverPhone, RecommendRequestDTO dto) {
+        Member receiver = dto.toReceiver(receiverPhone);
+        Recommend recommend = Recommend.builder()
+                .sender(null)
+                .receiver(receiver)
+                .receiverPhone(receiverPhone)
+                .receiverName(dto.getName())
+                .receiverAge(dto.getAge())
+                .receiverGender(dto.getGender())
+                .build();
+
+        memberRepository.save(receiver);
+        recommendRepository.save(recommend);
+
+        return RecommendDTO.of(recommend);
+    }
+
+    public List<RecommendDTO> findAllBySenderPhone(String phone) {
+        List<RecommendDTO> recommendDTOList = new ArrayList<>();
+        recommendRepository.findAllBySenderPhone(phone).stream().map(
+                recommend -> recommendDTOList.add(RecommendDTO.of(recommend))
+        );
+        return recommendDTOList;
+    }
+
+//    //링크로 요청한
+//    public RecommendDTO findAllRecommendRequestsByUuid(String uuid){
+//        RecommendMeta meta = recommendMetaRepository.findByUuid(uuid)
+//                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+//        return RecommendDTO.of(meta.getRecommend());
+//    }
+
+    public Boolean existsByReceiverPhone(String phone){
+        return recommendRepository.existsByReceiverPhone(phone);
+    }
+
 }
