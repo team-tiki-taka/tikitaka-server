@@ -3,6 +3,7 @@ package com.tikitaka.naechinso.domain.recommend.dto;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.annotation.Enum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -16,12 +17,15 @@ import java.util.UUID;
 @Builder
 @ToString
 public class RecommendRequestDTO {
+    @ApiModelProperty(example = "닉")
     @NotBlank(message = "유저 이름을 입력해주세요")
     private String name;
 
+    @ApiModelProperty(example = "M")
     @Enum(enumClass = Gender.class, message = "유저의 성별 입력이 올바르지 않습니다. M 또는 W가 필요합니다")
     private Gender gender;
 
+    @ApiModelProperty(example = "25")
     @Min(value = 25, message = "25-33세까지만 추천 및 가입 가능합니다")
     @Max(value = 33, message = "25-33세까지만 추천 및 가입 가능합니다")
     private int age;
@@ -43,11 +47,6 @@ public class RecommendRequestDTO {
 
     @NotNull(message = "마케팅 동의 여부가 필요합니다")
     private boolean acceptsMarketing;
-
-    //링크 식별을 위한 uuid
-    @Builder.Default
-    private String uuid = UUID.randomUUID().toString();
-
 
     public Member toReceiver(String phone) {
         return Member.builder()

@@ -6,8 +6,10 @@ import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendJoinRequestDTO;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * 추천사 정보를 담당하는 엔티티입니다
@@ -16,6 +18,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "recommend")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +29,9 @@ public class Recommend extends BaseEntity {
     @GeneratedValue
     @Column(name = "rec_id")
     private Long id;
+
+    @Builder.Default
+    private String uuid = UUID.randomUUID().toString();
 
     /* 추천 해준 사람 */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -81,10 +87,5 @@ public class Recommend extends BaseEntity {
 
     @Column(name = "rec_appeal")
     private String receiverAppeal;
-
-    public static Recommend of(RecommendJoinRequestDTO dto) {
-        return Recommend.builder()
-                .build();
-    }
 
 }

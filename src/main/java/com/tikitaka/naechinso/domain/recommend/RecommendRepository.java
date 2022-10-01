@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface RecommendRepository extends JpaRepository<Recommend, Long> {
@@ -15,6 +16,10 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     List<Recommend> findAllByReceiverPhone(String phone);
     List<Recommend> findAllBySender_Id(Long id);
     List<Recommend> findAllBySenderPhone(String phone);
+
+    List<Recommend> findAllByIdNotNull();
+
+    Optional<Recommend> findByUuid(String uuid);
 
     Boolean existsByReceiverPhone(String phone);
 }
