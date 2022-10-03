@@ -33,7 +33,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
     public List<MemberCommonResponseDto> findAll() {
@@ -90,24 +89,14 @@ public class MemberService {
         //영속성 유지를 위한 fetch
         Member member = memberRepository.findById(authMember.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        //detail 정보가 있으면 이미 가입한 회원
+        if (member.getDetail() != null) {
+            throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
+        }
+
         MemberDetail detail = MemberDetail.of(member, dto);
         memberDetailRepository.save(detail);
         return MemberDetailResponseDto.of(detail);
     }
-
-//
-//    public MemberCommonJoinResponseDto joinMemberWithDetail(MemberCommonJoinRequestDto dto) {
-//        //이미 존재하는 유저일 경우 400
-//        Optional<Member> checkMember = memberRepository.findByPhone(dto.getPhone());
-//        if(!checkMember.isEmpty()) {
-//            throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
-//        }
-//
-//        Member member = MemberCommonJoinRequestDto.toCommonMember(dto);
-//        memberRepository.save(member);
-//
-//        MemberCommonJoinResponseDto res = MemberCommonJoinResponseDto.of(member);
-//        return res;
-//    }
-
 }

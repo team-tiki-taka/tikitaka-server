@@ -27,7 +27,7 @@ public class RecommendController {
     private final RecommendService recommendService;
     private final JwtTokenProvider jwtTokenService;
 
-    @GetMapping("/")
+    @GetMapping
     @ApiOperation(value = "내 추천사 정보를 가져온다 (AccessToken 필요)")
     public CommonApiResponse<RecommendListResponseDTO> getRecommends(
             @ApiIgnore @AuthMember Member member)
@@ -38,22 +38,21 @@ public class RecommendController {
         return CommonApiResponse.of(recommendService.readRecommendList(member));
     }
 
-    @PostMapping("/")
+    @PostMapping
     @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다. (registerToken 필요)")
-    public CommonApiResponse<RecommendDTO> createRecommendNewSender(
+    public CommonApiResponse<RecommendResponseDTO> createRecommendNewSender(
             HttpServletRequest request,
             @Valid @RequestBody RecommendJoinRequestDTO dto)
     {
-        String registerToken = request.getHeader("Authorization");
-        String phone = parseRegisterToken(registerToken);
+        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
 
-        RecommendDTO recommendDTO = recommendService.createRecommendJoin(phone, dto);
-        return CommonApiResponse.of(recommendDTO);
+        RecommendResponseDTO recommendResponseDTO = recommendService.createRecommendJoin(phone, dto);
+        return CommonApiResponse.of(recommendResponseDTO);
     }
 
     @GetMapping("/find")
     @ApiOperation(value = "[Admin]모든 추천사 정보를 가져온다 (AccessToken)")
-    public CommonApiResponse<List<RecommendDTO>> getAllRecommends(
+    public CommonApiResponse<List<RecommendResponseDTO>> getAllRecommends(
             @ApiIgnore @AuthMember Member member)
     {
         if (member == null) {
@@ -64,14 +63,13 @@ public class RecommendController {
 
     @PostMapping("/request")
     @ApiOperation(value = "다른 유저에게 추천서 작성을 요청한다 (registerToken 필요)")
-    public CommonApiResponse<RecommendDTO> createRecommendRequest(
+    public CommonApiResponse<RecommendResponseDTO> createRecommendRequest(
             HttpServletRequest request,
             @Valid @RequestBody RecommendRequestDTO dto)
     {
-        String registerToken = request.getHeader("Authorization");
-        String phone = parseRegisterToken(registerToken);
-        RecommendDTO recommendDTO = recommendService.createRecommendRequest(phone, dto);
-        return CommonApiResponse.of(recommendDTO);
+        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
+        RecommendResponseDTO recommendResponseDTO = recommendService.createRecommendRequest(phone, dto);
+        return CommonApiResponse.of(recommendResponseDTO);
     }
 
 
@@ -83,38 +81,28 @@ public class RecommendController {
     //제일 아래에 있어야함
     @GetMapping("/{uuid}")
     @ApiOperation(value = "추천 요청받은 uuid 를 가진 추천사 정보를 가져온다 (Register / AccessToken 필요)")
-    public CommonApiResponse<RecommendDTO> getRecommendByUuid(
+    public CommonApiResponse<RecommendResponseDTO> getRecommendByUuid(
             HttpServletRequest request,
             @PathVariable("uuid") String uuid)
     {
         //토큰 장착 확인
-        String token = request.getHeader("Authorization");
-        String phone = parseRegisterToken(token);
+        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
 
-        RecommendDTO recommendDTO = RecommendDTO.of(recommendService.findByUuid(uuid));
-        return CommonApiResponse.of(recommendDTO);
+        RecommendResponseDTO recommendResponseDTO = RecommendResponseDTO.of(recommendService.findByUuid(uuid));
+        return CommonApiResponse.of(recommendResponseDTO);
     }
 
-    @PatchMapping("/{uuid}")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (Register / AccessToken 필요)")
-    public CommonApiResponse<RecommendDTO> getRecommendByUuid(
+    @PatchMapping("/{uuid}/accept")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (Register 필요)")
+    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
             HttpServletRequest request,
             @PathVariable("uuid") String uuid,
             @Valid @RequestBody RecommendAcceptRequestDTO dto)
     {
         //토큰 장착 확인
-        String token = request.getHeader("Authorization");
-        String phone = parseRegisterToken(token);
+        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
 
-        RecommendDTO recommendDTO = recommendService.updateRecommendRequest(uuid, phone, dto);
-        return CommonApiResponse.of(recommendDTO);
+        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendRequest(uuid, phone, dto);
+        return CommonApiResponse.of(recommendResponseDTO);
     }
-
-    private String parseRegisterToken(String registerToken) {
-        if (StringUtils.isBlank(registerToken) || !jwtTokenService.validateToken(registerToken)) {
-            throw new UnauthorizedException(ErrorCode.NO_TOKEN);
-        }
-        return jwtTokenService.parseClaims(registerToken).getSubject();
-    }
-
 }

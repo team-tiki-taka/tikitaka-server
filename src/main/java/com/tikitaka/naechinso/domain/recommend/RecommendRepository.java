@@ -20,6 +20,9 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     List<Recommend> findAllByIdNotNull();
 
     Optional<Recommend> findByUuid(String uuid);
+    Optional<Recommend> findByUuidAndReceiverNotNull(String uuid);
 
     Boolean existsByReceiverPhone(String phone);
+
+    Boolean existsByReceiverPhoneAndSenderNotNull(String phone);
 }

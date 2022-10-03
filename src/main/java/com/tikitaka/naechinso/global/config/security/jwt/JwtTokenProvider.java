@@ -10,6 +10,7 @@ import com.tikitaka.naechinso.global.config.redis.RedisService;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -198,6 +199,20 @@ public class JwtTokenProvider {
             throw new BadRequestException(ErrorCode.EXPIRED_TOKEN);
         }
     }
+
+    /**
+     * Request Header 에서 RegisterToken 파싱 및 phone 추출
+     * @param request Auth Token 장착한 Request
+     * @return phone 휴대폰
+     * */
+    public String parsePhoneByRegisterToken(HttpServletRequest request) {
+        String registerToken = request.getHeader("Authorization");
+        if (StringUtils.isBlank(registerToken) || !validateToken(registerToken)) {
+            throw new UnauthorizedException(ErrorCode.NO_TOKEN);
+        }
+        return parseClaims(registerToken).getSubject();
+    }
+
 
     /**
      * JWT 토큰에서 claims 추출

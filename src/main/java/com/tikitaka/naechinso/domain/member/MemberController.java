@@ -1,20 +1,18 @@
 package com.tikitaka.naechinso.domain.member;
 
-import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinRequestDto;
-import com.tikitaka.naechinso.domain.member.dto.MemberCommonResponseDto;
-import com.tikitaka.naechinso.domain.member.dto.MemberDetailJoinRequestDto;
-import com.tikitaka.naechinso.domain.member.dto.MemberDetailResponseDto;
+import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.domain.recommend.RecommendService;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
-import io.jsonwebtoken.Claims;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -29,9 +27,10 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final RecommendService recommendService;
     private final JwtTokenProvider jwtTokenService;
 
-    @GetMapping("/")
+    @GetMapping
     @ApiOperation(value = "유저 자신의 모든 정보를 가져온다 (AccessToken 필요)")
     public CommonApiResponse<MemberCommonResponseDto> getMyInformation(
             HttpServletRequest request, @ApiIgnore @AuthMember Member member) {
@@ -71,7 +70,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    @ApiOperation(value = "회원가입 세부 정보를 입력하여 최종 가입시킨다 (AccessToken 필요)")
+    @ApiOperation(value = "회원가입 세부 정보를 입력하여 최종 가입시킨다 (AccessToken)")
     public CommonApiResponse<MemberDetailResponseDto> setMemberDetail(
             @Valid @RequestBody MemberDetailJoinRequestDto dto,
             @ApiIgnore @AuthMember Member member)
@@ -86,17 +85,40 @@ public class MemberController {
 
     //페이징 처리 추가할 예정
     @GetMapping("/find")
-    @ApiOperation(value = "현재 가입한 모든 유저를 불러온다")
+    @ApiOperation(value = "[Admin]현재 가입한 모든 유저를 불러온다 (AccessToken)")
     public CommonApiResponse<List<MemberCommonResponseDto>> getMyInformation() {
         return CommonApiResponse.of(memberService.findAll());
     }
 
     @PostMapping("/recommend")
-    @ApiOperation(value = "다른 유저의 추천사를 작성한다")
-    public CommonApiResponse<MemberCommonResponseDto> createRecommend() {
+    @ApiOperation(value = "다른 유저의 추천사를 작성한다 (AccessToken)")
+    public CommonApiResponse<MemberCommonResponseDto> createRecommend(
+            @RequestBody RecommendMemberAcceptRequestDTO dto,
+            @ApiIgnore @AuthMember Member member)
+    {
+        //로그인 상태가 아닌 경우 401
+        if (member == null) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
         return CommonApiResponse.of(null);
     }
 
+
+    @PatchMapping("/recommend/{uuid}/accept")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (AccessToken)")
+    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
+            @PathVariable("uuid") String uuid,
+            @Valid @RequestBody RecommendMemberAcceptRequestDTO dto,
+            @ApiIgnore @AuthMember Member member)
+    {
+        //로그인 상태가 아닌 경우 401
+        if (member == null) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
+        String phone = member.getPhone();
+        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
+        return CommonApiResponse.of(recommendResponseDTO);
+    }
 //    @PostMapping("/login")
 
 

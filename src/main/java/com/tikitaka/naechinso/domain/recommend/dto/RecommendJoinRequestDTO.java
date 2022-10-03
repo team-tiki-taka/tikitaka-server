@@ -109,4 +109,21 @@ public class RecommendJoinRequestDTO {
                 .jobLocation(this.jobLocation)
                 .build();
     }
+
+    public Member toReceiver(String phone){
+        return Member.builder()
+                .phone(phone)
+                .name(this.name)
+                .gender(this.gender)
+                .age(this.age)
+                .acceptsService(this.acceptsService)
+                .acceptsInfo(this.acceptsInfo)
+                .acceptsReligion(this.acceptsReligion)
+                .acceptsLocation(this.acceptsLocation)
+                .acceptsMarketing(this.acceptsMarketing)
+                .jobName(this.jobName)
+                .jobPart(this.jobPart)
+                .jobLocation(this.jobLocation)
+                .build();
+    }
 }
