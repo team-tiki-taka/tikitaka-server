@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                }
 
                 if (StringUtils.isNotBlank(jwt) && jwtTokenService.validateToken(jwt)) {
-                    Authentication authentication = jwtTokenService.getAuthentication(jwt); //authentication 획득
+                    Authentication authentication = jwtTokenService.getAuthentication(request, jwt); //authentication 획득
 
                     //Security 세션에서 계속 사용하기 위해 SecurityContext에 Authentication 등록
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -55,9 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         request.setAttribute("exception", ErrorCode.NO_TOKEN.getCode());
                     }
 
-                    if (!jwtTokenService.validateToken(jwt, request)){
-
-                    }
+                    jwtTokenService.validateToken(request, jwt);
                 }
             } catch (Exception ex) {
                 logger.error("Security Context에 해당 토큰을 등록할 수 없습니다", ex);
@@ -70,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         //Prefix 로 Bearer 가 있으면 제거
@@ -79,5 +76,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         //Prefix 가 없으면 그대로
         return bearerToken;
+
     }
 }

@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.domain.member.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import lombok.*;
 
@@ -14,7 +15,10 @@ import lombok.*;
 @Builder
 @ToString
 public class MemberCommonResponseDto {
+
     private String phone;
+
+    private Role role;
 
     private String name;
 
@@ -25,6 +29,7 @@ public class MemberCommonResponseDto {
     public static MemberCommonResponseDto of(Member member) {
         MemberCommonResponseDto res = MemberCommonResponseDto.builder()
                 .phone(member.getPhone())
+                .role(member.getRole())
                 .name(member.getName())
                 .gender(member.getGender())
                 .age(member.getAge())

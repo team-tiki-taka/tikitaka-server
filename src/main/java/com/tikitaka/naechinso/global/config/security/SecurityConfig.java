@@ -59,6 +59,7 @@ public class SecurityConfig {
                 .antMatchers("/member/join").permitAll()
                 .antMatchers("/sms/**").permitAll()
                 .antMatchers("/recommend/").permitAll()
+                .antMatchers("/recommend/request").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();

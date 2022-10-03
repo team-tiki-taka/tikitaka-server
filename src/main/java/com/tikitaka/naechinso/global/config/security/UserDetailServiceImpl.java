@@ -18,14 +18,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         Member member = memberRepository.findByPhone(phone)
-                .orElseThrow(() -> { throw new UsernameNotFoundException(phone + "-> DB에 없는 유저"); });
-
+                .orElseThrow(() -> {
+                    throw new UsernameNotFoundException(phone + "-> DB에 없는 유저");
+                });
         return new MemberAdapter(member);
-//        return new User(member.getPhone(), "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
-//
-//    //DB에 존재하는 유저일 경우 UserDetails로 만들어서 반환
-//    private UserDetails createUserDetails(Member member) {
-//        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_USER");
-//    }
 }

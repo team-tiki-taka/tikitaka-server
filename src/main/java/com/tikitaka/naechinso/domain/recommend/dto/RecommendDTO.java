@@ -6,6 +6,7 @@ import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,11 +15,9 @@ import javax.persistence.*;
 @ToString
 public class RecommendDTO {
 
+    private String uuid;
+
     private String phone;
-
-    private Long senderId;
-
-    private Long receiverId;
 
     private String name;
 
@@ -27,6 +26,10 @@ public class RecommendDTO {
     private String meet;
 
     private String appeal;
+
+    private Long senderId;
+
+    private Long receiverId;
 
 
     public static RecommendDTO of(Recommend recommend) {
@@ -45,6 +48,7 @@ public class RecommendDTO {
         }
 
         return RecommendDTO.builder()
+                .uuid(recommend.getUuid())
                 .phone(recommend.getReceiverPhone())
                 .senderId(senderId)
                 .receiverId(receiverId)
