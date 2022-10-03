@@ -1,7 +1,6 @@
 package com.tikitaka.naechinso.domain.recommend.dto;
 
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,20 +12,20 @@ import java.util.List;
 @Builder
 @ToString
 public class RecommendListResponseDTO {
-    List<RecommendDTO> recommend = new ArrayList<>();
-    List<RecommendDTO> recommendReceived = new ArrayList<>();
+    List<RecommendResponseDTO> recommend = new ArrayList<>();
+    List<RecommendResponseDTO> recommendReceived = new ArrayList<>();
 
 
     public static RecommendListResponseDTO of(Member member) {
-        List<RecommendDTO> recommendList = new ArrayList<>();
-        List<RecommendDTO> recommendReceivedList = new ArrayList<>();
+        List<RecommendResponseDTO> recommendList = new ArrayList<>();
+        List<RecommendResponseDTO> recommendReceivedList = new ArrayList<>();
 
         member.getRecommends().stream().forEach(recommend ->
-                recommendList.add(RecommendDTO.of(recommend))
+                recommendList.add(RecommendResponseDTO.of(recommend))
         );
 
         member.getRecommend_received().stream().forEach(recommend ->
-                recommendReceivedList.add(RecommendDTO.of(recommend))
+                recommendReceivedList.add(RecommendResponseDTO.of(recommend))
         );
 
         return RecommendListResponseDTO.builder()

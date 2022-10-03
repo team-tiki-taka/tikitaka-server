@@ -1,19 +1,15 @@
 package com.tikitaka.naechinso.domain.recommend.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
-import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import lombok.*;
-
-import javax.persistence.*;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 @ToString
-public class RecommendDTO {
+public class RecommendResponseDTO {
 
     private String uuid;
 
@@ -32,7 +28,7 @@ public class RecommendDTO {
     private Long receiverId;
 
 
-    public static RecommendDTO of(Recommend recommend) {
+    public static RecommendResponseDTO of(Recommend recommend) {
         Long senderId;
         Long receiverId;
         if (recommend.getSender() == null) {
@@ -47,7 +43,7 @@ public class RecommendDTO {
             receiverId = recommend.getReceiver().getId();
         }
 
-        return RecommendDTO.builder()
+        return RecommendResponseDTO.builder()
                 .uuid(recommend.getUuid())
                 .phone(recommend.getReceiverPhone())
                 .senderId(senderId)

@@ -20,13 +20,13 @@ public enum ErrorCode {
 
 
     /* Auth 관련 오류 */
-    NO_TOKEN(BAD_REQUEST, "AUTH000", "토큰이 존재하지 않습니다"),
-    EXPIRED_TOKEN(BAD_REQUEST, "AUTH001", "만료된 엑세스 토큰입니다"),
-    INVALID_REFRESH_TOKEN(BAD_REQUEST, "AUTH002", "리프레시 토큰이 유효하지 않습니다"),
-    MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "AUTH003", "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
+    NO_TOKEN(UNAUTHORIZED, "AUTH000", "토큰이 존재하지 않습니다"),
+    EXPIRED_TOKEN(UNAUTHORIZED, "AUTH001", "만료된 엑세스 토큰입니다"),
+    INVALID_REFRESH_TOKEN(UNAUTHORIZED, "AUTH002", "리프레시 토큰이 유효하지 않습니다"),
+    MISMATCH_REFRESH_TOKEN(UNAUTHORIZED, "AUTH003", "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "AUTH004", "권한 정보가 없는 토큰입니다"),
     UNAUTHORIZED_USER(UNAUTHORIZED, "AUTH005", "로그인이 필요합니다"),
-    REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "AUTH006", "로그아웃 된 사용자입니다"),
+    REFRESH_TOKEN_NOT_FOUND(UNAUTHORIZED, "AUTH006", "로그아웃 된 사용자입니다"),
     FORBIDDEN_USER(FORBIDDEN, "AUTH007", "권한이 없는 유저입니다"),
     UNSUPPORTED_TOKEN(UNAUTHORIZED, "AUTH008", "지원하지 않는 토큰입니다"),
     INVALID_SIGNATURE(UNAUTHORIZED, "AUTH009", "잘못된 JWT 서명입니다"),
@@ -34,11 +34,6 @@ public enum ErrorCode {
     EXPIRED_VERIFICATION_CODE(UNAUTHORIZED, "AUTH011", "인증번호가 만료되었습니다"),
 
     LOGIN_FAILED(UNAUTHORIZED, "AUTH012", "로그인에 실패했습니다"),
-
-    /* OAuth 관련 오류 */
-    KAKAO_BAD_REQUEST(BAD_REQUEST, "OAUTH001", "카카오 토큰 오류"),
-    KAKAO_USER_NOT_FOUND(BAD_REQUEST, "OAUTH002", "카카오 유저를 찾을 수 없습니다"),
-    KAKAO_USER_EMAIL_NOT_FOUND(BAD_REQUEST, "OAUTH003", "이메일 동의를 하지 않았습니다"),
 
 
     /* User 관련 오류 */
@@ -51,6 +46,8 @@ public enum ErrorCode {
     RECOMMEND_NOT_FOUND(NOT_FOUND, "R000","해당 추천사 정보를 찾을 수 없습니다"),
     RECOMMEND_ALREADY_EXIST(BAD_REQUEST, "R001","추천사 요청은 한 번만 보낼 수 있습니다"),
     CANNOT_RECOMMEND_MYSELF(BAD_REQUEST, "R002","자기 자신은 추천할 수 없습니다"),
+    RECOMMEND_SENDER_ALREADY_EXIST(BAD_REQUEST, "R003","유저 추천사는 한 번만 작성할 수 있습니다"),
+    RECOMMEND_RECEIVER_NOT_EXIST(BAD_REQUEST, "R004","추천 받을 사람이 존재하지 않습니다"),
 
     /* Validation 오류 */
     PARAMETER_NOT_VALID(BAD_REQUEST, "P000", "인자가 유효하지 않습니다"),

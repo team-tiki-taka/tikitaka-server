@@ -50,8 +50,8 @@ public class RecommendRequestDTO {
 
     public Member toReceiver(String phone) {
         return Member.builder()
-                .name(this.getName())
                 .name(this.name)
+                .phone(phone)
                 .gender(this.gender)
                 .age(this.age)
                 .acceptsService(this.acceptsService)

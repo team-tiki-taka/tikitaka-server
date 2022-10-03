@@ -7,6 +7,7 @@ import com.tikitaka.naechinso.global.config.security.jwt.JwtAuthenticationFilter
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import javax.servlet.http.HttpServlet;
 
 /** 인증 및 Security 관련 설정 클래스입니다
  * @author gengminy (220919) */
@@ -58,7 +61,8 @@ public class SecurityConfig {
                 .antMatchers("/member/login").permitAll()
                 .antMatchers("/member/join").permitAll()
                 .antMatchers("/sms/**").permitAll()
-                .antMatchers("/recommend/").permitAll()
+                .antMatchers(HttpMethod.POST, "/recommend").permitAll()
+                .antMatchers("/recommend/**").permitAll()
                 .antMatchers("/recommend/request").permitAll()
                 .anyRequest().authenticated()
                 .and()

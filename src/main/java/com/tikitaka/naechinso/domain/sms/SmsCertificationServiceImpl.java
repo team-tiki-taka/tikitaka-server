@@ -1,13 +1,9 @@
 package com.tikitaka.naechinso.domain.sms;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
-import com.tikitaka.naechinso.domain.member.MemberService;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.recommend.RecommendRepository;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendDTO;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendListResponseDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationSuccessResponseDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
@@ -15,26 +11,16 @@ import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.InternalServerException;
 import com.tikitaka.naechinso.infra.sms.SmsService;
-import com.tikitaka.naechinso.infra.sms.dto.NaverSmsMessageDTO;
-import com.tikitaka.naechinso.infra.sms.dto.NaverSmsRequestDTO;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationRequestDTO;
-import com.tikitaka.naechinso.infra.sms.dto.NaverSmsResponseDTO;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import com.tikitaka.naechinso.global.config.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -119,8 +105,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
             redisService.deleteValues(key);
 
             //추천 받은 정보가 있는지
-            Boolean recommendReceived = recommendService.existsByReceiverPhone(phoneNumber);
-            List<RecommendDTO> recommendDTOList = recommendService.findAllBySenderPhone(phoneNumber);
+            Boolean recommendReceived = recommendService.existsByReceiverPhoneAndSenderNotNull(phoneNumber);
 
             //가입 안된 회원일 경우 registerToken 리턴
             Optional<Member> checkMember = memberRepository.findByPhone(phoneNumber);
@@ -129,7 +114,6 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
                 return SmsCertificationSuccessResponseDTO.builder()
                         .registerToken(registerToken)
-                        .recommendRequests(recommendDTOList)
                         .recommendReceived(recommendReceived)
                         .build();
             }
@@ -143,7 +127,6 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
             return SmsCertificationSuccessResponseDTO.builder()
                     .accessToken(tokenResponseDTO.getAccessToken())
                     .refreshToken(tokenResponseDTO.getRefreshToken())
-                    .recommendRequests(recommendDTOList)
                     .recommendReceived(recommendReceived)
                     .build();
         } catch (Exception e) {
