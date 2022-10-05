@@ -1,11 +1,9 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tikitaka.naechinso.domain.member.dto.MemberDetailJoinRequestDto;
+import com.tikitaka.naechinso.domain.member.dto.MemberDetailJoinRequestDTO;
 import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
-import com.tikitaka.naechinso.global.config.entity.BaseTimeEntity;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -99,7 +97,7 @@ public class MemberDetail extends BaseEntity {
     private Member member;
 
 
-    public static MemberDetail of(MemberDetailJoinRequestDto dto) {
+    public static MemberDetail of(MemberDetailJoinRequestDTO dto) {
         return MemberDetail.builder()
                 .height(dto.getHeight())
                 .address(dto.getAddress())
@@ -118,7 +116,7 @@ public class MemberDetail extends BaseEntity {
                 .build();
     }
 
-    public static MemberDetail of(Member member, MemberDetailJoinRequestDto dto) {
+    public static MemberDetail of(Member member, MemberDetailJoinRequestDTO dto) {
         return MemberDetail.builder()
                 .height(dto.getHeight())
                 .address(dto.getAddress())

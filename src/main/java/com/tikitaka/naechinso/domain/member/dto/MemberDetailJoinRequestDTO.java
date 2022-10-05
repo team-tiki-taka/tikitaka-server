@@ -1,12 +1,9 @@
 package com.tikitaka.naechinso.domain.member.dto;
 
-import com.tikitaka.naechinso.domain.member.constant.Gender;
-import com.tikitaka.naechinso.domain.member.entity.Member;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 /**
@@ -18,7 +15,7 @@ import javax.validation.constraints.*;
 @Getter
 @Builder
 @ToString
-public class MemberDetailJoinRequestDto {
+public class MemberDetailJoinRequestDTO {
     //추천인 정보
     //
     @ApiModelProperty(example = "180")

@@ -3,6 +3,7 @@ package com.tikitaka.naechinso.domain.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
+import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
@@ -96,5 +97,11 @@ public class Member extends BaseEntity {
 
     public void setDetail(MemberDetail memberDetail) {
         this.detail = memberDetail;
+    }
+
+    public void setJob(MemberJobUpdateRequestDTO requestDTO) {
+        this.jobName = requestDTO.getJobName();
+        this.jobLocation = requestDTO.getJobLocation();
+        this.jobPart = requestDTO.getJobPart();
     }
 }

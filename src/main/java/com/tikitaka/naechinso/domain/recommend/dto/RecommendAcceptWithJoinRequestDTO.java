@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 @Getter
 @Builder
 @ToString
-public class RecommendAcceptRequestDTO {
+public class RecommendAcceptWithJoinRequestDTO {
     @ApiModelProperty(example = "닉")
     @NotBlank(message = "이름을 입력해주세요")
     private String name;
@@ -83,6 +83,9 @@ public class RecommendAcceptRequestDTO {
     @NotBlank(message = "친구의 매력을 입력해주세요")
     private String appeal;
 
+    @ApiModelProperty(example = "1년")
+    @NotBlank(message = "만난 기간을 입력해주세요")
+    private String period;
 
     public Member toSender(String phone){
         return Member.builder()

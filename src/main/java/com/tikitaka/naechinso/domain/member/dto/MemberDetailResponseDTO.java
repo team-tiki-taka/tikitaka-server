@@ -8,10 +8,6 @@ import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 /**
  * 추천인 및 추천 받는 사람 공통 가입을 위한 Dto입니다
  * @author gengminy 220924
@@ -21,9 +17,8 @@ import javax.persistence.Enumerated;
 @Getter
 @Builder
 @ToString
-public class MemberDetailResponseDto {
+public class MemberDetailResponseDTO {
 
-//    private Member member;
     //추천인 정보
     private String phone;
 
@@ -67,7 +62,7 @@ public class MemberDetailResponseDto {
 
     private String eduLevel;
 
-    public static MemberDetailResponseDto of(Member member) {
+    public static MemberDetailResponseDTO of(Member member) {
         MemberDetail detail = member.getDetail();
         //회원가입 정보가 없으면 null
         if (detail == null) {
@@ -76,12 +71,12 @@ public class MemberDetailResponseDto {
         return buildDetail(detail);
     }
 
-    public static MemberDetailResponseDto of(MemberDetail memberDetail) {
+    public static MemberDetailResponseDTO of(MemberDetail memberDetail) {
         return buildDetail(memberDetail);
     }
 
-    private static MemberDetailResponseDto buildDetail(MemberDetail detail) {
-        MemberDetailResponseDtoBuilder dtoBuilder = MemberDetailResponseDto.builder();
+    private static MemberDetailResponseDTO buildDetail(MemberDetail detail) {
+        MemberDetailResponseDTOBuilder dtoBuilder = MemberDetailResponseDTO.builder();
         Member member = detail.getMember();
 
         //멤버 정보가 연결되어 있으면 가져옴
