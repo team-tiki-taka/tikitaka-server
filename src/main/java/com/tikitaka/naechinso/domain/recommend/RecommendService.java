@@ -217,4 +217,5 @@ public class RecommendService {
     public Boolean existsByReceiverPhoneAndSenderNotNull(String phone){
         return recommendRepository.existsByReceiverPhoneAndSenderNotNull(phone);
     }
+
 }

@@ -93,7 +93,7 @@ public class RecommendController {
     }
 
     @PatchMapping("/{uuid}/accept")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (Register 필요)")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한 후 임시 회원으로 가입한다 (Register 필요)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
             HttpServletRequest request,
             @PathVariable("uuid") String uuid,

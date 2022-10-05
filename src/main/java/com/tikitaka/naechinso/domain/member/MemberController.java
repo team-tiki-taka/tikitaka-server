@@ -115,17 +115,11 @@ public class MemberController {
         if (member == null) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
+        if (member.getDetail() == null) {
+            throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
+        }
         String phone = member.getPhone();
         RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
         return CommonApiResponse.of(recommendResponseDTO);
     }
-//    @PostMapping("/login")
-
-
-//    @GetMapping("/find")
-//    public CommonApiResponse<String> findAllMember() {
-//        final String a = memberService.getMember();
-//        return CommonApiResponse.of(a);
-//    }
-
 }

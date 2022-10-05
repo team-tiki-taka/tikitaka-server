@@ -54,7 +54,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
         final Duration verificationTimeLimit = Duration.ofSeconds(VERIFICATION_TIME_LIMIT);
 
         //[local, dev] 배포 환경이 아닐때는 fake service 를 제공합니다
-        if (!springProfile.equals("prod")) {
+        if (springProfile == null || !springProfile.equals("prod")) {
             log.info("스프링 프로파일(" + springProfile + ") 따라 fake 서비스를 제공합니다");
             String message = generateMessageWithCode(verificationCode);
             log.info(message);

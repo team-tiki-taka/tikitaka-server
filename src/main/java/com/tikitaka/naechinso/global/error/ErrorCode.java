@@ -42,6 +42,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "U003","해당 유저 정보를 찾을 수 없습니다"),
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
 
+
     /* Recommend 관련 오류 */
     RECOMMEND_NOT_FOUND(NOT_FOUND, "R000","해당 추천사 정보를 찾을 수 없습니다"),
     RECOMMEND_ALREADY_EXIST(BAD_REQUEST, "R001","추천사 요청은 한 번만 보낼 수 있습니다"),
