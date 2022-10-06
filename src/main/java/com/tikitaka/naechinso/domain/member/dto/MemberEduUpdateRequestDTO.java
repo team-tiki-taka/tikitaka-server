@@ -26,4 +26,8 @@ public class MemberEduUpdateRequestDTO {
     @ApiModelProperty(example = "대학교")
     @NotBlank(message = "최종학력을 입력해주세요")
     private String eduLevel;
+
+    @ApiModelProperty(example = "인증 사진 링크")
+    @NotBlank(message = "인증 사진을 업로드 해주세요")
+    private String eduPicture;
 }

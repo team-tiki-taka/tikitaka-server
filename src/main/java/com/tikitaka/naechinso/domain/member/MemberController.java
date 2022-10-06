@@ -4,13 +4,11 @@ import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptWithUpdateJobRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptAndUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
-import com.tikitaka.naechinso.global.error.ErrorCode;
-import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -138,7 +136,7 @@ public class MemberController {
     @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (AccessToken)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
             @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendMemberAcceptWithUpdateJobRequestDTO dto,
+            @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
         //로그인 상태가 아닌 경우 401
@@ -150,13 +148,13 @@ public class MemberController {
 
 
     /**
-     * 직업 정보가 없을 경우 내 직업 정보를 업데이트하고 추천인을 가입시킨다
+     * 직업 인증으로 추천인을 가입시킨다
      * */
     @PatchMapping("/recommend/{uuid}/accept/job")
     @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 직업 정보를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidWithJob(
+    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidAndJob(
             @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendMemberAcceptWithUpdateJobRequestDTO dto,
+            @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
         //로그인 상태가 아닌 경우 401
@@ -167,7 +165,19 @@ public class MemberController {
     }
 
     /**
-     * @// TODO: 2022/10/06 인증정보 업데이트 방식 정할것. 직업 또는 학생 둘다 가능하기 떄문
+     * 학교 인증으로 추천인을 가입시킨다
      * */
-
+    @PatchMapping("/recommend/{uuid}/accept/edu")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 학교 정보를 업데이트 한다 (AccessToken)")
+    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidAndEdu(
+            @PathVariable("uuid") String uuid,
+            @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        //로그인 상태가 아닌 경우 401
+        memberService.validateFormalMember(member);
+        String phone = member.getPhone();
+        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
+        return CommonApiResponse.of(recommendResponseDTO);
+    }
 }

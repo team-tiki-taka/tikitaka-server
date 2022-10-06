@@ -66,6 +66,9 @@ public class MemberCommonJoinRequestDTO {
     @NotBlank(message = "직장 위치를 입력해주세요")
     private String jobLocation;
 
+    @ApiModelProperty(example = "인증 사진 링크")
+    @NotBlank(message = "인증 사진을 업로드 해주세요")
+    private String jobPicture;
     @ApiModelProperty(example = "서울")
     @NotBlank(message = "학교명을 입력해주세요")
     private String eduName;
@@ -77,6 +80,10 @@ public class MemberCommonJoinRequestDTO {
     @ApiModelProperty(example = "대학교")
     @NotBlank(message = "최종학력을 입력해주세요")
     private String eduLevel;
+
+    @ApiModelProperty(example = "인증 사진 링크")
+    @NotBlank(message = "인증 사진을 업로드 해주세요")
+    private String eduPicture;
 
     public static Member toCommonMember(MemberCommonJoinRequestDTO dto) {
         Member member = Member.builder()
@@ -92,9 +99,11 @@ public class MemberCommonJoinRequestDTO {
                 .jobName(dto.jobName)
                 .jobPart(dto.jobPart)
                 .jobLocation(dto.jobLocation)
+                .jobPicture(dto.jobPicture)
                 .eduName(dto.eduName)
                 .eduMajor(dto.eduMajor)
                 .eduLevel(dto.eduLevel)
+                .eduPicture(dto.eduPicture)
                 .build();
 
         return member;

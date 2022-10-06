@@ -1,8 +1,9 @@
 package com.tikitaka.naechinso.domain.recommend.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.member.dto.MemberEduUpdateRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.annotation.Enum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -17,7 +18,7 @@ import javax.validation.constraints.*;
 @Getter
 @Builder
 @ToString
-public class RecommendJoinRequestDTO {
+public class RecommendAndJoinRequestDTO {
     @ApiModelProperty(example = "닉")
     @NotBlank(message = "이름을 입력해주세요")
     private String name;
@@ -49,17 +50,11 @@ public class RecommendJoinRequestDTO {
     @NotNull(message = "마케팅 동의 여부가 필요합니다")
     private boolean acceptsMarketing;
 
-    @ApiModelProperty(example = "카카오")
-    @NotBlank(message = "직장명을 입력해주세요")
-    private String jobName;
+    private MemberEduUpdateRequestDTO edu;
 
-    @ApiModelProperty(example = "개발자")
-    @NotBlank(message = "직장 부서를 입력해주세요")
-    private String jobPart;
+    private MemberJobUpdateRequestDTO job;
 
-    @ApiModelProperty(example = "판교")
-    @NotBlank(message = "직장 위치를 입력해주세요")
-    private String jobLocation;
+
 
 
 
@@ -98,7 +93,22 @@ public class RecommendJoinRequestDTO {
     private String period;
 
     public Member toSender(String phone){
-        return Member.builder()
+        Member.MemberBuilder builder = Member.builder();
+        if (this.job != null) {
+            builder.jobName(this.job.getJobName())
+                    .jobPart(this.job.getJobPart())
+                    .jobLocation(this.job.getJobLocation())
+                    .jobPicture(this.job.getJobPicture());
+        }
+
+        if (this.edu != null) {
+            builder.eduName(this.edu.getEduName())
+                    .eduMajor(this.edu.getEduMajor())
+                    .eduLevel(this.edu.getEduMajor())
+                    .eduPicture(this.edu.getEduPicture());
+        }
+
+        return builder
                 .phone(phone)
                 .name(this.name)
                 .gender(this.gender)
@@ -108,13 +118,25 @@ public class RecommendJoinRequestDTO {
                 .acceptsReligion(this.acceptsReligion)
                 .acceptsLocation(this.acceptsLocation)
                 .acceptsMarketing(this.acceptsMarketing)
-                .jobName(this.jobName)
-                .jobPart(this.jobPart)
-                .jobLocation(this.jobLocation)
                 .build();
     }
 
     public Member toReceiver(String phone){
+        Member.MemberBuilder builder = Member.builder();
+        if (job != null) {
+            builder.jobName(this.job.getJobName())
+                    .jobPart(this.job.getJobPart())
+                    .jobLocation(this.job.getJobLocation())
+                    .jobPicture(this.job.getJobPicture());
+        }
+
+        if (edu != null) {
+            builder.eduName(this.edu.getEduName())
+                    .eduMajor(this.edu.getEduMajor())
+                    .eduLevel(this.edu.getEduMajor())
+                    .eduPicture(this.edu.getEduPicture());
+        }
+
         return Member.builder()
                 .phone(phone)
                 .name(this.name)
@@ -125,9 +147,6 @@ public class RecommendJoinRequestDTO {
                 .acceptsReligion(this.acceptsReligion)
                 .acceptsLocation(this.acceptsLocation)
                 .acceptsMarketing(this.acceptsMarketing)
-                .jobName(this.jobName)
-                .jobPart(this.jobPart)
-                .jobLocation(this.jobLocation)
                 .build();
     }
 }

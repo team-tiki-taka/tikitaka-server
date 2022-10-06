@@ -39,9 +39,9 @@ public class RecommendController {
 
     @PostMapping
     @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다. RegisterToken)")
-    public CommonApiResponse<RecommendResponseDTO> createRecommendNewSender(
+    public CommonApiResponse<RecommendResponseDTO> createRecommendAndJoinSender(
             HttpServletRequest request,
-            @Valid @RequestBody RecommendJoinRequestDTO dto)
+            @Valid @RequestBody RecommendAndJoinRequestDTO dto)
     {
         String phone = jwtTokenService.parsePhoneByRegisterToken(request);
 

@@ -3,7 +3,11 @@ package com.tikitaka.naechinso.domain.member.dto;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+
+import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 
 /**
  * 추천인 및 추천 받는 사람 공통 가입을 위한 Dto입니다
@@ -26,6 +30,19 @@ public class MemberCommonResponseDTO {
 
     private int age;
 
+    private String jobName;
+
+    private String jobPart;
+
+    private String jobLocation;
+
+    private String eduName;
+
+    private String eduMajor;
+
+    private String eduLevel;
+
+
     public static MemberCommonResponseDTO of(Member member) {
         MemberCommonResponseDTO res = MemberCommonResponseDTO.builder()
                 .phone(member.getPhone())
@@ -33,6 +50,12 @@ public class MemberCommonResponseDTO {
                 .name(member.getName())
                 .gender(member.getGender())
                 .age(member.getAge())
+                .jobName(member.getJobName())
+                .jobPart(member.getJobPart())
+                .jobLocation(member.getJobLocation())
+                .eduName(member.getEduName())
+                .eduMajor(member.getEduMajor())
+                .eduLevel(member.getEduLevel())
                 .build();
 
         return res;
