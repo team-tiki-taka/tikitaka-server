@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/member/login").permitAll()
                 .antMatchers("/member/join").permitAll()
+                .antMatchers("/").permitAll() //health check
                 .antMatchers("/sms/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/recommend").permitAll()
                 .antMatchers("/recommend/**").permitAll()

@@ -12,8 +12,8 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 public class MainController {
-    @GetMapping("/")
-    public CommonApiResponse<Boolean> rootEndPoint() {
+    @GetMapping
+    public CommonApiResponse<Boolean> healthCheck() {
         return CommonApiResponse.of(true);
     }
 }
