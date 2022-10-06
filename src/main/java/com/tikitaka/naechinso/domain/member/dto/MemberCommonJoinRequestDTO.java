@@ -9,7 +9,7 @@ import lombok.*;
 import javax.validation.constraints.*;
 
 /**
- * 추천인 및 추천 받는 사람 공통 가입을 위한 Dto입니다
+ * 임시회원의 가입을 위한 Dto입니다
  * @author gengminy 220924
  * */
 @AllArgsConstructor
@@ -18,11 +18,6 @@ import javax.validation.constraints.*;
 @Builder
 @ToString
 public class MemberCommonJoinRequestDTO {
-    @ApiModelProperty(example = "01010001000")
-    @NotBlank(message = "전화번호를 입력해주세요")
-    @Pattern(regexp = "[0-9]{10,11}", message = "하이픈 없는 10~11자리 숫자를 입력해주세요")
-    private String phone;
-
     @ApiModelProperty(example = "닉")
     @NotBlank(message = "이름을 입력해주세요")
     private String name;
@@ -54,40 +49,9 @@ public class MemberCommonJoinRequestDTO {
     @NotNull(message = "마케팅 동의 여부가 필요합니다")
     private boolean acceptsMarketing;
 
-    @ApiModelProperty(example = "카카오")
-    @NotBlank(message = "직장명을 입력해주세요")
-    private String jobName;
-
-    @ApiModelProperty(example = "개발자")
-    @NotBlank(message = "직장 부서를 입력해주세요")
-    private String jobPart;
-
-    @ApiModelProperty(example = "판교")
-    @NotBlank(message = "직장 위치를 입력해주세요")
-    private String jobLocation;
-
-    @ApiModelProperty(example = "인증 사진 링크")
-    @NotBlank(message = "인증 사진을 업로드 해주세요")
-    private String jobPicture;
-    @ApiModelProperty(example = "서울")
-    @NotBlank(message = "학교명을 입력해주세요")
-    private String eduName;
-
-    @ApiModelProperty(example = "컴퓨터공학과")
-    @NotBlank(message = "전공을 입력해주세요")
-    private String eduMajor;
-
-    @ApiModelProperty(example = "대학교")
-    @NotBlank(message = "최종학력을 입력해주세요")
-    private String eduLevel;
-
-    @ApiModelProperty(example = "인증 사진 링크")
-    @NotBlank(message = "인증 사진을 업로드 해주세요")
-    private String eduPicture;
-
-    public static Member toCommonMember(MemberCommonJoinRequestDTO dto) {
+    public static Member toCommonMember(String phone, MemberCommonJoinRequestDTO dto) {
         Member member = Member.builder()
-                .phone(dto.phone)
+                .phone(phone)
                 .name(dto.name)
                 .gender(dto.gender)
                 .age(dto.age)
@@ -96,14 +60,6 @@ public class MemberCommonJoinRequestDTO {
                 .acceptsReligion(dto.acceptsReligion)
                 .acceptsLocation(dto.acceptsLocation)
                 .acceptsMarketing(dto.acceptsMarketing)
-                .jobName(dto.jobName)
-                .jobPart(dto.jobPart)
-                .jobLocation(dto.jobLocation)
-                .jobPicture(dto.jobPicture)
-                .eduName(dto.eduName)
-                .eduMajor(dto.eduMajor)
-                .eduLevel(dto.eduLevel)
-                .eduPicture(dto.eduPicture)
                 .build();
 
         return member;

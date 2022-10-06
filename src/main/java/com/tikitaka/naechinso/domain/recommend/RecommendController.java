@@ -38,7 +38,7 @@ public class RecommendController {
     }
 
     @PostMapping
-    @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다. RegisterToken)")
+    @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다.  (삭제예정 -> 다른 유저의 추천서를 작성한다)")
     public CommonApiResponse<RecommendResponseDTO> createRecommendAndJoinSender(
             HttpServletRequest request,
             @Valid @RequestBody RecommendAndJoinRequestDTO dto)

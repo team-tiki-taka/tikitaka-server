@@ -29,6 +29,7 @@ public class MemberController {
     private final RecommendService recommendService;
     private final JwtTokenProvider jwtTokenService;
 
+
     @GetMapping
     @ApiOperation(value = "유저 자신의 모든 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> getMyInformation(
@@ -38,20 +39,6 @@ public class MemberController {
         return CommonApiResponse.of(MemberCommonResponseDTO.of(member));
     }
 
-//    @PostMapping("/join")
-//    @ApiOperation(value = "공통 유저를 기본 정보로 회원가입 시킨다 (registerToken 필요)")
-//    public CommonApiResponse<MemberCommonResponseDTO> joinCommonMember(
-//            HttpServletRequest request,
-//            @Valid @RequestBody MemberCommonJoinRequestDTO dto)
-//    {
-//        String registerToken = request.getHeader("Authorization");
-//        if (StringUtils.isBlank(registerToken) || !jwtTokenService.validateToken(registerToken)) {
-//            throw new UnauthorizedException(ErrorCode.NO_TOKEN);
-//        }
-//
-//        final MemberCommonResponseDTO res = memberService.createCommonMember(dto);
-//        return CommonApiResponse.of(res);
-//    }
 
     @GetMapping("/detail")
     @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken 필요)")
@@ -60,6 +47,26 @@ public class MemberController {
     ) {
         final MemberDetailResponseDTO res = memberService.readDetail(member);
         return CommonApiResponse.of(res);
+    }
+
+
+    @PostMapping("/join")
+    @ApiOperation(value = "유저를 공통 정보로 가입시킨다 (RegisterToken)")
+    public CommonApiResponse<MemberCommonJoinResponseDTO> joinCommonMember(
+            HttpServletRequest request,
+            @Valid @RequestBody MemberCommonJoinRequestDTO dto
+    ) {
+        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
+        return CommonApiResponse.of(memberService.joinCommonMember(phone, dto));
+    }
+
+    @PatchMapping("/common")
+    @ApiOperation(value = "유저를 공통 정보를 수정한다 (AccessToken)")
+    public CommonApiResponse<MemberCommonJoinResponseDTO> updateCommonMember(
+            @Valid @RequestBody MemberUpdateCommonRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.updateCommonMember(member, dto));
     }
 
     @PatchMapping("/job")
@@ -81,20 +88,6 @@ public class MemberController {
     }
 
 
-    @PostMapping("/join")
-    @ApiOperation(value = "유저를 공통 정보로 가입시킨다 (RegisterToken)")
-    public CommonApiResponse<MemberDetailResponseDTO> join(
-            HttpServletRequest request,
-            @Valid @RequestBody MemberDetailJoinRequestDTO dto
-    ) {
-        return null;
-//        //로그인 상태가 아닌 경우 401
-//        if (member == null) {
-//            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-//        }
-//        final MemberDetailResponseDTO res = memberService.createDetail(member, dto);
-//        return CommonApiResponse.of(res);
-    }
 
 
     @PostMapping("/join/detail")
@@ -124,7 +117,7 @@ public class MemberController {
             @ApiIgnore @AuthMember Member member
     ) {
         //로그인 상태가 아닌 경우 401
-        memberService.validateLoggedIn(member);
+        memberService.validateToken(member);
         return CommonApiResponse.of(null);
     }
 
@@ -133,7 +126,7 @@ public class MemberController {
      * @// TODO: 2022/10/05 직업 정보가 없는 사람이 가입할 때 직업 정보 입력해야 하는 처리 필요
      * */
     @PatchMapping("/recommend/{uuid}/accept")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (AccessToken)")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (삭제예정)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
             @PathVariable("uuid") String uuid,
             @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
@@ -151,7 +144,7 @@ public class MemberController {
      * 직업 인증으로 추천인을 가입시킨다
      * */
     @PatchMapping("/recommend/{uuid}/accept/job")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 직업 정보를 업데이트 한다 (AccessToken)")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 직업 정보를 업데이트 한다 (삭제예정)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidAndJob(
             @PathVariable("uuid") String uuid,
             @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
@@ -168,7 +161,7 @@ public class MemberController {
      * 학교 인증으로 추천인을 가입시킨다
      * */
     @PatchMapping("/recommend/{uuid}/accept/edu")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 학교 정보를 업데이트 한다 (AccessToken)")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 학교 정보를 업데이트 한다 (삭제예정)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidAndEdu(
             @PathVariable("uuid") String uuid,
             @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,

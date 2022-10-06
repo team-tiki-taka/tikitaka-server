@@ -14,6 +14,8 @@ import java.util.UUID;
 public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     List<Recommend> findAllByReceiver_Id(Long id);
     List<Recommend> findAllByReceiverPhone(String phone);
+
+    List<Recommend> findAllByReceiverPhoneAndSenderNotNull(String phone);
     List<Recommend> findAllBySender_Id(Long id);
     List<Recommend> findAllBySenderPhone(String phone);
 

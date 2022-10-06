@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,14 @@ public class RecommendService {
         Member member = memberRepository.findByPhone(authMember.getPhone())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         return RecommendListResponseDTO.of(member);
+    }
+
+    /**
+     * 휴대폰 번호로 받은 추천사 기본 정보를 가져온다
+     * */
+    public List<RecommendReceiverDTO> findAllRecommendReceivedListBasicByPhone(String phone) {
+        return recommendRepository.findAllByReceiverPhoneAndSenderNotNull(phone)
+                .stream().map(RecommendReceiverDTO::of).collect(Collectors.toList());
     }
 
     /**

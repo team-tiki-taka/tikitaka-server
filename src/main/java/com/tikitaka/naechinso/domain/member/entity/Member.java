@@ -3,6 +3,7 @@ package com.tikitaka.naechinso.domain.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberEduUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
@@ -143,4 +144,11 @@ public class Member extends BaseEntity {
         this.eduLevel = requestDTO.getEduLevel();
         this.eduPicture = requestDTO.getEduPicture();
     }
+
+    public void updateCommon(MemberUpdateCommonRequestDTO dto) {
+        this.name = dto.getName();
+        this.gender = dto.getGender();
+        this.age = dto.getAge();
+    }
+
 }

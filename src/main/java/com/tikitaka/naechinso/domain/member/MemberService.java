@@ -38,19 +38,38 @@ public class MemberService {
     }
 
 
-    public MemberCommonResponseDTO createCommonMember(MemberCommonJoinRequestDTO dto) {
-
+    public MemberCommonJoinResponseDTO joinCommonMember(String phone, MemberCommonJoinRequestDTO dto) {
         //이미 존재하는 유저일 경우 400
-        Optional<Member> checkMember = memberRepository.findByPhone(dto.getPhone());
-        if(!checkMember.isEmpty()) {
+        Optional<Member> checkMember = memberRepository.findByPhone(phone);
+        if(checkMember.isPresent()) {
             throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
         }
 
-        Member member = MemberCommonJoinRequestDTO.toCommonMember(dto);
+        Member member = MemberCommonJoinRequestDTO.toCommonMember(phone, dto);
         memberRepository.save(member);
 
-        MemberCommonResponseDTO res = MemberCommonResponseDTO.of(member);
-        return res;
+        TokenResponseDTO tokenResponseDTO
+                = jwtTokenProvider.generateToken(new JwtDTO(phone, "ROLE_USER"));
+
+        return MemberCommonJoinResponseDTO.of(member, tokenResponseDTO);
+    }
+
+    public MemberCommonJoinResponseDTO updateCommonMember(Member authMember, MemberUpdateCommonRequestDTO dto) {
+        //없는 유저면 404
+        final String phone = authMember.getPhone();
+        Optional<Member> checkMember = memberRepository.findByPhone(phone);
+        if(checkMember.isEmpty()) {
+            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        Member member = checkMember.get();
+        member.updateCommon(dto);
+        memberRepository.save(member);
+
+        TokenResponseDTO tokenResponseDTO
+                = jwtTokenProvider.generateToken(new JwtDTO(phone, "ROLE_USER"));
+
+        return MemberCommonJoinResponseDTO.of(member);
     }
 
     public TokenResponseDTO login(String phone) {
@@ -117,14 +136,14 @@ public class MemberService {
     }
 
 
-    public void validateLoggedIn(Member authMember) {
+    public void validateToken(Member authMember) {
         if (authMember == null) {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
         }
     }
 
     public void validateFormalMember(Member authMember) {
-        validateLoggedIn(authMember);
+        validateToken(authMember);
         if (authMember.getDetail() == null) {
             throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
         }

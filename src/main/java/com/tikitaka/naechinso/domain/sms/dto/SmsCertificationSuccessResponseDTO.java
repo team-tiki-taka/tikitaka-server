@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.domain.sms.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendReceiverDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import lombok.*;
 
@@ -19,5 +20,8 @@ public class SmsCertificationSuccessResponseDTO {
     private String registerToken;
 
     //추천 받았는지 여부, true 면 유효한 유저
-    private Boolean recommendReceived = false;
+    private List<RecommendReceiverDTO> recommendReceived = new ArrayList<>();
+    //가입 완료했는지 여부, detail 정보가 있으면 true
+    private Boolean isActive = false;
+    private Boolean isBanned = false;
 }
