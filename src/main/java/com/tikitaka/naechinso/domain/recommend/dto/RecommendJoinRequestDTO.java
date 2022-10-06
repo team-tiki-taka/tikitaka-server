@@ -2,6 +2,7 @@ package com.tikitaka.naechinso.domain.recommend.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.annotation.Enum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -92,6 +93,9 @@ public class RecommendJoinRequestDTO {
     @NotBlank(message = "친구의 매력을 입력해주세요")
     private String appeal;
 
+    @ApiModelProperty(example = "1년")
+    @NotBlank(message = "만난 기간을 입력해주세요")
+    private String period;
 
     public Member toSender(String phone){
         return Member.builder()

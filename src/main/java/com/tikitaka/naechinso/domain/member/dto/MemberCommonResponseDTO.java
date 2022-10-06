@@ -14,7 +14,7 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
-public class MemberCommonResponseDto {
+public class MemberCommonResponseDTO {
 
     private String phone;
 
@@ -26,8 +26,8 @@ public class MemberCommonResponseDto {
 
     private int age;
 
-    public static MemberCommonResponseDto of(Member member) {
-        MemberCommonResponseDto res = MemberCommonResponseDto.builder()
+    public static MemberCommonResponseDTO of(Member member) {
+        MemberCommonResponseDTO res = MemberCommonResponseDTO.builder()
                 .phone(member.getPhone())
                 .role(member.getRole())
                 .name(member.getName())

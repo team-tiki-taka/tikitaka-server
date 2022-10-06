@@ -23,6 +23,8 @@ public class RecommendResponseDTO {
 
     private String appeal;
 
+    private String period;
+
     private Long senderId;
 
     private Long receiverId;
@@ -52,6 +54,7 @@ public class RecommendResponseDTO {
                 .gender(recommend.getReceiverGender())
                 .meet(recommend.getReceiverMeet())
                 .appeal(recommend.getReceiverAppeal())
+                .period(recommend.getReceiverPeriod())
                 .build();
     }
 }

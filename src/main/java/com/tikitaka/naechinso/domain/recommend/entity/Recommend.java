@@ -3,10 +3,10 @@ package com.tikitaka.naechinso.domain.recommend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendJoinRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendAcceptWithJoinRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -60,6 +60,7 @@ public class Recommend extends BaseEntity {
     @Column(name = "mem_job_location")
     private String senderJobLocation;
 
+
     /* 받는 사람이 아직 가입 안했으면 NULL 일수도 있음 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -87,5 +88,39 @@ public class Recommend extends BaseEntity {
 
     @Column(name = "rec_appeal")
     private String receiverAppeal;
+
+    @Column(name = "rec_period")
+    private String receiverPeriod;
+
+    public void update(Member sender, RecommendAcceptWithJoinRequestDTO requestDTO) {
+        updateSender(sender);
+        updateReceiver(requestDTO);
+    }
+
+    public void update(Member sender, RecommendMemberAcceptRequestDTO requestDTO) {
+        updateSender(sender);
+        this.receiverAppeal = requestDTO.getAppeal();
+        this.receiverMeet = requestDTO.getMeet();
+        this.receiverPersonality = requestDTO.getPersonality();
+        this.receiverPeriod = requestDTO.getPeriod();
+    }
+
+    public void updateSender(Member sender) {
+        this.sender = sender;
+        this.senderPhone = sender.getPhone();
+        this.senderName = sender.getName();
+        this.senderAge = sender.getAge();
+        this.senderGender = sender.getGender();
+        this.senderJobName = sender.getJobName();
+        this.senderJobPart = sender.getJobPart();
+        this.senderJobLocation = sender.getJobLocation();
+    }
+
+    public void updateReceiver(RecommendAcceptWithJoinRequestDTO requestDTO) {
+        this.receiverAppeal = requestDTO.getAppeal();
+        this.receiverMeet = requestDTO.getMeet();
+        this.receiverPersonality = requestDTO.getPersonality();
+        this.receiverPeriod = requestDTO.getPeriod();
+    }
 
 }

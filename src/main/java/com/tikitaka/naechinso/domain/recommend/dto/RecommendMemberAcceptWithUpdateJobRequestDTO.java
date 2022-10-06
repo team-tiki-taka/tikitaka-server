@@ -1,19 +1,31 @@
 package com.tikitaka.naechinso.domain.recommend.dto;
 
+import com.tikitaka.naechinso.domain.member.constant.Gender;
+import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.global.annotation.Enum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.*;
 
-/** 내친소 회원이 다른 유저를 추천할 때 사용할 DTO
- * @author gengminy 221003
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 @ToString
-public class RecommendMemberAcceptRequestDTO {
+public class RecommendMemberAcceptWithUpdateJobRequestDTO {
+    @ApiModelProperty(example = "카카오")
+    @NotBlank(message = "직장명을 입력해주세요")
+    private String jobName;
+
+    @ApiModelProperty(example = "개발자")
+    @NotBlank(message = "직장 부서를 입력해주세요")
+    private String jobPart;
+
+    @ApiModelProperty(example = "판교")
+    @NotBlank(message = "직장 위치를 입력해주세요")
+    private String jobLocation;
+
     @ApiModelProperty(example = "CMC 에서")
     @NotBlank(message = "만나게 된 계기를 입력해주세요")
     private String meet;
@@ -29,4 +41,5 @@ public class RecommendMemberAcceptRequestDTO {
     @ApiModelProperty(example = "1년")
     @NotBlank(message = "만난 기간을 입력해주세요")
     private String period;
+
 }

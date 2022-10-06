@@ -10,7 +10,6 @@ import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -39,7 +38,7 @@ public class RecommendController {
     }
 
     @PostMapping
-    @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다. (registerToken 필요)")
+    @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다. RegisterToken)")
     public CommonApiResponse<RecommendResponseDTO> createRecommendNewSender(
             HttpServletRequest request,
             @Valid @RequestBody RecommendJoinRequestDTO dto)
@@ -62,7 +61,7 @@ public class RecommendController {
     }
 
     @PostMapping("/request")
-    @ApiOperation(value = "다른 유저에게 추천서 작성을 요청한다 (registerToken 필요)")
+    @ApiOperation(value = "다른 유저에게 추천서 작성을 요청한다 (RegisterToken)")
     public CommonApiResponse<RecommendResponseDTO> createRecommendRequest(
             HttpServletRequest request,
             @Valid @RequestBody RecommendRequestDTO dto)
@@ -80,7 +79,7 @@ public class RecommendController {
 
     //제일 아래에 있어야함
     @GetMapping("/{uuid}")
-    @ApiOperation(value = "추천 요청받은 uuid 를 가진 추천사 정보를 가져온다 (Register / AccessToken 필요)")
+    @ApiOperation(value = "추천 요청받은 uuid 를 가진 추천사 정보를 가져온다 (Register / AccessToken)")
     public CommonApiResponse<RecommendResponseDTO> getRecommendByUuid(
             HttpServletRequest request,
             @PathVariable("uuid") String uuid)
@@ -93,16 +92,16 @@ public class RecommendController {
     }
 
     @PatchMapping("/{uuid}/accept")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (Register 필요)")
+    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한 후 임시 회원으로 가입한다 (RegisterToken)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
             HttpServletRequest request,
             @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendAcceptRequestDTO dto)
+            @Valid @RequestBody RecommendAcceptWithJoinRequestDTO dto)
     {
         //토큰 장착 확인
         String phone = jwtTokenService.parsePhoneByRegisterToken(request);
 
-        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendRequest(uuid, phone, dto);
+        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendRequestWithJoin(uuid, phone, dto);
         return CommonApiResponse.of(recommendResponseDTO);
     }
 }

@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.domain.recommend;
 
 import com.tikitaka.naechinso.domain.member.MemberRepository;
+import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.dto.*;
@@ -24,17 +25,18 @@ public class RecommendService {
     private final RecommendRepository recommendRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * 추천사 정보를 가져온다
+     * */
     public RecommendListResponseDTO readRecommendList(Member authMember) {
         Member member = memberRepository.findByPhone(authMember.getPhone())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         return RecommendListResponseDTO.of(member);
     }
 
-    public RecommendResponseDTO createRecommend(String senderPhone, RecommendResponseDTO dto) {
-
-        return null;
-    }
-
+    /**
+     * 임시회원으로 등록하며 가입하지 않은 임의의 유저 추천사를 작성한다
+     * */
     public RecommendResponseDTO createRecommendJoin(String senderPhone, RecommendJoinRequestDTO dto) {
             //멤버가 이미 있으면 종료
             Optional<Member> checkSender = memberRepository.findByPhone(senderPhone);
@@ -69,6 +71,7 @@ public class RecommendService {
                     .receiverGender(dto.getReceiverGender())
                     .receiverMeet(dto.getMeet())
                     .receiverPersonality(dto.getPersonality())
+                    .receiverPeriod(dto.getPeriod())
                     .build();
 
             memberRepository.save(sender);
@@ -77,6 +80,9 @@ public class RecommendService {
             return RecommendResponseDTO.of(recommend);
     }
 
+    /**
+     * 내 추천사 작성을 요청한다
+     * */
     public RecommendResponseDTO createRecommendRequest(String receiverPhone, RecommendRequestDTO dto) {
         //이미 추천사 요청을 보냄
         if (existsByReceiverPhone(receiverPhone)) {
@@ -99,7 +105,10 @@ public class RecommendService {
         return RecommendResponseDTO.of(recommend);
     }
 
-    public RecommendResponseDTO updateRecommendRequest(String uuid, String senderPhone, RecommendAcceptRequestDTO dto) {
+    /**
+     * 임시회원으로 가입하며 해당 uuid 추천사에 자신을 등록한다
+     * */
+    public RecommendResponseDTO updateRecommendRequestWithJoin(String uuid, String senderPhone, RecommendAcceptWithJoinRequestDTO dto) {
 
         Recommend recommend = findByUuidAndReceiverNotNull(uuid);
 
@@ -114,23 +123,14 @@ public class RecommendService {
         }
 
         //유저가 없으면 회원가입 시킴, 있으면 그대로 사용
-        Member sender = memberRepository.findByPhone(senderPhone)
-                .orElse(dto.toSender(senderPhone));
+        Optional<Member> checkSender = memberRepository.findByPhone(senderPhone);
+        if(checkSender.isPresent()) {
+            throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
+        }
+        Member sender = dto.toSender(senderPhone);
 
-        recommend.setSender(sender);
-        recommend.setSenderPhone(senderPhone);
-        recommend.setSenderName(dto.getName());
-        recommend.setSenderAge(dto.getAge());
-        recommend.setSenderGender(dto.getGender());
-        recommend.setSenderJobName(dto.getJobName());
-        recommend.setSenderJobPart(dto.getJobPart());
-        recommend.setSenderJobLocation(dto.getJobLocation());
-        recommend.setReceiverName(dto.getReceiverName());
-        recommend.setReceiverAge(dto.getReceiverAge());
-        recommend.setReceiverAppeal(dto.getAppeal());
-        recommend.setReceiverGender(dto.getReceiverGender());
-        recommend.setReceiverMeet(dto.getMeet());
-        recommend.setReceiverPersonality(dto.getPersonality());
+        //유저 정보 업데이트, 가입 정보가 이미 있다면 무시됨, 없으면 생성
+        recommend.update(sender, dto);
 
         memberRepository.save(sender);
         recommendRepository.save(recommend);
@@ -139,8 +139,7 @@ public class RecommendService {
     }
 
     /**
-     * 추천사 작성 유저가 정회원일 경우 유저 정보로 추천사를 등록한다
-     *
+     * 추천사 작성 유저가 정회원일 경우 해당 유저 정보로 uuid 에 해당하는 추천사를 등록한다
     * */
     public RecommendResponseDTO updateRecommendMemberAccept(String uuid, String senderPhone, RecommendMemberAcceptRequestDTO dto) {
 
@@ -160,17 +159,54 @@ public class RecommendService {
         Member sender = memberRepository.findByPhone(senderPhone)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.USER_NOT_FOUND));
 
-        recommend.setSender(sender);
-        recommend.setSenderPhone(sender.getPhone());
-        recommend.setSenderName(sender.getName());
-        recommend.setSenderAge(sender.getAge());
-        recommend.setSenderGender(sender.getGender());
-        recommend.setSenderJobName(sender.getJobName());
-        recommend.setSenderJobPart(sender.getJobPart());
-        recommend.setSenderJobLocation(sender.getJobLocation());
-        recommend.setReceiverAppeal(dto.getAppeal());
-        recommend.setReceiverMeet(dto.getMeet());
-        recommend.setReceiverPersonality(dto.getPersonality());
+        recommend.update(sender, dto);
+
+        memberRepository.save(sender);
+        recommendRepository.save(recommend);
+
+        return RecommendResponseDTO.of(recommend);
+    }
+
+    /**
+     * 추천사 작성 유저가 임시회원 이상일 경우
+     * 해당 유저 정보로 uuid 에 해당하는 추천사를 등록하며
+     * 직업 정보를 업데이트 한다
+     * */
+    public RecommendResponseDTO updateRecommendMemberAccept(String uuid, String senderPhone, RecommendMemberAcceptWithUpdateJobRequestDTO dto) {
+
+        Recommend recommend = findByUuidAndReceiverNotNull(uuid);
+
+        //자기 자신을 추천하면 종료
+        if (senderPhone.equals(recommend.getReceiverPhone())) {
+            throw new BadRequestException(ErrorCode.CANNOT_RECOMMEND_MYSELF);
+        }
+
+        //이미 작성된 추천사 엔티티면 종료
+        if (recommend.getSender() != null) {
+            throw new BadRequestException(ErrorCode.RECOMMEND_SENDER_ALREADY_EXIST);
+        }
+
+        //유저가 없으면 400
+        Member sender = memberRepository.findByPhone(senderPhone)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.USER_NOT_FOUND));
+
+        MemberJobUpdateRequestDTO updateDTO1 = MemberJobUpdateRequestDTO.builder()
+                .jobLocation(dto.getJobLocation())
+                .jobPart(dto.getJobPart())
+                .jobName(dto.getJobName())
+                .build();
+
+        sender.setJob(updateDTO1);
+
+        RecommendMemberAcceptRequestDTO updateDTO2 = RecommendMemberAcceptRequestDTO.builder()
+                .appeal(dto.getAppeal())
+                .meet(dto.getMeet())
+                .period(dto.getPeriod())
+                .personality(dto.getPersonality())
+                .build();
+
+        recommend.update(sender, updateDTO2);
+
 
         memberRepository.save(sender);
         recommendRepository.save(recommend);
@@ -217,4 +253,5 @@ public class RecommendService {
     public Boolean existsByReceiverPhoneAndSenderNotNull(String phone){
         return recommendRepository.existsByReceiverPhoneAndSenderNotNull(phone);
     }
+
 }

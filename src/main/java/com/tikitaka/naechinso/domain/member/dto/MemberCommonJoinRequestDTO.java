@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
 @Getter
 @Builder
 @ToString
-public class MemberCommonJoinRequestDto {
+public class MemberCommonJoinRequestDTO {
     @ApiModelProperty(example = "01010001000")
     @NotBlank(message = "전화번호를 입력해주세요")
     @Pattern(regexp = "[0-9]{10,11}", message = "하이픈 없는 10~11자리 숫자를 입력해주세요")
@@ -66,7 +66,7 @@ public class MemberCommonJoinRequestDto {
     @NotBlank(message = "직장 위치를 입력해주세요")
     private String jobLocation;
 
-    public static Member toCommonMember(MemberCommonJoinRequestDto dto) {
+    public static Member toCommonMember(MemberCommonJoinRequestDTO dto) {
         Member member = Member.builder()
                 .phone(dto.phone)
                 .name(dto.name)
