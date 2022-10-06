@@ -196,7 +196,7 @@ public class RecommendService {
                 .jobName(dto.getJobName())
                 .build();
 
-        sender.setJob(updateDTO1);
+        sender.updateJob(updateDTO1);
 
         RecommendMemberAcceptRequestDTO updateDTO2 = RecommendMemberAcceptRequestDTO.builder()
                 .appeal(dto.getAppeal())

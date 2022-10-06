@@ -10,6 +10,7 @@ import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -100,9 +101,33 @@ public class MemberService {
         Member member = memberRepository.findById(authMember.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        member.setJob(dto);
+        member.updateJob(dto);
         memberRepository.save(member);
         return MemberCommonResponseDTO.of(member);
+    }
+
+    public MemberCommonResponseDTO updateEdu(Member authMember, MemberEduUpdateRequestDTO dto){
+        //영속성 유지를 위한 fetch
+        Member member = memberRepository.findById(authMember.getId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        member.updateEdu(dto);
+        memberRepository.save(member);
+        return MemberCommonResponseDTO.of(member);
+    }
+
+
+    public void validateLoggedIn(Member authMember) {
+        if (authMember == null) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
+    }
+
+    public void validateFormalMember(Member authMember) {
+        validateLoggedIn(authMember);
+        if (authMember.getDetail() == null) {
+            throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
+        }
     }
 
 }

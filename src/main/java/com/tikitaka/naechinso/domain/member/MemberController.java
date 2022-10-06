@@ -34,11 +34,9 @@ public class MemberController {
     @GetMapping
     @ApiOperation(value = "유저 자신의 모든 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> getMyInformation(
-            HttpServletRequest request, @ApiIgnore @AuthMember Member member) {
-        //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+            HttpServletRequest request,
+            @ApiIgnore @AuthMember Member member
+    ) {
         return CommonApiResponse.of(MemberCommonResponseDTO.of(member));
     }
 
@@ -60,12 +58,8 @@ public class MemberController {
     @GetMapping("/detail")
     @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken 필요)")
     public CommonApiResponse<MemberDetailResponseDTO> getMemberDetail(
-            @ApiIgnore @AuthMember Member member)
-    {
-        //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+            @ApiIgnore @AuthMember Member member
+    ) {
         final MemberDetailResponseDTO res = memberService.readDetail(member);
         return CommonApiResponse.of(res);
     }
@@ -74,13 +68,18 @@ public class MemberController {
     @ApiOperation(value = "직업 정보를 업데이트 한다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> setMemberJob(
             @RequestBody MemberJobUpdateRequestDTO dto,
-            @ApiIgnore @AuthMember Member member)
-    {
-        //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+            @ApiIgnore @AuthMember Member member
+    ) {
         return CommonApiResponse.of(memberService.updateJob(member, dto));
+    }
+
+    @PatchMapping("/edu")
+    @ApiOperation(value = "학력 정보를 업데이트 한다 (AccessToken)")
+    public CommonApiResponse<MemberCommonResponseDTO> setMemberJob(
+            @RequestBody MemberEduUpdateRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.updateEdu(member, dto));
     }
 
 
@@ -89,8 +88,7 @@ public class MemberController {
     public CommonApiResponse<MemberDetailResponseDTO> join(
             HttpServletRequest request,
             @Valid @RequestBody MemberDetailJoinRequestDTO dto
-            )
-    {
+    ) {
         return null;
 //        //로그인 상태가 아닌 경우 401
 //        if (member == null) {
@@ -105,12 +103,8 @@ public class MemberController {
     @ApiOperation(value = "회원가입 세부 정보를 입력하여 최종 가입시킨다 (AccessToken)")
     public CommonApiResponse<MemberDetailResponseDTO> setMemberDetail(
             @Valid @RequestBody MemberDetailJoinRequestDTO dto,
-            @ApiIgnore @AuthMember Member member)
-    {
-        //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+            @ApiIgnore @AuthMember Member member
+    ) {
         final MemberDetailResponseDTO res = memberService.createDetail(member, dto);
         return CommonApiResponse.of(res);
     }
@@ -118,7 +112,10 @@ public class MemberController {
     //페이징 처리 추가할 예정
     @GetMapping("/find")
     @ApiOperation(value = "[Admin]현재 가입한 모든 유저를 불러온다 (AccessToken)")
-    public CommonApiResponse<List<MemberCommonResponseDTO>> getMyInformation() {
+    public CommonApiResponse<List<MemberCommonResponseDTO>> getMyInformation(
+//            @RequestBody RecommendMemberAcceptRequestDTO dto,
+//            @ApiIgnore @AuthMember Member member
+    ) {
         return CommonApiResponse.of(memberService.findAll());
     }
 
@@ -126,12 +123,10 @@ public class MemberController {
     @ApiOperation(value = "다른 유저의 추천사를 작성한다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> createRecommend(
             @RequestBody RecommendMemberAcceptRequestDTO dto,
-            @ApiIgnore @AuthMember Member member)
-    {
+            @ApiIgnore @AuthMember Member member
+    ) {
         //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
+        memberService.validateLoggedIn(member);
         return CommonApiResponse.of(null);
     }
 
@@ -144,15 +139,10 @@ public class MemberController {
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
             @PathVariable("uuid") String uuid,
             @Valid @RequestBody RecommendMemberAcceptWithUpdateJobRequestDTO dto,
-            @ApiIgnore @AuthMember Member member)
-    {
+            @ApiIgnore @AuthMember Member member
+    ) {
         //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
-        if (member.getDetail() == null) {
-            throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
-        }
+        memberService.validateFormalMember(member);
         String phone = member.getPhone();
         RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
         return CommonApiResponse.of(recommendResponseDTO);
@@ -167,17 +157,17 @@ public class MemberController {
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidWithJob(
             @PathVariable("uuid") String uuid,
             @Valid @RequestBody RecommendMemberAcceptWithUpdateJobRequestDTO dto,
-            @ApiIgnore @AuthMember Member member)
-    {
+            @ApiIgnore @AuthMember Member member
+    ) {
         //로그인 상태가 아닌 경우 401
-        if (member == null) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-        }
-        if (member.getDetail() == null) {
-            throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
-        }
+        memberService.validateFormalMember(member);
         String phone = member.getPhone();
         RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
         return CommonApiResponse.of(recommendResponseDTO);
     }
+
+    /**
+     * @// TODO: 2022/10/06 인증정보 업데이트 방식 정할것. 직업 또는 학생 둘다 가능하기 떄문
+     * */
+
 }

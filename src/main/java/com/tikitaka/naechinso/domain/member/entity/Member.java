@@ -3,6 +3,7 @@ package com.tikitaka.naechinso.domain.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
+import com.tikitaka.naechinso.domain.member.dto.MemberEduUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
@@ -78,6 +79,15 @@ public class Member extends BaseEntity {
     @Column(name = "mem_job_location")
     private String jobLocation;
 
+    @Column(name = "mem_school")
+    private String eduName;
+
+    @Column(name = "mem_major")
+    private String eduMajor;
+
+    @Column(name = "mem_edu_level")
+    private String eduLevel;
+
     //가입했을 경우 정보 디테일
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "mem_detail")
@@ -99,9 +109,15 @@ public class Member extends BaseEntity {
         this.detail = memberDetail;
     }
 
-    public void setJob(MemberJobUpdateRequestDTO requestDTO) {
+    public void updateJob(MemberJobUpdateRequestDTO requestDTO) {
         this.jobName = requestDTO.getJobName();
         this.jobLocation = requestDTO.getJobLocation();
         this.jobPart = requestDTO.getJobPart();
+    }
+
+    public void updateEdu(MemberEduUpdateRequestDTO requestDTO) {
+        this.eduName = requestDTO.getEduName();
+        this.eduMajor = requestDTO.getEduMajor();
+        this.eduLevel = requestDTO.getEduLevel();
     }
 }

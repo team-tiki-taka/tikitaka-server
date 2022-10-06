@@ -74,15 +74,6 @@ public class MemberDetail extends BaseEntity {
     @Builder.Default
     private Long point = 0L;
 
-    @Column(name = "mem_school")
-    private String school;
-
-    @Column(name = "mem_major")
-    private String major;
-
-    @Column(name = "mem_edu_level")
-    private String eduLevel;
-
     //    포인트 내역
     @OneToMany(mappedBy = "member")
     private List<Point> points = new ArrayList<>();
@@ -110,9 +101,6 @@ public class MemberDetail extends BaseEntity {
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
                 .picture(dto.getPicture())
-                .school(dto.getSchool())
-                .major(dto.getMajor())
-                .eduLevel(dto.getEduLevel())
                 .build();
     }
 
@@ -129,9 +117,6 @@ public class MemberDetail extends BaseEntity {
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
                 .picture(dto.getPicture())
-                .school(dto.getSchool())
-                .major(dto.getMajor())
-                .eduLevel(dto.getEduLevel())
                 .member(member)
                 .build();
     }

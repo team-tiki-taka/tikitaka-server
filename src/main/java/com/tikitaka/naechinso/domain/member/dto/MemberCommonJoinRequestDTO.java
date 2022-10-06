@@ -66,6 +66,18 @@ public class MemberCommonJoinRequestDTO {
     @NotBlank(message = "직장 위치를 입력해주세요")
     private String jobLocation;
 
+    @ApiModelProperty(example = "서울")
+    @NotBlank(message = "학교명을 입력해주세요")
+    private String eduName;
+
+    @ApiModelProperty(example = "컴퓨터공학과")
+    @NotBlank(message = "전공을 입력해주세요")
+    private String eduMajor;
+
+    @ApiModelProperty(example = "대학교")
+    @NotBlank(message = "최종학력을 입력해주세요")
+    private String eduLevel;
+
     public static Member toCommonMember(MemberCommonJoinRequestDTO dto) {
         Member member = Member.builder()
                 .phone(dto.phone)
@@ -80,6 +92,9 @@ public class MemberCommonJoinRequestDTO {
                 .jobName(dto.jobName)
                 .jobPart(dto.jobPart)
                 .jobLocation(dto.jobLocation)
+                .eduName(dto.eduName)
+                .eduMajor(dto.eduMajor)
+                .eduLevel(dto.eduLevel)
                 .build();
 
         return member;
