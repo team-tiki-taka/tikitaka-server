@@ -3,6 +3,7 @@ package com.tikitaka.naechinso.domain.sms;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendReceiverDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationSuccessResponseDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
@@ -104,8 +105,9 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
             //redis 에서 번호 제거
             redisService.deleteValues(key);
 
-            //추천 받은 정보가 있는지
-            Boolean recommendReceived = recommendService.existsByReceiverPhoneAndSenderNotNull(phoneNumber);
+            //유효한 추천인이 있는 추천사 리스트
+            List<RecommendReceiverDTO> recommendReceivedList
+                    = recommendService.findAllRecommendReceivedListBasicByPhone(phoneNumber);
 
             //가입 안된 회원일 경우 registerToken 리턴
             Optional<Member> checkMember = memberRepository.findByPhone(phoneNumber);
@@ -114,20 +116,29 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
                 return SmsCertificationSuccessResponseDTO.builder()
                         .registerToken(registerToken)
-                        .recommendReceived(recommendReceived)
+                        .recommendReceived(recommendReceivedList)
                         .build();
             }
 
+
             //이미 가입한 회원이면
             //인증한 휴대폰 번호로 로그인 후 토큰 생성
+            final Member authMember = checkMember.get();
             TokenResponseDTO tokenResponseDTO
-                    = jwtTokenProvider.generateToken(new JwtDTO(phoneNumber, checkMember.get().getRole().getDetail()));
+                    = jwtTokenProvider.generateToken(new JwtDTO(phoneNumber, authMember.getRole().getDetail()));
+
+            //가입 여부 (detail == null) 확인 후 받은 추천서 꺼내옴
+            final Boolean hasDetail = authMember.getDetail() != null;
+            //유저 밴 여부
+            final Boolean isBanned = false;
 
             //액세스 + 리프레시 토큰 반환
             return SmsCertificationSuccessResponseDTO.builder()
                     .accessToken(tokenResponseDTO.getAccessToken())
                     .refreshToken(tokenResponseDTO.getRefreshToken())
-                    .recommendReceived(recommendReceived)
+                    .recommendReceived(recommendReceivedList)
+                    .isActive(hasDetail)
+                    .isBanned(false)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

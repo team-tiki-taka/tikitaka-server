@@ -13,18 +13,7 @@ import javax.validation.constraints.*;
 @Getter
 @Builder
 @ToString
-public class RecommendMemberAcceptWithUpdateJobRequestDTO {
-    @ApiModelProperty(example = "카카오")
-    @NotBlank(message = "직장명을 입력해주세요")
-    private String jobName;
-
-    @ApiModelProperty(example = "개발자")
-    @NotBlank(message = "직장 부서를 입력해주세요")
-    private String jobPart;
-
-    @ApiModelProperty(example = "판교")
-    @NotBlank(message = "직장 위치를 입력해주세요")
-    private String jobLocation;
+public class RecommendAcceptRequestDTO {
 
     @ApiModelProperty(example = "CMC 에서")
     @NotBlank(message = "만나게 된 계기를 입력해주세요")
@@ -41,5 +30,4 @@ public class RecommendMemberAcceptWithUpdateJobRequestDTO {
     @ApiModelProperty(example = "1년")
     @NotBlank(message = "만난 기간을 입력해주세요")
     private String period;
-
 }

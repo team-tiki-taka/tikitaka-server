@@ -58,13 +58,10 @@ public class SecurityConfig {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(SwaggerPatterns).permitAll()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/member/login").permitAll()
                 .antMatchers("/member/join").permitAll()
                 .antMatchers("/").permitAll() //health check
                 .antMatchers("/sms/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/recommend").permitAll()
-                .antMatchers("/recommend/**").permitAll()
-                .antMatchers("/recommend/request").permitAll()
+                .antMatchers(HttpMethod.GET, "/recommend/").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();

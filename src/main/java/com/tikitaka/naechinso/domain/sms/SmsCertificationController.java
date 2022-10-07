@@ -5,6 +5,7 @@ import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationRequestDTO;
 import com.tikitaka.naechinso.domain.sms.dto.SmsVerificationCodeRequestDTO;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +23,14 @@ public class SmsCertificationController {
     private final SmsCertificationService smsCertificationService;
 
     @PostMapping("/send")
+    @ApiOperation(value = "인증번호가 담긴 문자를 보낸다")
     public CommonApiResponse<String> sendMessageWithVerificationCode(@Valid  @RequestBody SmsVerificationCodeRequestDTO dto) {
         String result = smsCertificationService.sendVerificationMessage(dto.getPhoneNumber());
         return CommonApiResponse.of(result);
     }
 
     @PostMapping("/verify")
+    @ApiOperation(value = "인증번호를 입력하여 인증한다")
     public CommonApiResponse<SmsCertificationSuccessResponseDTO> verifyCode(@RequestBody @Valid SmsCertificationRequestDTO dto) {
         SmsCertificationSuccessResponseDTO responseDTO = smsCertificationService.verifyCode(dto);
         return CommonApiResponse.of(responseDTO);

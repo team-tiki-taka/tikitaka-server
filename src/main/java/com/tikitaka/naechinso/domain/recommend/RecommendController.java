@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.recommend;
 
+import com.tikitaka.naechinso.domain.member.MemberService;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.dto.*;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
@@ -24,10 +25,11 @@ import java.util.List;
 public class RecommendController {
 
     private final RecommendService recommendService;
+    private final MemberService memberService;
     private final JwtTokenProvider jwtTokenService;
 
     @GetMapping
-    @ApiOperation(value = "내 추천사 정보를 가져온다 (AccessToken 필요)")
+    @ApiOperation(value = "내 추천사 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<RecommendListResponseDTO> getRecommends(
             @ApiIgnore @AuthMember Member member)
     {
@@ -38,14 +40,12 @@ public class RecommendController {
     }
 
     @PostMapping
-    @ApiOperation(value = "추천서를 작성한 후, 추천인을 회원가입 시킨다. RegisterToken)")
-    public CommonApiResponse<RecommendResponseDTO> createRecommendNewSender(
-            HttpServletRequest request,
-            @Valid @RequestBody RecommendJoinRequestDTO dto)
-    {
-        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
-
-        RecommendResponseDTO recommendResponseDTO = recommendService.createRecommendJoin(phone, dto);
+    @ApiOperation(value = "다른 유저의 추천사를 작성한다 (AccessToken)")
+    public CommonApiResponse<RecommendResponseDTO> createRecommend(
+            @Valid @RequestBody RecommendBySenderRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        RecommendResponseDTO recommendResponseDTO = recommendService.createRecommend(member, dto);
         return CommonApiResponse.of(recommendResponseDTO);
     }
 
@@ -61,47 +61,38 @@ public class RecommendController {
     }
 
     @PostMapping("/request")
-    @ApiOperation(value = "다른 유저에게 추천서 작성을 요청한다 (RegisterToken)")
+    @ApiOperation(value = "다른 유저에게 추천서 작성을 요청한다 (AccessToken)")
     public CommonApiResponse<RecommendResponseDTO> createRecommendRequest(
-            HttpServletRequest request,
-            @Valid @RequestBody RecommendRequestDTO dto)
+            @ApiIgnore @AuthMember Member member)
     {
-        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
-        RecommendResponseDTO recommendResponseDTO = recommendService.createRecommendRequest(phone, dto);
+        RecommendResponseDTO recommendResponseDTO = recommendService.createRecommendRequest(member);
         return CommonApiResponse.of(recommendResponseDTO);
     }
-
-
-
 
 
 
 
     //제일 아래에 있어야함
     @GetMapping("/{uuid}")
-    @ApiOperation(value = "추천 요청받은 uuid 를 가진 추천사 정보를 가져온다 (Register / AccessToken)")
+    @ApiOperation(value = "해당 UUID 를 가진 추천사 정보를 가져온다 (Register / AccessToken)")
     public CommonApiResponse<RecommendResponseDTO> getRecommendByUuid(
             HttpServletRequest request,
             @PathVariable("uuid") String uuid)
     {
         //토큰 장착 확인
         String phone = jwtTokenService.parsePhoneByRegisterToken(request);
-
         RecommendResponseDTO recommendResponseDTO = RecommendResponseDTO.of(recommendService.findByUuid(uuid));
         return CommonApiResponse.of(recommendResponseDTO);
     }
 
     @PatchMapping("/{uuid}/accept")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한 후 임시 회원으로 가입한다 (RegisterToken)")
+    @ApiOperation(value = "해당 UUID 추천사에 자신을 추천인으로 등록한다 (AccessToken)")
     public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
-            HttpServletRequest request,
+            @ApiIgnore @AuthMember Member member,
             @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendAcceptWithJoinRequestDTO dto)
+            @Valid @RequestBody RecommendAcceptRequestDTO dto)
     {
-        //토큰 장착 확인
-        String phone = jwtTokenService.parsePhoneByRegisterToken(request);
-
-        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendRequestWithJoin(uuid, phone, dto);
+        RecommendResponseDTO recommendResponseDTO = recommendService.acceptRecommendByUuid(member, uuid, dto);
         return CommonApiResponse.of(recommendResponseDTO);
     }
 }

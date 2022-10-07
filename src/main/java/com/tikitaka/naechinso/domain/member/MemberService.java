@@ -10,6 +10,7 @@ import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,26 +31,50 @@ public class MemberService {
     private final MemberDetailRepository memberDetailRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public Member findByMember(Member member) {
+        return findByPhone(member.getPhone());
+    }
+
     public List<MemberCommonResponseDTO> findAll() {
-        List<MemberCommonResponseDTO> memberList = memberRepository.findAll().stream()
-                .map(member -> MemberCommonResponseDTO.of(member)).collect(Collectors.toList());
-        return memberList;
+        return memberRepository.findAll().stream()
+                .map(MemberCommonResponseDTO::of).collect(Collectors.toList());
     }
 
 
-    public MemberCommonResponseDTO createCommonMember(MemberCommonJoinRequestDTO dto) {
-
+    public MemberCommonJoinResponseDTO joinCommonMember(String phone, MemberCommonJoinRequestDTO dto) {
         //이미 존재하는 유저일 경우 400
-        Optional<Member> checkMember = memberRepository.findByPhone(dto.getPhone());
-        if(!checkMember.isEmpty()) {
+        Optional<Member> checkMember = memberRepository.findByPhone(phone);
+        if(checkMember.isPresent()) {
             throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
         }
 
-        Member member = MemberCommonJoinRequestDTO.toCommonMember(dto);
+        Member member = MemberCommonJoinRequestDTO.toCommonMember(phone, dto);
         memberRepository.save(member);
 
-        MemberCommonResponseDTO res = MemberCommonResponseDTO.of(member);
-        return res;
+        TokenResponseDTO tokenResponseDTO
+                = jwtTokenProvider.generateToken(new JwtDTO(phone, "ROLE_USER"));
+
+        return MemberCommonJoinResponseDTO.of(member, tokenResponseDTO);
+    }
+
+    /**
+     * @// TODO: 2022-10-07 이상한점 수정 필요 
+     * */
+    public MemberCommonJoinResponseDTO updateCommonMember(Member authMember, MemberUpdateCommonRequestDTO dto) {
+        //없는 유저면 404
+        Member member = findByMember(authMember);
+        member.updateCommon(dto);
+        memberRepository.save(member);
+
+        TokenResponseDTO tokenResponseDTO
+                = jwtTokenProvider.generateToken(new JwtDTO(member.getPhone(), "ROLE_USER"));
+
+        return MemberCommonJoinResponseDTO.of(member);
     }
 
     public TokenResponseDTO login(String phone) {
@@ -82,8 +107,7 @@ public class MemberService {
 
     public MemberDetailResponseDTO createDetail(Member authMember, MemberDetailJoinRequestDTO dto) {
         //영속성 유지를 위한 fetch
-        Member member = memberRepository.findById(authMember.getId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        Member member = findByMember(authMember);
 
         //detail 정보가 있으면 이미 가입한 회원
         if (member.getDetail() != null) {
@@ -97,12 +121,34 @@ public class MemberService {
 
     public MemberCommonResponseDTO updateJob(Member authMember, MemberJobUpdateRequestDTO dto){
         //영속성 유지를 위한 fetch
-        Member member = memberRepository.findById(authMember.getId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        Member member = findByMember(authMember);
 
-        member.setJob(dto);
+        member.updateJob(dto);
         memberRepository.save(member);
         return MemberCommonResponseDTO.of(member);
+    }
+
+    public MemberCommonResponseDTO updateEdu(Member authMember, MemberEduUpdateRequestDTO dto){
+        //영속성 유지를 위한 fetch
+        Member member = findByMember(authMember);
+
+        member.updateEdu(dto);
+        memberRepository.save(member);
+        return MemberCommonResponseDTO.of(member);
+    }
+
+
+    public void validateToken(Member authMember) {
+        if (authMember == null) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+        }
+    }
+
+    public void validateFormalMember(Member authMember) {
+        validateToken(authMember);
+        if (authMember.getDetail() == null) {
+            throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
+        }
     }
 
 }

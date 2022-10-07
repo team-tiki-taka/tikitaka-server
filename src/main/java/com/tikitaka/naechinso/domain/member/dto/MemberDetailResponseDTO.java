@@ -30,8 +30,6 @@ public class MemberDetailResponseDTO {
 
     private int age;
 
-
-
     private int height;
 
     private String address;
@@ -55,12 +53,6 @@ public class MemberDetailResponseDTO {
     private String picture;
 
     private Long point;
-
-    private String school;
-
-    private String major;
-
-    private String eduLevel;
 
     public static MemberDetailResponseDTO of(Member member) {
         MemberDetail detail = member.getDetail();
@@ -105,9 +97,6 @@ public class MemberDetailResponseDTO {
                 .style(detail.getStyle())
                 .picture(detail.getPicture())
                 .point(detail.getPoint())
-                .school(detail.getSchool())
-                .major(detail.getMajor())
-                .eduLevel(detail.getEduLevel())
                 .build();
     }
 

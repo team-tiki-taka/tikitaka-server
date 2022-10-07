@@ -3,6 +3,8 @@ package com.tikitaka.naechinso.domain.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberEduUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
@@ -78,6 +80,36 @@ public class Member extends BaseEntity {
     @Column(name = "mem_job_location")
     private String jobLocation;
 
+    @Column(name = "mem_job_picture")
+    private String jobPicture;
+
+    @Column(name = "mem_job_accepted")
+    private String jobAccepted;
+
+    @Column(name = "mem_school")
+    private String eduName;
+
+    @Column(name = "mem_major")
+    private String eduMajor;
+
+    @Column(name = "mem_edu_level")
+    private String eduLevel;
+
+    @Column(name = "mem_edu_picture")
+    private String eduPicture;
+
+    @Column(name = "mem_edu_accepted")
+    private String eduAccepted;
+
+    @Column(name = "mem_join_accepted")
+    private String joinAccepted;
+
+    //마지막으로 관리한 어드민
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "mem_admin_id")
+//    @JsonIgnore
+//    private Member adminId;
+
     //가입했을 경우 정보 디테일
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "mem_detail")
@@ -99,9 +131,24 @@ public class Member extends BaseEntity {
         this.detail = memberDetail;
     }
 
-    public void setJob(MemberJobUpdateRequestDTO requestDTO) {
+    public void updateJob(MemberJobUpdateRequestDTO requestDTO) {
         this.jobName = requestDTO.getJobName();
         this.jobLocation = requestDTO.getJobLocation();
         this.jobPart = requestDTO.getJobPart();
+        this.jobPicture = requestDTO.getJobPicture();
     }
+
+    public void updateEdu(MemberEduUpdateRequestDTO requestDTO) {
+        this.eduName = requestDTO.getEduName();
+        this.eduMajor = requestDTO.getEduMajor();
+        this.eduLevel = requestDTO.getEduLevel();
+        this.eduPicture = requestDTO.getEduPicture();
+    }
+
+    public void updateCommon(MemberUpdateCommonRequestDTO dto) {
+        this.name = dto.getName();
+        this.gender = dto.getGender();
+        this.age = dto.getAge();
+    }
+
 }
