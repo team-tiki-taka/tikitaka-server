@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -85,7 +86,7 @@ public class SmsCertificationServiceTest {
         given(redisService.hasKey(key)).willReturn(true);
         given(redisService.getValues(key)).willReturn(verificationCode);
         given(memberRepository.findByPhone(receiver)).willReturn(Optional.empty());
-        given(recommendService.existsByReceiverPhoneAndSenderNotNull(receiver)).willReturn(false);
+        given(recommendService.findAllRecommendReceivedListBasicByPhone(receiver)).willReturn(new ArrayList<>());
         given(jwtTokenProvider.generateRegisterToken(new JwtDTO(receiver))).willReturn("rgT");
 
         //when
@@ -98,12 +99,12 @@ public class SmsCertificationServiceTest {
         verify(redisService, times(1)).hasKey(key);
         verify(redisService, times(1)).getValues(key);
         verify(memberRepository, times(1)).findByPhone(receiver);
-        verify(recommendService, times(1)).existsByReceiverPhoneAndSenderNotNull(receiver);
+        verify(recommendService, times(1)).findAllRecommendReceivedListBasicByPhone(receiver);
         verify(jwtTokenProvider, times(1)).generateRegisterToken(new JwtDTO(receiver));
         assertThat(responseDTO.getAccessToken()).isNull();
         assertThat(responseDTO.getRefreshToken()).isNull();
         assertThat(responseDTO.getRegisterToken()).isEqualTo("rgT");
-        assertThat(responseDTO.getRecommendReceived()).isFalse();
+//        assertThat(responseDTO.getRecommendReceived()).isFalse();
     }
 
     @DisplayName("가입한 회원의 Token 발급 테스트")
@@ -124,7 +125,7 @@ public class SmsCertificationServiceTest {
         given(redisService.hasKey(key)).willReturn(true);
         given(redisService.getValues(key)).willReturn(verificationCode);
         given(memberRepository.findByPhone(receiver)).willReturn(Optional.of(member));
-        given(recommendService.existsByReceiverPhoneAndSenderNotNull(receiver)).willReturn(false);
+        given(recommendService.findAllRecommendReceivedListBasicByPhone(receiver)).willReturn(new ArrayList<>());
         given(jwtTokenProvider.generateToken(new JwtDTO(receiver, "ROLE_USER")))
                 .willReturn(TokenResponseDTO.builder().accessToken("aT").refreshToken("rfT").build());
 
@@ -138,13 +139,13 @@ public class SmsCertificationServiceTest {
         verify(redisService, times(1)).hasKey(key);
         verify(redisService, times(1)).getValues(key);
         verify(memberRepository, times(1)).findByPhone(receiver);
-        verify(recommendService, times(1)).existsByReceiverPhoneAndSenderNotNull(receiver);
+        verify(recommendService, times(1)).findAllRecommendReceivedListBasicByPhone(receiver);
         verify(jwtTokenProvider, times(1)).generateToken(new JwtDTO(receiver, "ROLE_USER"));
 
         assertThat(responseDTO.getAccessToken()).isEqualTo("aT");
         assertThat(responseDTO.getRefreshToken()).isEqualTo("rfT");
         assertThat(responseDTO.getRegisterToken()).isNull();
-        assertThat(responseDTO.getRecommendReceived()).isFalse();
+//        assertThat(responseDTO.getRecommendReceived()).isFalse();
     }
 
 //
