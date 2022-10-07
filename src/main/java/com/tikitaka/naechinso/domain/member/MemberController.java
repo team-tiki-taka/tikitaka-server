@@ -33,7 +33,6 @@ public class MemberController {
     @GetMapping
     @ApiOperation(value = "유저 자신의 모든 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> getMyInformation(
-            HttpServletRequest request,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(MemberCommonResponseDTO.of(member));
@@ -108,69 +107,5 @@ public class MemberController {
 //            @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(memberService.findAll());
-    }
-
-    @PostMapping("/recommend")
-    @ApiOperation(value = "다른 유저의 추천사를 작성한다 (AccessToken)")
-    public CommonApiResponse<MemberCommonResponseDTO> createRecommend(
-            @RequestBody RecommendMemberAcceptRequestDTO dto,
-            @ApiIgnore @AuthMember Member member
-    ) {
-        //로그인 상태가 아닌 경우 401
-        memberService.validateToken(member);
-        return CommonApiResponse.of(null);
-    }
-
-
-    /**
-     * @// TODO: 2022/10/05 직업 정보가 없는 사람이 가입할 때 직업 정보 입력해야 하는 처리 필요
-     * */
-    @PatchMapping("/recommend/{uuid}/accept")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록한다 (삭제예정)")
-    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuid(
-            @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
-            @ApiIgnore @AuthMember Member member
-    ) {
-        //로그인 상태가 아닌 경우 401
-        memberService.validateFormalMember(member);
-        String phone = member.getPhone();
-        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
-        return CommonApiResponse.of(recommendResponseDTO);
-    }
-
-
-    /**
-     * 직업 인증으로 추천인을 가입시킨다
-     * */
-    @PatchMapping("/recommend/{uuid}/accept/job")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 직업 정보를 업데이트 한다 (삭제예정)")
-    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidAndJob(
-            @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
-            @ApiIgnore @AuthMember Member member
-    ) {
-        //로그인 상태가 아닌 경우 401
-        memberService.validateFormalMember(member);
-        String phone = member.getPhone();
-        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
-        return CommonApiResponse.of(recommendResponseDTO);
-    }
-
-    /**
-     * 학교 인증으로 추천인을 가입시킨다
-     * */
-    @PatchMapping("/recommend/{uuid}/accept/edu")
-    @ApiOperation(value = "요청받은 uuid 추천사에 자신을 추천인으로 등록하며 학교 정보를 업데이트 한다 (삭제예정)")
-    public CommonApiResponse<RecommendResponseDTO> updateRecommendByUuidAndEdu(
-            @PathVariable("uuid") String uuid,
-            @Valid @RequestBody RecommendMemberAcceptAndUpdateRequestDTO dto,
-            @ApiIgnore @AuthMember Member member
-    ) {
-        //로그인 상태가 아닌 경우 401
-        memberService.validateFormalMember(member);
-        String phone = member.getPhone();
-        RecommendResponseDTO recommendResponseDTO = recommendService.updateRecommendMemberAccept(uuid, phone, dto);
-        return CommonApiResponse.of(recommendResponseDTO);
     }
 }

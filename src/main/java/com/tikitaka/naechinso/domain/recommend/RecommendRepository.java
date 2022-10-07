@@ -27,4 +27,6 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     Boolean existsByReceiverPhone(String phone);
 
     Boolean existsByReceiverPhoneAndSenderNotNull(String phone);
+
+    Boolean existsBySenderPhoneAndReceiverPhone(String senderPhone, String receiverPhone);
 }

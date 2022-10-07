@@ -3,7 +3,7 @@ package com.tikitaka.naechinso.domain.recommend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendAcceptWithJoinRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendAcceptRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
@@ -92,9 +92,12 @@ public class Recommend extends BaseEntity {
     @Column(name = "rec_period")
     private String receiverPeriod;
 
-    public void update(Member sender, RecommendAcceptWithJoinRequestDTO requestDTO) {
-        updateSender(sender);
-        updateReceiver(requestDTO);
+
+    public void update(RecommendAcceptRequestDTO requestDTO) {
+        this.receiverAppeal = requestDTO.getAppeal();
+        this.receiverMeet = requestDTO.getMeet();
+        this.receiverPersonality = requestDTO.getPersonality();
+        this.receiverPeriod = requestDTO.getPeriod();
     }
 
     public void update(Member sender, RecommendMemberAcceptRequestDTO requestDTO) {
@@ -115,12 +118,4 @@ public class Recommend extends BaseEntity {
         this.senderJobPart = sender.getJobPart();
         this.senderJobLocation = sender.getJobLocation();
     }
-
-    public void updateReceiver(RecommendAcceptWithJoinRequestDTO requestDTO) {
-        this.receiverAppeal = requestDTO.getAppeal();
-        this.receiverMeet = requestDTO.getMeet();
-        this.receiverPersonality = requestDTO.getPersonality();
-        this.receiverPeriod = requestDTO.getPeriod();
-    }
-
 }

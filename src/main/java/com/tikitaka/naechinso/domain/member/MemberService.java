@@ -31,10 +31,18 @@ public class MemberService {
     private final MemberDetailRepository memberDetailRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public Member findByMember(Member member) {
+        return findByPhone(member.getPhone());
+    }
+
     public List<MemberCommonResponseDTO> findAll() {
-        List<MemberCommonResponseDTO> memberList = memberRepository.findAll().stream()
-                .map(member -> MemberCommonResponseDTO.of(member)).collect(Collectors.toList());
-        return memberList;
+        return memberRepository.findAll().stream()
+                .map(MemberCommonResponseDTO::of).collect(Collectors.toList());
     }
 
 
@@ -54,20 +62,17 @@ public class MemberService {
         return MemberCommonJoinResponseDTO.of(member, tokenResponseDTO);
     }
 
+    /**
+     * @// TODO: 2022-10-07 이상한점 수정 필요 
+     * */
     public MemberCommonJoinResponseDTO updateCommonMember(Member authMember, MemberUpdateCommonRequestDTO dto) {
         //없는 유저면 404
-        final String phone = authMember.getPhone();
-        Optional<Member> checkMember = memberRepository.findByPhone(phone);
-        if(checkMember.isEmpty()) {
-            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
-        }
-
-        Member member = checkMember.get();
+        Member member = findByMember(authMember);
         member.updateCommon(dto);
         memberRepository.save(member);
 
         TokenResponseDTO tokenResponseDTO
-                = jwtTokenProvider.generateToken(new JwtDTO(phone, "ROLE_USER"));
+                = jwtTokenProvider.generateToken(new JwtDTO(member.getPhone(), "ROLE_USER"));
 
         return MemberCommonJoinResponseDTO.of(member);
     }
@@ -102,8 +107,7 @@ public class MemberService {
 
     public MemberDetailResponseDTO createDetail(Member authMember, MemberDetailJoinRequestDTO dto) {
         //영속성 유지를 위한 fetch
-        Member member = memberRepository.findById(authMember.getId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        Member member = findByMember(authMember);
 
         //detail 정보가 있으면 이미 가입한 회원
         if (member.getDetail() != null) {
@@ -117,8 +121,7 @@ public class MemberService {
 
     public MemberCommonResponseDTO updateJob(Member authMember, MemberJobUpdateRequestDTO dto){
         //영속성 유지를 위한 fetch
-        Member member = memberRepository.findById(authMember.getId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        Member member = findByMember(authMember);
 
         member.updateJob(dto);
         memberRepository.save(member);
@@ -127,8 +130,7 @@ public class MemberService {
 
     public MemberCommonResponseDTO updateEdu(Member authMember, MemberEduUpdateRequestDTO dto){
         //영속성 유지를 위한 fetch
-        Member member = memberRepository.findById(authMember.getId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        Member member = findByMember(authMember);
 
         member.updateEdu(dto);
         memberRepository.save(member);
