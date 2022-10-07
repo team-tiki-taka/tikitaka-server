@@ -51,19 +51,19 @@ public class MemberDetailJoinRequestDTO {
 
     @ApiModelProperty(example = "ESTJ")
     @Length(max = 4, message = "올바른 MBTI 정보를 입력하세요")
-    private String mbti = "";
+    private String mbti;
 
     @NotBlank(message = "성격 정보를 입력해야 합니다")
     private String personality;
 
     @NotBlank(message = "자기 소개를 입력해야 합니다")
-    private String introduce = "";
+    private String introduce;
 
     @NotBlank(message = "취미 정보를 입력해야 합니다")
-    private String hobby = "";
+    private String hobby;
 
     @NotBlank(message = "연애 스타일을 입력해야 합니다")
-    private String style = "";
+    private String style;
 
     @NotBlank(message = "사진을 업로드해야 합니다")
     private String picture;
