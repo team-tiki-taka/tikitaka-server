@@ -4,14 +4,13 @@ import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendReceiverDTO;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationSuccessResponseDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.InternalServerException;
-import com.tikitaka.naechinso.infra.sms.SmsService;
+import com.tikitaka.naechinso.infra.sms.NaverSmsService;
 import com.tikitaka.naechinso.domain.sms.dto.SmsCertificationRequestDTO;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
@@ -31,7 +30,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class SmsCertificationServiceImpl implements SmsCertificationService {
 
-    private final SmsService smsService;
+    private final NaverSmsService naverSmsService;
     private final RedisService redisService;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
@@ -66,7 +65,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
         //[prod] 실 배포 환경에서는 문자를 전송합니다
         try {
             //네이버 sms 메세지 dto
-            if (smsService.sendMessage(to, generateMessageWithCode(verificationCode))) {
+            if (naverSmsService.sendMessage(to, generateMessageWithCode(verificationCode))) {
                 //전송 성공하면 redis 에 3분 제한의 인증번호 토큰 저장
                 redisService.setValues(VERIFICATION_PREFIX + to, verificationCode, verificationTimeLimit);
                 return "메세지 전송 성공";

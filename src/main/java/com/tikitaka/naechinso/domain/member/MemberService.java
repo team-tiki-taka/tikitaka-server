@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -136,6 +137,17 @@ public class MemberService {
         memberRepository.save(member);
         return MemberCommonResponseDTO.of(member);
     }
+
+    /**
+     * MemberDetail 의 프로필 이미지를 업로드 한다
+     * */
+//    public List<String> updateProfileImage(Member authMember, List<MultipartFile> multipartFile){
+//        //영속성 유지를 위한 fetch
+//        Member member = findByMember(authMember);
+//
+//        memberRepository.save(member);
+//        return MemberCommonResponseDTO.of(member);
+//    }
 
 
     public void validateToken(Member authMember) {

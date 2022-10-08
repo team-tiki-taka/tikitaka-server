@@ -39,6 +39,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         else if(exception.equals(ErrorCode.INVALID_AUTH_TOKEN.getCode())) {
             setResponse(response, ErrorCode.INVALID_AUTH_TOKEN);
         }
+        //DB에 정보가 없는 토큰을 사용했울 때
+        else if(exception.equals(ErrorCode.INVALID_USER_TOKEN.getCode())) {
+            setResponse(response, ErrorCode.INVALID_USER_TOKEN);
+        }
         //잘못된 서명
         else if(exception.equals(ErrorCode.INVALID_SIGNATURE.getCode())) {
             setResponse(response, ErrorCode.INVALID_SIGNATURE);

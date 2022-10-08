@@ -80,23 +80,23 @@ public class Member extends BaseEntity {
     @Column(name = "mem_job_location")
     private String jobLocation;
 
-    @Column(name = "mem_job_picture")
-    private String jobPicture;
+    @Column(name = "mem_job_image")
+    private String jobImage;
 
     @Column(name = "mem_job_accepted")
     private String jobAccepted;
 
-    @Column(name = "mem_school")
+    @Column(name = "mem_edu_school")
     private String eduName;
 
-    @Column(name = "mem_major")
+    @Column(name = "mem_edu_major")
     private String eduMajor;
 
     @Column(name = "mem_edu_level")
     private String eduLevel;
 
-    @Column(name = "mem_edu_picture")
-    private String eduPicture;
+    @Column(name = "mem_edu_image")
+    private String eduImage;
 
     @Column(name = "mem_edu_accepted")
     private String eduAccepted;
@@ -135,14 +135,14 @@ public class Member extends BaseEntity {
         this.jobName = requestDTO.getJobName();
         this.jobLocation = requestDTO.getJobLocation();
         this.jobPart = requestDTO.getJobPart();
-        this.jobPicture = requestDTO.getJobPicture();
+        this.jobImage = requestDTO.getJobImage();
     }
 
     public void updateEdu(MemberEduUpdateRequestDTO requestDTO) {
         this.eduName = requestDTO.getEduName();
         this.eduMajor = requestDTO.getEduMajor();
         this.eduLevel = requestDTO.getEduLevel();
-        this.eduPicture = requestDTO.getEduPicture();
+        this.eduImage = requestDTO.getEduImage();
     }
 
     public void updateCommon(MemberUpdateCommonRequestDTO dto) {

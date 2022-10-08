@@ -3,9 +3,6 @@ package com.tikitaka.naechinso.domain.member;
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptAndUpdateRequestDTO;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
@@ -30,6 +27,7 @@ public class MemberController {
     private final JwtTokenProvider jwtTokenService;
 
 
+
     @GetMapping
     @ApiOperation(value = "유저 자신의 모든 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> getMyInformation(
@@ -37,7 +35,6 @@ public class MemberController {
     ) {
         return CommonApiResponse.of(MemberCommonResponseDTO.of(member));
     }
-
 
     @GetMapping("/detail")
     @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken 필요)")
@@ -48,7 +45,6 @@ public class MemberController {
         return CommonApiResponse.of(res);
     }
 
-
     @PostMapping("/join")
     @ApiOperation(value = "유저를 공통 정보로 가입시킨다 (RegisterToken)")
     public CommonApiResponse<MemberCommonJoinResponseDTO> joinCommonMember(
@@ -57,6 +53,16 @@ public class MemberController {
     ) {
         String phone = jwtTokenService.parsePhoneByRegisterToken(request);
         return CommonApiResponse.of(memberService.joinCommonMember(phone, dto));
+    }
+
+    @PostMapping("/join/detail")
+    @ApiOperation(value = "회원가입 세부 정보를 입력하여 최종 가입시킨다 (AccessToken)")
+    public CommonApiResponse<MemberDetailResponseDTO> setMemberDetail(
+            @Valid @RequestBody MemberDetailJoinRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        final MemberDetailResponseDTO res = memberService.createDetail(member, dto);
+        return CommonApiResponse.of(res);
     }
 
     @PatchMapping("/common")
@@ -86,18 +92,22 @@ public class MemberController {
         return CommonApiResponse.of(memberService.updateEdu(member, dto));
     }
 
+//    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @ApiOperation(value = "프로필 이미지를 업로드하고 이미지 URL 을 가져온다 (AccessToken)")
+//    public CommonApiResponse<List<String>> updateProfileImage(
+//            @Parameter(
+//                    description = "업로드 파일 리스트",
+//                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE),
+//                    required = true
+//            )
+//            @RequestPart List<MultipartFile> multipartFile,
+//            @ApiIgnore @AuthMember Member member
+//    ) {
+////        awsS3Service.uploadImage(multipartFile, dirName);
+//        return CommonApiResponse.of(null);
+//    }
 
 
-
-    @PostMapping("/join/detail")
-    @ApiOperation(value = "회원가입 세부 정보를 입력하여 최종 가입시킨다 (AccessToken)")
-    public CommonApiResponse<MemberDetailResponseDTO> setMemberDetail(
-            @Valid @RequestBody MemberDetailJoinRequestDTO dto,
-            @ApiIgnore @AuthMember Member member
-    ) {
-        final MemberDetailResponseDTO res = memberService.createDetail(member, dto);
-        return CommonApiResponse.of(res);
-    }
 
     //페이징 처리 추가할 예정
     @GetMapping("/find")

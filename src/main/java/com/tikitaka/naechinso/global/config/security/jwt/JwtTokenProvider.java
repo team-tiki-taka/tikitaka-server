@@ -129,9 +129,13 @@ public class JwtTokenProvider {
             throw new UnauthorizedException(ErrorCode.INVALID_AUTH_TOKEN);
         }
 
-        UserDetails principal = loginService.loadUserByUsername(claims.getSubject());
-
-        return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
+        try {
+            UserDetails principal = loginService.loadUserByUsername(claims.getSubject());
+            return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
+        } catch (Exception e) {
+            request.setAttribute("exception", ErrorCode.INVALID_USER_TOKEN.getCode());
+            throw e;
+        }
     }
 
 
