@@ -15,6 +15,7 @@ public interface AwsS3Service {
 
     /**
      * 지정한 파일 명에 해당하는 파일을 S3 버킷에서 제거합니다
+     * 서버에 존재하지 않는 파일을 삭제 시도하더라도 예외를 내보내지 않습니다
      * @param fileName 디렉토리 경로를 포함한 파일명
      * */
     void deleteImage(String fileName);

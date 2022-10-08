@@ -33,14 +33,15 @@ public class AwsS3Controller {
      * @return 성공 시 200 / 함께 업로드 된 파일의 파일명 리스트 반영
      */
     @ApiOperation(value = "Amazon S3에 이미지를 업로드한다", notes = "Amazon S3에 이미지 업로드 ")
-    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/image/{dir}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public CommonApiResponse<List<String>> uploadImage(
+            @PathVariable("dir") AwsS3Directory dirName,
             @Parameter(
                     description = "업로드 할 파일 리스트",
-                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)  // Won't work without OCTET_STREAM as the mediaType.
+                    // Won't work without OCTET_STREAM as the mediaType.
+                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)
             )
             @RequestPart List<MultipartFile> multipartFiles,
-            @RequestParam AwsS3Directory dirName,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(awsS3ServiceImpl.uploadImage(multipartFiles, dirName.name()));
@@ -51,10 +52,10 @@ public class AwsS3Controller {
      * @return 성공 시 200 Success
      */
     @ApiOperation(value = "[Admin] Amazon S3에 업로드 된 파일을 삭제한다", notes = "Amazon S3에 업로드된 이미지 삭제")
-    @DeleteMapping("/image")
+    @DeleteMapping("/image/{file}")
     public CommonApiResponse<Void> deleteImage(
-            @ApiParam(value="img 파일 하나 삭제", required = true)
-            @RequestParam String fileName
+            @ApiParam(value="삭제할 서버 내 파일 명", required = true)
+            @PathVariable("file") String fileName
     ) {
         awsS3ServiceImpl.deleteImage(fileName);
         return CommonApiResponse.of(null);

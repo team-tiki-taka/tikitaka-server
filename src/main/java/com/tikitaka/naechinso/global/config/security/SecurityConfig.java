@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(SwaggerPatterns).permitAll()
-                .antMatchers(HttpMethod.DELETE,"/s3/image").hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/s3/image/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/member/join").permitAll()
                 .antMatchers("/").permitAll() //health check

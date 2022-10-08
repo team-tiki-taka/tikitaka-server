@@ -64,6 +64,10 @@ public enum ErrorCode {
     /* Database 관련 오류 */
     DUPLICATE_RESOURCE(CONFLICT, "D001", "데이터가 이미 존재합니다"),
 
+    /* 이미지 관련 오류 */
+    INVALID_FILE_EXTENSION(BAD_REQUEST, "FILE000", "잘못된 파일 확장자명입니다"),
+    FILE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "FILE001", "파일 업로드에 실패했습니다"),
+
 
 
     ;
