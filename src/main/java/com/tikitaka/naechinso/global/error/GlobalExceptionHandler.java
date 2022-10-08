@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.global.error;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.tikitaka.naechinso.global.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -7,10 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 
 import java.util.Arrays;
 
@@ -42,16 +47,26 @@ public class GlobalExceptionHandler {
     }
 
 
-//    /**
-//     * enum type 일치하지 않아 binding 못할 경우 발생
-//     * 주로 @RequestParam enum으로 binding 못했을 경우 발생
-//     */
-//    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-//    protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-//        log.error("handleMethodArgumentTypeMismatchException", e);
-//        final ErrorResponse response = ErrorResponse.of(e);
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    /**
+     * enum type 일치하지 않아 binding 못할 경우 발생
+     * 주로 @RequestParam enum으로 binding 못했을 경우 발생
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        log.error("handleMethodArgumentTypeMismatchException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode._INVALID_REQUEST_PARAMETER);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    /**
+     * Request Param 타입이 일치하지 않을 때 발생
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        log.error("handleMissingServletRequestParameterException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode._INVALID_REQUEST_PARAMETER);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     /**
      * 지원하지 않은 HTTP method 호출 할 경우 발생
@@ -61,6 +76,16 @@ public class GlobalExceptionHandler {
         log.error("handleHttpRequestMethodNotSupportedException", e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode._METHOD_NOT_ALLOWED);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    /**
+     * 지원하지 않은 HTTP Media Type 호출 할 경우 발생
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
+        log.error("handleHttpMediaTypeNotSupportedException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode._UNSUPPORTED_MEDIA_TYPE);
+        return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     /**
@@ -82,6 +107,29 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.LOGIN_FAILED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    /**
+     * 파일 업로드 시 멀티파트 헤더를 설정하지 않았을때 에러
+     */
+    @ExceptionHandler({MultipartException.class})
+    protected ResponseEntity<ErrorResponse> handleMultipartException(MultipartException e) {
+        log.error("handleMultipartException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.NOT_MULTIPART_HEADER);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 아마존 S3 접근 오류
+     */
+    @ExceptionHandler({AmazonS3Exception.class})
+    protected ResponseEntity<ErrorResponse> handleMultipartException(AmazonS3Exception e) {
+        log.error("handleAmazonS3Exception", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.AMAZON_ACCESS_DENIED);
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+
+
 
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleAllException(Exception e) {

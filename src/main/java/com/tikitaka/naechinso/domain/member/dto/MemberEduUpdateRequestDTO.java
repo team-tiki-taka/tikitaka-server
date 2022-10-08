@@ -29,5 +29,5 @@ public class MemberEduUpdateRequestDTO {
 
     @ApiModelProperty(example = "인증 사진 링크")
     @NotBlank(message = "인증 사진을 업로드 해주세요")
-    private String eduPicture;
+    private String eduImage;
 }

@@ -17,9 +17,13 @@ public enum ErrorCode {
     _UNAUTHORIZED(UNAUTHORIZED, "C002", "권한이 없습니다"),
 
     _METHOD_NOT_ALLOWED(METHOD_NOT_ALLOWED, "C003", "지원하지 않는 Http Method 입니다"),
-    CANNOT_CREATE_RECOMMEND(INTERNAL_SERVER_ERROR, "C004", "추천사 작성에 실패했습니다"),
-    CANNOT_CREATE_RECOMMEND_REQUEST(INTERNAL_SERVER_ERROR, "C005", "추천사 요청에 실패했습니다"),
+    _UNSUPPORTED_MEDIA_TYPE(UNSUPPORTED_MEDIA_TYPE, "C004", "지원하지 않는 Http Media Type 입니다"),
+    _INVALID_REQUEST_PARAMETER(BAD_REQUEST, "C005", "유효하지 않은 Request Parameter 입니다"),
+    CANNOT_CREATE_RECOMMEND(INTERNAL_SERVER_ERROR, "C006", "추천사 작성에 실패했습니다"),
+    CANNOT_CREATE_RECOMMEND_REQUEST(INTERNAL_SERVER_ERROR, "C007", "추천사 요청에 실패했습니다"),
 
+    NOT_MULTIPART_HEADER(BAD_REQUEST, "C008", "Multipart 헤더가 아닙니다"),
+    AMAZON_ACCESS_DENIED(FORBIDDEN, "C009", "Amazon S3 접근이 거부되었습니다"),
 
     /* Auth 관련 오류 */
     NO_TOKEN(UNAUTHORIZED, "AUTH000", "토큰이 존재하지 않습니다"),
@@ -34,6 +38,7 @@ public enum ErrorCode {
     INVALID_SIGNATURE(UNAUTHORIZED, "AUTH009", "잘못된 JWT 서명입니다"),
     MISMATCH_VERIFICATION_CODE(UNAUTHORIZED, "AUTH010", "인증번호가 일치하지 않습니다"),
     EXPIRED_VERIFICATION_CODE(UNAUTHORIZED, "AUTH011", "인증번호가 만료되었습니다"),
+    INVALID_USER_TOKEN(UNAUTHORIZED, "AUTH012", "서버에 토큰과 일치하는 정보가 없습니다"),
 
     LOGIN_FAILED(UNAUTHORIZED, "AUTH012", "로그인에 실패했습니다"),
 

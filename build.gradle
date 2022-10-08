@@ -37,6 +37,9 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	//AWS S3
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.2'
+
 	//jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 

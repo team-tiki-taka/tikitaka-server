@@ -27,8 +27,8 @@ public class MemberCommonJoinRequestDTO {
     private Gender gender;
 
     @ApiModelProperty(example = "25")
-    @Min(value = 25, message = "25-33세까지만 가입 가능합니다")
-    @Max(value = 33, message = "25-33세까지만 가입 가능합니다")
+    @Min(value = 25, message = "25-35세까지만 가입 가능합니다")
+    @Max(value = 35, message = "25-35세까지만 가입 가능합니다")
     private int age;
 
     @NotNull(message = "서비스 이용약관 동의가 필요합니다")
