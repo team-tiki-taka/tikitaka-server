@@ -59,6 +59,7 @@ public class SecurityConfig {
                 .antMatchers(SwaggerPatterns).permitAll()
                 .antMatchers(HttpMethod.DELETE,"/s3/image/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/pending/**").permitAll() ///////////////////////////////////////가입승인대기
                 .antMatchers("/member/join").permitAll()
                 .antMatchers("/").permitAll() //health check
                 .antMatchers("/sms/**").permitAll()

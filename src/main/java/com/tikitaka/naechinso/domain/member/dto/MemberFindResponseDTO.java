@@ -3,22 +3,22 @@ package com.tikitaka.naechinso.domain.member.dto;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 /**
- * 추천인 및 추천 받는 사람 공통 가입을 위한 Dto입니다
- * @author gengminy 220924
+ * 멤버 전체 검색을 위한 DTO
+ * @author gengminy 221008
  * */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
 @ToString
-public class MemberCommonResponseDTO {
+public class MemberFindResponseDTO {
+
+    private Long id;
 
     private String phone;
 
@@ -46,9 +46,12 @@ public class MemberCommonResponseDTO {
 
     private String eduImage;
 
+    private LocalDateTime createdAt;
 
-    public static MemberCommonResponseDTO of(Member member) {
-        MemberCommonResponseDTO res = MemberCommonResponseDTO.builder()
+
+    public static MemberFindResponseDTO of(Member member) {
+        MemberFindResponseDTO res = MemberFindResponseDTO.builder()
+                .id(member.getId())
                 .phone(member.getPhone())
                 .role(member.getRole())
                 .name(member.getName())
@@ -62,6 +65,7 @@ public class MemberCommonResponseDTO {
                 .eduMajor(member.getEduMajor())
                 .eduLevel(member.getEduLevel())
                 .eduImage(member.getEduImage())
+                .createdAt(member.getCreatedAt())
                 .build();
 
         return res;

@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 지원하지 않은 HTTP Media Type 호출 할 경우 발생
+     * 지원하지 않은 HTTP Media PendingType 호출 할 경우 발생
      */
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     protected ResponseEntity<ErrorResponse> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {

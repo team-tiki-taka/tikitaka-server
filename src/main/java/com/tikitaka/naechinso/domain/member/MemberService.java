@@ -3,21 +3,21 @@ package com.tikitaka.naechinso.domain.member;
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
+import com.tikitaka.naechinso.domain.pending.PendingService;
+import com.tikitaka.naechinso.domain.pending.constant.PendingType;
+import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateCreditImageRequestDTO;
+import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateMemberImageRequestDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
-import com.tikitaka.naechinso.global.config.security.MemberAdapter;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
+import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,9 +28,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class MemberService {
 
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PendingService pendingService;
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     public Member findByPhone(String phone) {
         return memberRepository.findByPhone(phone)
@@ -41,9 +42,9 @@ public class MemberService {
         return findByPhone(member.getPhone());
     }
 
-    public List<MemberCommonResponseDTO> findAll() {
+    public List<MemberFindResponseDTO> findAll() {
         return memberRepository.findAll().stream()
-                .map(MemberCommonResponseDTO::of).collect(Collectors.toList());
+                .map(MemberFindResponseDTO::of).collect(Collectors.toList());
     }
 
 
@@ -78,32 +79,8 @@ public class MemberService {
         return MemberCommonJoinResponseDTO.of(member);
     }
 
-    public TokenResponseDTO login(String phone) {
-
-        Member checkMember = memberRepository.findByPhone(phone)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.USER_NOT_FOUND));
-
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(new MemberAdapter(checkMember), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
-
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        TokenResponseDTO tokenResponseDTO
-                = jwtTokenProvider.generateToken(new JwtDTO(phone));
-
-        //리프레시 토큰 저장 로직 아래에
-        return tokenResponseDTO;
-    }
-
-
     public MemberDetailResponseDTO readDetail(Member member) {
-//
-//        Member checkMember = memberRepository.findByPhone(phone)
-//                .orElseThrow(() -> new BadRequestException(ErrorCode.USER_NOT_FOUND));
-
-        MemberDetailResponseDTO dto = MemberDetailResponseDTO.of(member);
-
-        return dto;
+        return MemberDetailResponseDTO.of(member);
     }
 
     public MemberDetailResponseDTO createDetail(Member authMember, MemberDetailJoinRequestDTO dto) {
@@ -115,39 +92,58 @@ public class MemberService {
             throw new BadRequestException(ErrorCode.USER_ALREADY_EXIST);
         }
 
+        //추천 받은 정보가 없는 회원
+        if (member.getRecommendReceived().isEmpty()) {
+            throw new ForbiddenException(ErrorCode.RECOMMEND_NOT_RECEIVED);
+        }
+
         MemberDetail detail = MemberDetail.of(member, dto);
+
+
         memberDetailRepository.save(detail);
         return MemberDetailResponseDTO.of(detail);
     }
 
-    public MemberCommonResponseDTO updateJob(Member authMember, MemberJobUpdateRequestDTO dto){
+    public MemberCommonResponseDTO updateJob(Member authMember, MemberUpdateJobRequestDTO dto){
         //영속성 유지를 위한 fetch
         Member member = findByMember(authMember);
 
         member.updateJob(dto);
         memberRepository.save(member);
+
+        //직업 정보 승인 요청
+        pendingService.createPendingByCreditImage(new PendingUpdateCreditImageRequestDTO(member.getId(), PendingType.JOB, dto.getJobImage()));
+
         return MemberCommonResponseDTO.of(member);
     }
 
-    public MemberCommonResponseDTO updateEdu(Member authMember, MemberEduUpdateRequestDTO dto){
+    public MemberCommonResponseDTO updateEdu(Member authMember, MemberUpdateEduRequestDTO dto){
         //영속성 유지를 위한 fetch
         Member member = findByMember(authMember);
 
         member.updateEdu(dto);
         memberRepository.save(member);
+
+        //직업 정보 승인 요청
+        pendingService.createPendingByCreditImage(new PendingUpdateCreditImageRequestDTO(member.getId(), PendingType.EDU, dto.getEduImage()));
+
         return MemberCommonResponseDTO.of(member);
     }
 
     /**
      * MemberDetail 의 프로필 이미지를 업로드 한다
      * */
-//    public List<String> updateProfileImage(Member authMember, List<MultipartFile> multipartFile){
-//        //영속성 유지를 위한 fetch
-//        Member member = findByMember(authMember);
-//
-//        memberRepository.save(member);
-//        return MemberCommonResponseDTO.of(member);
-//    }
+    public MemberDetailResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){
+        //영속성 유지를 위한 fetch
+        Member member = findByMember(authMember);
+        member.updateImage(dto.getImages());
+
+        //프로필 사진 정보 승인 요청
+        pendingService.createPendingByMemberImage(new PendingUpdateMemberImageRequestDTO(member.getId(), PendingType.EDU, dto.getImages()));
+
+        memberRepository.save(member);
+        return MemberDetailResponseDTO.of(member);
+    }
 
 
     public void validateToken(Member authMember) {
@@ -161,6 +157,15 @@ public class MemberService {
         if (authMember.getDetail() == null) {
             throw new UnauthorizedException(ErrorCode.FORBIDDEN_USER);
         }
+    }
+
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public boolean existsById(Long memberId) {
+        return memberRepository.existsById(memberId);
     }
 
 }

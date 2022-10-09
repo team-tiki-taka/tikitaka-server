@@ -20,11 +20,11 @@ public class RecommendListResponseDTO {
         List<RecommendResponseDTO> recommendList = new ArrayList<>();
         List<RecommendResponseDTO> recommendReceivedList = new ArrayList<>();
 
-        member.getRecommends().stream().forEach(recommend ->
+        member.getRecommends().forEach(recommend ->
                 recommendList.add(RecommendResponseDTO.of(recommend))
         );
 
-        member.getRecommend_received().stream().forEach(recommend ->
+        member.getRecommendReceived().forEach(recommend ->
                 recommendReceivedList.add(RecommendResponseDTO.of(recommend))
         );
 

@@ -1,7 +1,7 @@
 package com.tikitaka.naechinso.domain.recommend.dto;
 
-import com.tikitaka.naechinso.domain.member.dto.MemberEduUpdateRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -16,10 +16,10 @@ public class RecommendMemberAcceptAndUpdateRequestDTO {
 
 
     @ApiModelProperty
-    private MemberEduUpdateRequestDTO edu;
+    private MemberUpdateEduRequestDTO edu;
 
     @ApiModelProperty
-    private MemberJobUpdateRequestDTO job;
+    private MemberUpdateJobRequestDTO job;
 
 //    @NotBlank(message = "직장명을 입력해주세요")
 //    private String jobName;

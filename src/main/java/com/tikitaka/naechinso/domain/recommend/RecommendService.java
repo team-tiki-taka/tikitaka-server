@@ -2,8 +2,6 @@ package com.tikitaka.naechinso.domain.recommend;
 
 import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.MemberService;
-import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
-import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.dto.*;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j

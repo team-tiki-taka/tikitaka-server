@@ -128,7 +128,7 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
 
             //가입 여부 (detail == null) 확인 후 받은 추천서 꺼내옴
             final Boolean hasDetail = authMember.getDetail() != null;
-            //유저 밴 여부
+            //유저 밴 여부 가져오기
             final Boolean isBanned = false;
 
             //액세스 + 리프레시 토큰 반환

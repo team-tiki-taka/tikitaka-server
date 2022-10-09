@@ -23,7 +23,6 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
-    private final RecommendService recommendService;
     private final JwtTokenProvider jwtTokenService;
 
 
@@ -37,7 +36,7 @@ public class MemberController {
     }
 
     @GetMapping("/detail")
-    @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken 필요)")
+    @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberDetailResponseDTO> getMemberDetail(
             @ApiIgnore @AuthMember Member member
     ) {
@@ -47,7 +46,7 @@ public class MemberController {
 
     @PostMapping("/join")
     @ApiOperation(value = "유저를 공통 정보로 가입시킨다 (RegisterToken)")
-    public CommonApiResponse<MemberCommonJoinResponseDTO> joinCommonMember(
+    public CommonApiResponse<MemberCommonJoinResponseDTO> createCommonMember(
             HttpServletRequest request,
             @Valid @RequestBody MemberCommonJoinRequestDTO dto
     ) {
@@ -57,7 +56,7 @@ public class MemberController {
 
     @PostMapping("/join/detail")
     @ApiOperation(value = "회원가입 세부 정보를 입력하여 최종 가입시킨다 (AccessToken)")
-    public CommonApiResponse<MemberDetailResponseDTO> setMemberDetail(
+    public CommonApiResponse<MemberDetailResponseDTO> createMemberDetail(
             @Valid @RequestBody MemberDetailJoinRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
@@ -76,8 +75,8 @@ public class MemberController {
 
     @PatchMapping("/job")
     @ApiOperation(value = "직업 정보를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<MemberCommonResponseDTO> setMemberJob(
-            @RequestBody MemberJobUpdateRequestDTO dto,
+    public CommonApiResponse<MemberCommonResponseDTO> updateJob(
+            @Valid @RequestBody MemberUpdateJobRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(memberService.updateJob(member, dto));
@@ -85,34 +84,27 @@ public class MemberController {
 
     @PatchMapping("/edu")
     @ApiOperation(value = "학력 정보를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<MemberCommonResponseDTO> setMemberJob(
-            @RequestBody MemberEduUpdateRequestDTO dto,
+    public CommonApiResponse<MemberCommonResponseDTO> updateEdu(
+            @Valid @RequestBody MemberUpdateEduRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(memberService.updateEdu(member, dto));
     }
 
-//    @PostMapping(value = "/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @ApiOperation(value = "프로필 이미지를 업로드하고 이미지 URL 을 가져온다 (AccessToken)")
-//    public CommonApiResponse<List<String>> updateProfileImage(
-//            @Parameter(
-//                    description = "업로드 파일 리스트",
-//                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE),
-//                    required = true
-//            )
-//            @RequestPart List<MultipartFile> multipartFile,
-//            @ApiIgnore @AuthMember Member member
-//    ) {
-////        awsS3Service.uploadImage(multipartFile, dirName);
-//        return CommonApiResponse.of(null);
-//    }
-
+    @PatchMapping("/image")
+    @ApiOperation(value = "프로필 이미지를 업데이트 한다 (AccessToken)")
+    public CommonApiResponse<MemberDetailResponseDTO> updateImage(
+            @Valid @RequestBody MemberUpdateImageRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.updateImage(member, dto));
+    }
 
 
     //페이징 처리 추가할 예정
     @GetMapping("/find")
     @ApiOperation(value = "[Admin]현재 가입한 모든 유저를 불러온다 (AccessToken)")
-    public CommonApiResponse<List<MemberCommonResponseDTO>> getMyInformation(
+    public CommonApiResponse<List<MemberFindResponseDTO>> getMyInformation(
 //            @RequestBody RecommendMemberAcceptRequestDTO dto,
 //            @ApiIgnore @AuthMember Member member
     ) {

@@ -23,7 +23,7 @@ public class RecommendReceiverDTO {
         return RecommendReceiverDTO.builder()
                 .name(recommend.getReceiverName())
                 .gender(recommend.getReceiverGender())
-                .name(recommend.getReceiverName())
+                .age(recommend.getReceiverAge())
                 .build();
     }
 }

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Builder
 @ToString
-public class MemberJobUpdateRequestDTO {
+public class MemberUpdateJobRequestDTO {
     @ApiModelProperty(example = "카카오")
     @NotBlank(message = "직장명을 입력해주세요")
     private String jobName;
