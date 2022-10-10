@@ -122,8 +122,6 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(HttpServletRequest request, String accessToken) {
         Claims claims = parseClaims(accessToken);
 
-        System.out.println("claims = " + claims); //
-
         if (claims.get(AUTHORITIES_KEY) == null) {
             request.setAttribute("exception", ErrorCode.INVALID_AUTH_TOKEN.getCode());
             throw new UnauthorizedException(ErrorCode.INVALID_AUTH_TOKEN);

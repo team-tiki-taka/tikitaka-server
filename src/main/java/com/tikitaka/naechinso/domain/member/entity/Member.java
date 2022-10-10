@@ -87,7 +87,8 @@ public class Member extends BaseEntity {
     private String jobImage;
 
     @Column(name = "mem_job_accepted")
-    private Boolean jobAccepted;
+    @Builder.Default
+    private Boolean jobAccepted = false;
 
     @Column(name = "mem_edu_school")
     private String eduName;
@@ -102,10 +103,12 @@ public class Member extends BaseEntity {
     private String eduImage;
 
     @Column(name = "mem_edu_accepted")
-    private Boolean eduAccepted;
+    @Builder.Default
+    private Boolean eduAccepted = false;
 
     @Column(name = "mem_join_accepted")
-    private Boolean joinAccepted;
+    @Builder.Default
+    private Boolean joinAccepted = false;
 
     //멤버 디테일 정보
     @OneToOne(mappedBy = "member")
@@ -139,6 +142,8 @@ public class Member extends BaseEntity {
         this.jobLocation = requestDTO.getJobLocation();
         this.jobPart = requestDTO.getJobPart();
         this.jobImage = requestDTO.getJobImage();
+
+        this.jobAccepted = true;
     }
 
     public void updateEdu(MemberUpdateEduRequestDTO requestDTO) {
@@ -146,6 +151,8 @@ public class Member extends BaseEntity {
         this.eduMajor = requestDTO.getEduMajor();
         this.eduLevel = requestDTO.getEduLevel();
         this.eduImage = requestDTO.getEduImage();
+
+        this.eduAccepted = true;
     }
 
     public void updateCommon(MemberUpdateCommonRequestDTO dto) {

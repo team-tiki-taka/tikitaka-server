@@ -24,17 +24,17 @@ public class PendingResponseDTO {
 
     private Long adminId;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
-    public static PendingFindResponseDTO of(Pending pending) {
-        return PendingFindResponseDTO.builder()
+    public static PendingResponseDTO of(Pending pending) {
+        return PendingResponseDTO.builder()
                 .type(pending.getType())
                 .isAccepted(pending.getIsAccepted())
                 .reason(pending.getReason())
                 .images(pending.getImages())
                 .adminId(pending.getAdminId())
-                .createdAt(pending.getCreatedAt())
+                .createdAt(pending.getCreatedAt().toString())
                 .build();
     }
 }

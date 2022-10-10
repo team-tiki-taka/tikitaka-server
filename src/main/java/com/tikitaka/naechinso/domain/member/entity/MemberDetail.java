@@ -72,6 +72,9 @@ public class MemberDetail extends BaseEntity {
     @Column(name = "mem_images")
     private String images;
 
+    @Column(name = "mem_image_accepted")
+    private Boolean image_accepted;
+
     @Column(name = "mem_point")
     @Builder.Default
     private Long point = 0L;
@@ -118,16 +121,20 @@ public class MemberDetail extends BaseEntity {
                 .introduce(dto.getIntroduce())
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
-                .images(StringUtils.join(dto.getImages(), ","))
+//                .images(StringUtils.join(dto.getImages(), ",")) // image pending
                 .member(member)
                 .build();
     }
 
     public List<String> getImages() {
-        return List.of(this.images.split(","));
+        if (this.images != null) {
+            return List.of(this.images.split(","));
+        }
+        return List.of();
     }
     public List<String> updateImage(List<String> images) {
         this.images = StringUtils.join(images, ",");
+        this.image_accepted = true;
         return images;
     }
 }

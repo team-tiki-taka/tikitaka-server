@@ -1,17 +1,16 @@
 package com.tikitaka.naechinso.domain.pending.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.pending.constant.PendingType;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
-import com.tikitaka.naechinso.global.error.ErrorCode;
-import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "pending")
@@ -35,7 +34,11 @@ public class Pending extends BaseEntity {
     private Member member;
 
     @Column(name = "pen_type")
+    @Enumerated(EnumType.STRING)
     private PendingType type;
+
+    @Column(name = "pen_content")
+    private String content;
 
     @Column(name = "pen_is_accepted")
     @Builder.Default
@@ -61,11 +64,15 @@ public class Pending extends BaseEntity {
     }
 
     public void accept(Member adminMember) {
-        //어드민이 아니면 거부
-//        if (!Objects.equals(adminMember.getRole().getDetail(), "ROLE_ADMIN")) {
-//            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
-//        }
         this.isAccepted = true;
         this.adminId = adminMember.getId();
+    }
+
+    public MemberUpdateEduRequestDTO getEduContent() {
+        return MemberUpdateEduRequestDTO.of(this.content);
+    }
+
+    public MemberUpdateJobRequestDTO getJobContent() {
+        return MemberUpdateJobRequestDTO.of(this.content);
     }
 }

@@ -2,6 +2,7 @@ package com.tikitaka.naechinso.domain.member;
 
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
@@ -9,6 +10,7 @@ import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -32,7 +34,7 @@ public class MemberController {
     public CommonApiResponse<MemberCommonResponseDTO> getMyInformation(
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(MemberCommonResponseDTO.of(member));
+        return CommonApiResponse.of(memberService.readCommonMember(member));
     }
 
     @GetMapping("/detail")
@@ -74,26 +76,26 @@ public class MemberController {
     }
 
     @PatchMapping("/job")
-    @ApiOperation(value = "직업 정보를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<MemberCommonResponseDTO> updateJob(
+    @ApiOperation(value = "직업 인증 정보 업데이트 요청을 보낸다 (AccessToken)")
+    public CommonApiResponse<PendingFindResponseDTO> updateJob(
             @Valid @RequestBody MemberUpdateJobRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(memberService.updateJob(member, dto));
+        return CommonApiResponse.of(memberService.updateJobRequest(member, dto));
     }
 
     @PatchMapping("/edu")
-    @ApiOperation(value = "학력 정보를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<MemberCommonResponseDTO> updateEdu(
+    @ApiOperation(value = "학력 정보 업데이트 요청을 보낸다 (AccessToken)")
+    public CommonApiResponse<PendingFindResponseDTO> updateEdu(
             @Valid @RequestBody MemberUpdateEduRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(memberService.updateEdu(member, dto));
+        return CommonApiResponse.of(memberService.updateEduRequest(member, dto));
     }
 
     @PatchMapping("/image")
     @ApiOperation(value = "프로필 이미지를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<MemberDetailResponseDTO> updateImage(
+    public CommonApiResponse<PendingFindResponseDTO> updateImage(
             @Valid @RequestBody MemberUpdateImageRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {

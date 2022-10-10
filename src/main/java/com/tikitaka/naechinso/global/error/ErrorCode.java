@@ -48,6 +48,7 @@ public enum ErrorCode {
     USER_ALREADY_EXIST(BAD_REQUEST, "U002","이미 가입된 유저입니다"),
     USER_NOT_FOUND(NOT_FOUND, "U003","해당 유저 정보를 찾을 수 없습니다"),
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
+    DUPLICATE_PENDING_REQUEST(NOT_FOUND, "U005","동일한 종류의 심사 요청은 한 번만 보낼 수 있습니다"),
 
 
     /* Recommend 관련 오류 */
@@ -58,6 +59,8 @@ public enum ErrorCode {
     RECOMMEND_RECEIVER_NOT_EXIST(BAD_REQUEST, "R004","추천 받을 사람이 존재하지 않습니다"),
     RECOMMEND_REQUEST_ALREADY_EXIST(BAD_REQUEST, "R005","추천사 요청은 한 번만 보낼 수 있습니다"),
     RECOMMEND_NOT_RECEIVED(FORBIDDEN, "R006","가입하기 위해서는 먼저 추천사를 받아야 합니다"),
+    RECOMMEND_SENDER_UNAUTHORIZED(UNAUTHORIZED, "R007","추천인의 인증이 아직 완료되지 않았습니다"),
+    RECOMMEND_SENDER_NOT_EXIST(BAD_REQUEST, "R008","추천인 정보가 올바르지 않습니다"),
 
     /* Validation 오류 */
     PARAMETER_NOT_VALID(BAD_REQUEST, "P000", "인자가 유효하지 않습니다"),

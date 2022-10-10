@@ -22,4 +22,8 @@ public class MemberUpdateImageRequestDTO {
     @Size(min = 3, max = 3, message = "사진 3장을 업로드해야 합니다")
     @NotNull
     private List<String> images;
+
+        public static MemberUpdateImageRequestDTO of(List<String> images) {
+        return new MemberUpdateImageRequestDTO(images);
+    }
 }

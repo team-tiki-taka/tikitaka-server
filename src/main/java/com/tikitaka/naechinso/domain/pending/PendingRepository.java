@@ -11,4 +11,5 @@ public interface PendingRepository extends JpaRepository<Pending, Long> {
     List<Pending> findAllByMemberId(Long memberId);
 
     List<Pending> findAllByMemberIdAndIsAcceptedIsTrue(Long memberId);
+
 }

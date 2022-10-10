@@ -5,8 +5,9 @@ import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
 import com.tikitaka.naechinso.domain.pending.PendingService;
 import com.tikitaka.naechinso.domain.pending.constant.PendingType;
-import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateCreditImageRequestDTO;
+import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
 import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateMemberImageRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
@@ -47,6 +48,10 @@ public class MemberService {
                 .map(MemberFindResponseDTO::of).collect(Collectors.toList());
     }
 
+    public MemberCommonResponseDTO readCommonMember(Member authMember) {
+        Member member = findByMember(authMember);
+        return MemberCommonResponseDTO.of(member);
+    }
 
     public MemberCommonJoinResponseDTO joinCommonMember(String phone, MemberCommonJoinRequestDTO dto) {
         //이미 존재하는 유저일 경우 400
@@ -93,56 +98,58 @@ public class MemberService {
         }
 
         //추천 받은 정보가 없는 회원
-        if (member.getRecommendReceived().isEmpty()) {
+        if (member.getRecommendReceived() == null || member.getRecommendReceived().isEmpty()) {
             throw new ForbiddenException(ErrorCode.RECOMMEND_NOT_RECEIVED);
         }
 
-        MemberDetail detail = MemberDetail.of(member, dto);
+        for (Recommend recommend : member.getRecommendReceived()) {
+            //아직 추천인이 없는 상태면 무시
+            if (recommend.getSender() == null) {
+                continue;
+            }
 
+            //받은 추천사 중 한명이라도 인증이 완료된 상태면 정회원 가입 실행
+            if (recommend.getSender().getJobAccepted() || recommend.getSender().getEduAccepted()) {
+                MemberDetail detail = MemberDetail.of(member, dto);
+                memberDetailRepository.save(detail);
 
-        memberDetailRepository.save(detail);
-        return MemberDetailResponseDTO.of(detail);
+                member.setDetail(detail);
+                pendingService.createPendingByMemberImage(member, new MemberUpdateImageRequestDTO(dto.getImages()));
+                return MemberDetailResponseDTO.of(detail);
+            }
+        }
+        //추천서를 작성한 사람의 인증이 완료되지 않은 경우
+        throw new UnauthorizedException(ErrorCode.RECOMMEND_SENDER_UNAUTHORIZED);
     }
 
-    public MemberCommonResponseDTO updateJob(Member authMember, MemberUpdateJobRequestDTO dto){
-        //영속성 유지를 위한 fetch
-        Member member = findByMember(authMember);
 
-        member.updateJob(dto);
-        memberRepository.save(member);
+    /**
+     * 직업 정보 업데이트 요청 처리
+     * 사진 필드는 Pending 에서 승인 후 처리한다
+     * */
+    public PendingFindResponseDTO updateJobRequest(Member authMember, MemberUpdateJobRequestDTO dto){
+//        member.updateJob(dto);
+//        memberRepository.save(member);
 
         //직업 정보 승인 요청
-        pendingService.createPendingByCreditImage(new PendingUpdateCreditImageRequestDTO(member.getId(), PendingType.JOB, dto.getJobImage()));
 
-        return MemberCommonResponseDTO.of(member);
+        return pendingService.createPendingByJob(authMember, dto);
     }
 
-    public MemberCommonResponseDTO updateEdu(Member authMember, MemberUpdateEduRequestDTO dto){
-        //영속성 유지를 위한 fetch
-        Member member = findByMember(authMember);
-
-        member.updateEdu(dto);
-        memberRepository.save(member);
-
-        //직업 정보 승인 요청
-        pendingService.createPendingByCreditImage(new PendingUpdateCreditImageRequestDTO(member.getId(), PendingType.EDU, dto.getEduImage()));
-
-        return MemberCommonResponseDTO.of(member);
+    /**
+     * 학력 정보 업데이트 요청 처리
+     * 사진 필드는 Pending 에서 승인 후 처리한다
+     * */
+    public PendingFindResponseDTO updateEduRequest(Member authMember, MemberUpdateEduRequestDTO dto){
+        //학력 정보 승인 요청
+        return pendingService.createPendingByEdu(authMember, dto);
     }
 
     /**
      * MemberDetail 의 프로필 이미지를 업로드 한다
      * */
-    public MemberDetailResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){
-        //영속성 유지를 위한 fetch
-        Member member = findByMember(authMember);
-        member.updateImage(dto.getImages());
-
-        //프로필 사진 정보 승인 요청
-        pendingService.createPendingByMemberImage(new PendingUpdateMemberImageRequestDTO(member.getId(), PendingType.EDU, dto.getImages()));
-
-        memberRepository.save(member);
-        return MemberDetailResponseDTO.of(member);
+    public PendingFindResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){
+        return pendingService.createPendingByMemberImage(authMember, dto);
     }
 
 

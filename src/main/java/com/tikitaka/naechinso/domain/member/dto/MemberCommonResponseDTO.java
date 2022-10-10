@@ -3,11 +3,15 @@ package com.tikitaka.naechinso.domain.member.dto;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.entity.Member;
+import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
+import com.tikitaka.naechinso.domain.pending.entity.Pending;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 추천인 및 추천 받는 사람 공통 가입을 위한 Dto입니다
@@ -38,6 +42,8 @@ public class MemberCommonResponseDTO {
 
     private String jobImage;
 
+    private Boolean jobAccepted;
+
     private String eduName;
 
     private String eduMajor;
@@ -46,9 +52,10 @@ public class MemberCommonResponseDTO {
 
     private String eduImage;
 
+    private Boolean eduAccepted;
 
     public static MemberCommonResponseDTO of(Member member) {
-        MemberCommonResponseDTO res = MemberCommonResponseDTO.builder()
+        return MemberCommonResponseDTO.builder()
                 .phone(member.getPhone())
                 .role(member.getRole())
                 .name(member.getName())
@@ -58,12 +65,12 @@ public class MemberCommonResponseDTO {
                 .jobPart(member.getJobPart())
                 .jobLocation(member.getJobLocation())
                 .jobImage(member.getJobImage())
+                .jobAccepted(member.getJobAccepted())
                 .eduName(member.getEduName())
                 .eduMajor(member.getEduMajor())
                 .eduLevel(member.getEduLevel())
                 .eduImage(member.getEduImage())
+                .eduAccepted(member.getEduAccepted())
                 .build();
-
-        return res;
     }
 }

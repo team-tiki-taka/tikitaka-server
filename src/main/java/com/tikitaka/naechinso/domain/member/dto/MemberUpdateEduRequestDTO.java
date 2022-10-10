@@ -1,9 +1,14 @@
 package com.tikitaka.naechinso.domain.member.dto;
 
+import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.JSONObject;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 직업 정보 업데이트를 위한 DTO
@@ -30,4 +35,22 @@ public class MemberUpdateEduRequestDTO {
     @ApiModelProperty(example = "인증 사진 링크")
     @NotBlank(message = "인증 사진을 업로드 해주세요")
     private String eduImage;
+
+    public static MemberUpdateEduRequestDTO of(String content) {
+        JSONObject json = new JSONObject(content);
+        try {
+            final String eduName = json.getString("eduName");
+            final String eduMajor = json.getString("eduMajor");
+            final String eduLevel = json.getString("eduLevel");
+            final String eduImage = json.getString("eduImage");
+            return MemberUpdateEduRequestDTO.builder()
+                    .eduName(eduName)
+                    .eduMajor(eduMajor)
+                    .eduLevel(eduLevel)
+                    .eduImage(eduImage)
+                    .build();
+        } catch (Exception e) {
+            throw new BadRequestException(ErrorCode._BAD_REQUEST, "JSON 형식 오류입니다");
+        }
+    }
 }
