@@ -2,6 +2,8 @@ package com.tikitaka.naechinso.domain.recommend.dto;
 
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
+import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import lombok.*;
 
 /**
@@ -19,11 +21,18 @@ public class RecommendReceiverDTO {
 
     private int age;
 
+    //추천인의 사진 인증 승인 여부
+    private boolean senderCreditAccepted;
+
     public static RecommendReceiverDTO of(Recommend recommend) {
+        if (recommend.getSender() == null) {
+            throw new BadRequestException(ErrorCode.RECOMMEND_SENDER_NOT_EXIST);
+        }
         return RecommendReceiverDTO.builder()
-                .name(recommend.getReceiverName())
-                .gender(recommend.getReceiverGender())
-                .name(recommend.getReceiverName())
+                .name(recommend.getSenderName())
+                .gender(recommend.getSenderGender())
+                .age(recommend.getSenderAge())
+                .senderCreditAccepted(recommend.getSender().getEduAccepted() || recommend.getSender().getJobAccepted()  )
                 .build();
     }
 }

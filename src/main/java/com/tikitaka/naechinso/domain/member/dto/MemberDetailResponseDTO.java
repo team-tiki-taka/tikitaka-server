@@ -8,6 +8,9 @@ import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 추천인 및 추천 받는 사람 공통 가입을 위한 Dto입니다
  * @author gengminy 220924
@@ -50,7 +53,7 @@ public class MemberDetailResponseDTO {
 
     private String style;
 
-    private String picture;
+    private List<String> images;
 
     private Long point;
 
@@ -68,23 +71,19 @@ public class MemberDetailResponseDTO {
     }
 
     private static MemberDetailResponseDTO buildDetail(MemberDetail detail) {
-        MemberDetailResponseDTOBuilder dtoBuilder = MemberDetailResponseDTO.builder();
         Member member = detail.getMember();
 
-        //멤버 정보가 연결되어 있으면 가져옴
-        if (member != null) {
-            dtoBuilder.phone(member.getPhone())
-                    .role(member.getRole())
-                    .name(member.getName())
-                    .gender(member.getGender())
-                    .age(member.getAge());
-
-        } else {
-            //없으면 에러
+        //멤버 정보가 없으면 에러
+        if (member == null) {
             throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
         }
 
-        return dtoBuilder
+        return MemberDetailResponseDTO.builder()
+                .phone(member.getPhone())
+                .role(member.getRole())
+                .name(member.getName())
+                .gender(member.getGender())
+                .age(member.getAge())
                 .height(detail.getHeight())
                 .address(detail.getAddress())
                 .religion(detail.getReligion())
@@ -95,7 +94,7 @@ public class MemberDetailResponseDTO {
                 .introduce(detail.getIntroduce())
                 .hobby(detail.getHobby())
                 .style(detail.getStyle())
-                .picture(detail.getPicture())
+                .images(detail.getImages())
                 .point(detail.getPoint())
                 .build();
     }

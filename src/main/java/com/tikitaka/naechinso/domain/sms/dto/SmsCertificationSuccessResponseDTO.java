@@ -19,9 +19,10 @@ public class SmsCertificationSuccessResponseDTO {
     private String refreshToken;
     private String registerToken;
 
-    //추천 받았는지 여부, true 면 유효한 유저
+    //내 번호로 추천받은 정보 리스트
     private List<RecommendReceiverDTO> recommendReceived = new ArrayList<>();
     //가입 완료했는지 여부, detail 정보가 있으면 true
     private Boolean isActive = false;
+    //서버로부터 차단 당했는지 여부
     private Boolean isBanned = false;
 }

@@ -32,7 +32,7 @@ public class ErrorResponse {
                 .message(errorCode.getDetail())
                 .status(errorCode.getHttpStatus().value())
                 .code(errorCode.getCode())
-                .errors(Arrays.asList())
+                .errors(List.of())
                 .build();
     }
 

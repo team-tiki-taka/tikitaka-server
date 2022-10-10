@@ -99,23 +99,4 @@ public class Recommend extends BaseEntity {
         this.receiverPersonality = requestDTO.getPersonality();
         this.receiverPeriod = requestDTO.getPeriod();
     }
-
-    public void update(Member sender, RecommendMemberAcceptRequestDTO requestDTO) {
-        updateSender(sender);
-        this.receiverAppeal = requestDTO.getAppeal();
-        this.receiverMeet = requestDTO.getMeet();
-        this.receiverPersonality = requestDTO.getPersonality();
-        this.receiverPeriod = requestDTO.getPeriod();
-    }
-
-    public void updateSender(Member sender) {
-        this.sender = sender;
-        this.senderPhone = sender.getPhone();
-        this.senderName = sender.getName();
-        this.senderAge = sender.getAge();
-        this.senderGender = sender.getGender();
-        this.senderJobName = sender.getJobName();
-        this.senderJobPart = sender.getJobPart();
-        this.senderJobLocation = sender.getJobLocation();
-    }
 }

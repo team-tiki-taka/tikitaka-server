@@ -17,7 +17,7 @@ public enum ErrorCode {
     _UNAUTHORIZED(UNAUTHORIZED, "C002", "권한이 없습니다"),
 
     _METHOD_NOT_ALLOWED(METHOD_NOT_ALLOWED, "C003", "지원하지 않는 Http Method 입니다"),
-    _UNSUPPORTED_MEDIA_TYPE(UNSUPPORTED_MEDIA_TYPE, "C004", "지원하지 않는 Http Media Type 입니다"),
+    _UNSUPPORTED_MEDIA_TYPE(UNSUPPORTED_MEDIA_TYPE, "C004", "지원하지 않는 Http Media PendingType 입니다"),
     _INVALID_REQUEST_PARAMETER(BAD_REQUEST, "C005", "유효하지 않은 Request Parameter 입니다"),
     CANNOT_CREATE_RECOMMEND(INTERNAL_SERVER_ERROR, "C006", "추천사 작성에 실패했습니다"),
     CANNOT_CREATE_RECOMMEND_REQUEST(INTERNAL_SERVER_ERROR, "C007", "추천사 요청에 실패했습니다"),
@@ -40,7 +40,7 @@ public enum ErrorCode {
     EXPIRED_VERIFICATION_CODE(UNAUTHORIZED, "AUTH011", "인증번호가 만료되었습니다"),
     INVALID_USER_TOKEN(UNAUTHORIZED, "AUTH012", "서버에 토큰과 일치하는 정보가 없습니다"),
 
-    LOGIN_FAILED(UNAUTHORIZED, "AUTH012", "로그인에 실패했습니다"),
+    LOGIN_FAILED(UNAUTHORIZED, "AUTH013", "로그인에 실패했습니다"),
 
 
     /* User 관련 오류 */
@@ -48,15 +48,19 @@ public enum ErrorCode {
     USER_ALREADY_EXIST(BAD_REQUEST, "U002","이미 가입된 유저입니다"),
     USER_NOT_FOUND(NOT_FOUND, "U003","해당 유저 정보를 찾을 수 없습니다"),
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
+    DUPLICATE_PENDING_REQUEST(BAD_REQUEST, "U005","동일한 종류의 심사 요청은 한 번만 보낼 수 있습니다"),
 
 
     /* Recommend 관련 오류 */
-    RECOMMEND_NOT_FOUND(NOT_FOUND, "R000","해당 추천사 정보를 찾을 수 없습니다"),
+    RECOMMEND_NOT_FOUND(NOT_FOUND, "R000","추천사 정보를 찾을 수 없습니다"),
     RECOMMEND_ALREADY_EXIST(BAD_REQUEST, "R001","추천사를 같은 사람에게 중복으로 보낼 수 없습니다"),
     CANNOT_RECOMMEND_MYSELF(BAD_REQUEST, "R002","자기 자신은 추천할 수 없습니다"),
     RECOMMEND_SENDER_ALREADY_EXIST(BAD_REQUEST, "R003","유저 추천사는 한 번만 작성할 수 있습니다"),
     RECOMMEND_RECEIVER_NOT_EXIST(BAD_REQUEST, "R004","추천 받을 사람이 존재하지 않습니다"),
     RECOMMEND_REQUEST_ALREADY_EXIST(BAD_REQUEST, "R005","추천사 요청은 한 번만 보낼 수 있습니다"),
+    RECOMMEND_NOT_RECEIVED(FORBIDDEN, "R006","가입하기 위해서는 먼저 추천사를 받아야 합니다"),
+    RECOMMEND_SENDER_UNAUTHORIZED(UNAUTHORIZED, "R007","추천인의 인증이 아직 완료되지 않았습니다"),
+    RECOMMEND_SENDER_NOT_EXIST(BAD_REQUEST, "R008","추천인 정보가 올바르지 않습니다"),
 
     /* Validation 오류 */
     PARAMETER_NOT_VALID(BAD_REQUEST, "P000", "인자가 유효하지 않습니다"),
@@ -68,6 +72,9 @@ public enum ErrorCode {
     INVALID_FILE_EXTENSION(BAD_REQUEST, "FILE000", "잘못된 파일 확장자명입니다"),
     FILE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "FILE001", "파일 업로드에 실패했습니다"),
 
+    /* 가입 대기 관련 */
+    PENDING_NOT_FOUND(NOT_FOUND, "PEND000", "요청 대기 정보를 찾을 수 없습니다"),
+    PENDING_ALREADY_PROCESSED(BAD_REQUEST, "PEND001", "이미 처리 완료된 요청입니다"),
 
 
     ;

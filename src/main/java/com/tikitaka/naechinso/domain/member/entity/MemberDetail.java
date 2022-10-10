@@ -5,9 +5,11 @@ import com.tikitaka.naechinso.domain.member.dto.MemberDetailJoinRequestDTO;
 import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,8 +69,11 @@ public class MemberDetail extends BaseEntity {
     @Builder.Default
     private String style = "";
 
-    @Column(name = "mem_picture")
-    private String picture;
+    @Column(name = "mem_images")
+    private String images;
+
+    @Column(name = "mem_image_accepted")
+    private Boolean image_accepted;
 
     @Column(name = "mem_point")
     @Builder.Default
@@ -100,7 +105,7 @@ public class MemberDetail extends BaseEntity {
                 .introduce(dto.getIntroduce())
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
-                .picture(dto.getPicture())
+                .images(StringUtils.join(dto.getImages(), ","))
                 .build();
     }
 
@@ -116,9 +121,20 @@ public class MemberDetail extends BaseEntity {
                 .introduce(dto.getIntroduce())
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
-                .picture(dto.getPicture())
+//                .images(StringUtils.join(dto.getImages(), ",")) // image pending
                 .member(member)
                 .build();
     }
 
+    public List<String> getImages() {
+        if (this.images != null) {
+            return List.of(this.images.split(","));
+        }
+        return List.of();
+    }
+    public List<String> updateImage(List<String> images) {
+        this.images = StringUtils.join(images, ",");
+        this.image_accepted = true;
+        return images;
+    }
 }

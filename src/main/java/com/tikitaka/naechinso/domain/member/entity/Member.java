@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberEduUpdateRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberJobUpdateRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
+import com.tikitaka.naechinso.domain.pending.entity.Pending;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
+import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.*;
 
 import javax.persistence.*;
@@ -84,7 +87,8 @@ public class Member extends BaseEntity {
     private String jobImage;
 
     @Column(name = "mem_job_accepted")
-    private String jobAccepted;
+    @Builder.Default
+    private Boolean jobAccepted = false;
 
     @Column(name = "mem_edu_school")
     private String eduName;
@@ -99,21 +103,23 @@ public class Member extends BaseEntity {
     private String eduImage;
 
     @Column(name = "mem_edu_accepted")
-    private String eduAccepted;
+    @Builder.Default
+    private Boolean eduAccepted = false;
 
     @Column(name = "mem_join_accepted")
-    private String joinAccepted;
+    @Builder.Default
+    private Boolean joinAccepted = false;
 
-    //마지막으로 관리한 어드민
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "mem_admin_id")
-//    @JsonIgnore
-//    private Member adminId;
-
-    //가입했을 경우 정보 디테일
+    //멤버 디테일 정보
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "mem_detail")
     private MemberDetail detail;
+
+    //내 가입 대기 정보
+    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    private List<Pending> pending = new ArrayList<>();
+
 
     //내가 소개해준 사람들
     //mapped by 에는 연관관계 엔티티의 필드명을 적어줌
@@ -124,31 +130,67 @@ public class Member extends BaseEntity {
     //나를 소개해준 사람들
     @OneToMany(mappedBy = "receiver")
     @JsonIgnore //순환참조 방지, 엔티티 프로퍼티 가려줌
-    private List<Recommend> recommend_received = new ArrayList<>();
+    private List<Recommend> recommendReceived = new ArrayList<>();
 
 
     public void setDetail(MemberDetail memberDetail) {
         this.detail = memberDetail;
     }
 
-    public void updateJob(MemberJobUpdateRequestDTO requestDTO) {
+    public void updateJob(MemberUpdateJobRequestDTO requestDTO) {
         this.jobName = requestDTO.getJobName();
         this.jobLocation = requestDTO.getJobLocation();
         this.jobPart = requestDTO.getJobPart();
         this.jobImage = requestDTO.getJobImage();
+
+        this.jobAccepted = true;
     }
 
-    public void updateEdu(MemberEduUpdateRequestDTO requestDTO) {
+    public void updateEdu(MemberUpdateEduRequestDTO requestDTO) {
         this.eduName = requestDTO.getEduName();
         this.eduMajor = requestDTO.getEduMajor();
         this.eduLevel = requestDTO.getEduLevel();
         this.eduImage = requestDTO.getEduImage();
+
+        this.eduAccepted = true;
     }
 
     public void updateCommon(MemberUpdateCommonRequestDTO dto) {
         this.name = dto.getName();
         this.gender = dto.getGender();
         this.age = dto.getAge();
+    }
+
+    public List<String> updateImage(List<String> images) {
+        if (this.detail == null) {
+            throw new UnauthorizedException(ErrorCode._UNAUTHORIZED);
+        }
+        return this.detail.updateImage(images);
+    }
+
+    public void acceptJobImage() {
+        this.jobAccepted = true;
+    }
+
+    public void acceptEduImage() {
+        this.eduAccepted = true;
+    }
+
+
+
+
+
+    /**
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * */
+    public void setAdmin() {
+        this.role = Role.ADMIN;
     }
 
 }
