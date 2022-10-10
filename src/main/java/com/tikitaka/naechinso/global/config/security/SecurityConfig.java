@@ -58,8 +58,10 @@ public class SecurityConfig {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(SwaggerPatterns).permitAll()
                 .antMatchers(HttpMethod.DELETE,"/s3/image/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.POST, "/pending/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.GET, "/pending/find").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/pending/find").permitAll() ///////////////////////////////////////가입승인대기
+                .antMatchers(HttpMethod.GET, "/pending").permitAll()
                 .antMatchers("/test/**").permitAll() ///////////////////////////////////////테스트
                 .antMatchers("/member/join").permitAll()
                 .antMatchers("/").permitAll() //health check

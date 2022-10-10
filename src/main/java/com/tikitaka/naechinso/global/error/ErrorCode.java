@@ -48,7 +48,7 @@ public enum ErrorCode {
     USER_ALREADY_EXIST(BAD_REQUEST, "U002","이미 가입된 유저입니다"),
     USER_NOT_FOUND(NOT_FOUND, "U003","해당 유저 정보를 찾을 수 없습니다"),
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
-    DUPLICATE_PENDING_REQUEST(NOT_FOUND, "U005","동일한 종류의 심사 요청은 한 번만 보낼 수 있습니다"),
+    DUPLICATE_PENDING_REQUEST(BAD_REQUEST, "U005","동일한 종류의 심사 요청은 한 번만 보낼 수 있습니다"),
 
 
     /* Recommend 관련 오류 */
@@ -72,6 +72,9 @@ public enum ErrorCode {
     INVALID_FILE_EXTENSION(BAD_REQUEST, "FILE000", "잘못된 파일 확장자명입니다"),
     FILE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "FILE001", "파일 업로드에 실패했습니다"),
 
+    /* 가입 대기 관련 */
+    PENDING_NOT_FOUND(NOT_FOUND, "PEND000", "요청 대기 정보를 찾을 수 없습니다"),
+    PENDING_ALREADY_PROCESSED(BAD_REQUEST, "PEND001", "이미 처리 완료된 요청입니다"),
 
 
     ;

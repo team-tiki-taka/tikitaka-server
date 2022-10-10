@@ -44,18 +44,30 @@ public class Pending extends BaseEntity {
     @Builder.Default
     private Boolean isAccepted = false;
 
+    @Column(name = "pen_images")
+    private String images;
     @Column(name = "pen_reason")
     private String reason;
 
-    @Column(name = "pen_images")
-    private String images;
+    @Column(name = "pen_reject_images")
+    private String rejectImages;
 
     //마지막으로 관리한 어드민 정보
     @Column(name = "pen_admin_id")
     private Long adminId;
 
     public List<String> getImages() {
-        return List.of(this.images.split(","));
+        if (this.images != null) {
+            return List.of(this.images.split(","));
+        }
+        return List.of();
+    }
+
+    public List<String> getRejectImages() {
+        if (this.rejectImages != null) {
+            return List.of(this.rejectImages.split(","));
+        }
+        return List.of();
     }
 
     public List<String> updateImage(List<String> images) {
@@ -65,6 +77,13 @@ public class Pending extends BaseEntity {
 
     public void accept(Member adminMember) {
         this.isAccepted = true;
+        this.adminId = adminMember.getId();
+    }
+
+    public void reject(Member adminMember, String reason, List<String> rejectImages) {
+        this.isAccepted = false;
+        this.reason = reason;
+        this.rejectImages = StringUtils.join(rejectImages, ",");
         this.adminId = adminMember.getId();
     }
 

@@ -12,6 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 사진 변경 및 인증 승인 요청에 대한 어드민용 응답 DTO
+ * @author gengminy 221010
+ * */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -35,8 +39,9 @@ public class PendingFindResponseDTO {
 
     private List<String> images;
 
-    private String createdAt;
+    private List<String> rejectImages;
 
+    private String createdAt;
 
     public static PendingFindResponseDTO of(Pending pending) {
         Long memberId;
@@ -58,9 +63,11 @@ public class PendingFindResponseDTO {
                 .memberId(memberId)
                 .type(pending.getType())
                 .content(content)
-                .isAccepted(pending.getIsAccepted())
                 .reason(pending.getReason())
+                .isAccepted(pending.getIsAccepted())
                 .images(pending.getImages())
+                .reason(pending.getReason())
+                .rejectImages(pending.getRejectImages())
                 .adminId(pending.getAdminId())
                 .createdAt(pending.getCreatedAt().toString())
                 .build();

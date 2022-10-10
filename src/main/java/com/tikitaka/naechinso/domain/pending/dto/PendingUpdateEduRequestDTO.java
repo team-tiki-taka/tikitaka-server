@@ -33,7 +33,7 @@ public class PendingUpdateEduRequestDTO {
     @NotEmpty
     private MemberUpdateEduRequestDTO content;
 
-    @ApiModelProperty(example = "img1")
+    @ApiModelProperty(example = "img1.png")
     @NotEmpty
     private String image;
 }

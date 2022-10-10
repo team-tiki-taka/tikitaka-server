@@ -1,9 +1,11 @@
 package com.tikitaka.naechinso.domain;
 
+import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.MemberService;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberCommonJoinResponseDTO;
+import com.tikitaka.naechinso.domain.member.dto.MemberCommonResponseDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.pending.PendingService;
@@ -15,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
     private final MemberService memberService;
+
+    private final MemberRepository memberRepository;
     private final RecommendService recommendService;
     private final PendingService pendingService;
 
@@ -216,4 +221,17 @@ public class TestController {
 //                .build()));
 //
 //    }
+
+    @GetMapping("/set-admin-member/{id}")
+    @ApiOperation(value = "[*TEST*] 특정 고유 아이디의 유저를 어드민으로 만든다")
+    public CommonApiResponse<Object> createJobPendingMemberAndRecommendOther(
+            @PathVariable("id") Long id
+    ) {
+        Member member = memberService.findById(id);
+        member.setAdmin();
+
+        memberRepository.save(member);
+
+        return CommonApiResponse.of(MemberCommonResponseDTO.of(member));
+    }
 }

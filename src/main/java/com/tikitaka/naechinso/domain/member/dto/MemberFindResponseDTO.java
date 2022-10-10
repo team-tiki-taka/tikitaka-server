@@ -46,7 +46,7 @@ public class MemberFindResponseDTO {
 
     private String eduImage;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
     public static MemberFindResponseDTO of(Member member) {
@@ -65,7 +65,7 @@ public class MemberFindResponseDTO {
                 .eduMajor(member.getEduMajor())
                 .eduLevel(member.getEduLevel())
                 .eduImage(member.getEduImage())
-                .createdAt(member.getCreatedAt())
+                .createdAt(member.getCreatedAt().toString())
                 .build();
 
         return res;

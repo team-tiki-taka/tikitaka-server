@@ -29,7 +29,7 @@ public class PendingUpdateMemberImageRequestDTO {
     @Enum(enumClass = PendingType.class, message = "승인 요청 타입이 올바르지 않습니다")
     private PendingType type;
 
-    @ApiModelProperty(example = "[\"img1\", \"img2\", \"img3\"]")
+    @ApiModelProperty(example = "[\"img1.png\", \"img2.jpg\", \"img3.png\"]")
     @Size(min = 3, max = 3, message = "사진 3장을 업로드해야 합니다")
     @NotNull
     private List<String> images;

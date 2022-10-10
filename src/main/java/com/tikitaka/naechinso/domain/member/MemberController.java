@@ -77,7 +77,7 @@ public class MemberController {
 
     @PatchMapping("/job")
     @ApiOperation(value = "직업 인증 정보 업데이트 요청을 보낸다 (AccessToken)")
-    public CommonApiResponse<PendingFindResponseDTO> updateJob(
+    public CommonApiResponse<MemberCommonResponseDTO> updateJob(
             @Valid @RequestBody MemberUpdateJobRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
@@ -86,7 +86,7 @@ public class MemberController {
 
     @PatchMapping("/edu")
     @ApiOperation(value = "학력 정보 업데이트 요청을 보낸다 (AccessToken)")
-    public CommonApiResponse<PendingFindResponseDTO> updateEdu(
+    public CommonApiResponse<MemberCommonResponseDTO> updateEdu(
             @Valid @RequestBody MemberUpdateEduRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {
@@ -95,7 +95,7 @@ public class MemberController {
 
     @PatchMapping("/image")
     @ApiOperation(value = "프로필 이미지를 업데이트 한다 (AccessToken)")
-    public CommonApiResponse<PendingFindResponseDTO> updateImage(
+    public CommonApiResponse<MemberDetailResponseDTO> updateImage(
             @Valid @RequestBody MemberUpdateImageRequestDTO dto,
             @ApiIgnore @AuthMember Member member
     ) {

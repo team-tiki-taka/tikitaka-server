@@ -177,4 +177,20 @@ public class Member extends BaseEntity {
     }
 
 
+
+
+
+    /**
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * 테스트 이후 삭제합니다
+     * */
+    public void setAdmin() {
+        this.role = Role.ADMIN;
+    }
+
 }

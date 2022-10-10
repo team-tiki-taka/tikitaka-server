@@ -127,7 +127,7 @@ public class MemberService {
      * 직업 정보 업데이트 요청 처리
      * 사진 필드는 Pending 에서 승인 후 처리한다
      * */
-    public PendingFindResponseDTO updateJobRequest(Member authMember, MemberUpdateJobRequestDTO dto){
+    public MemberCommonResponseDTO updateJobRequest(Member authMember, MemberUpdateJobRequestDTO dto){
 //        member.updateJob(dto);
 //        memberRepository.save(member);
 
@@ -140,7 +140,7 @@ public class MemberService {
      * 학력 정보 업데이트 요청 처리
      * 사진 필드는 Pending 에서 승인 후 처리한다
      * */
-    public PendingFindResponseDTO updateEduRequest(Member authMember, MemberUpdateEduRequestDTO dto){
+    public MemberCommonResponseDTO updateEduRequest(Member authMember, MemberUpdateEduRequestDTO dto){
         //학력 정보 승인 요청
         return pendingService.createPendingByEdu(authMember, dto);
     }
@@ -148,7 +148,7 @@ public class MemberService {
     /**
      * MemberDetail 의 프로필 이미지를 업로드 한다
      * */
-    public PendingFindResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){
+    public MemberDetailResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){
         return pendingService.createPendingByMemberImage(authMember, dto);
     }
 

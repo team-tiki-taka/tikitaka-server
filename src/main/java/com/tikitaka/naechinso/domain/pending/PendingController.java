@@ -3,6 +3,7 @@ package com.tikitaka.naechinso.domain.pending;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.pending.dto.PendingRejectRequestDTO;
 import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
+import com.tikitaka.naechinso.domain.pending.dto.PendingResponseDTO;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +25,7 @@ public class PendingController {
 
     @GetMapping
     @ApiOperation(value = "내 승인 대기 정보를 가져온다 (AccessToken)")
-    public CommonApiResponse<List<PendingFindResponseDTO>> getPendingByMember(
+    public CommonApiResponse<List<PendingResponseDTO>> getPendingByMember(
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(pendingService.findAllByMemberId(member.getId()));
@@ -33,20 +34,28 @@ public class PendingController {
     @GetMapping("/find")
     @ApiOperation(value = "[Admin]모든 가입 대기 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<List<PendingFindResponseDTO>> getAllPending(
-//            @ApiIgnore @AuthMember Member member
+            @ApiIgnore @AuthMember Member adminMember
     ) {
         return CommonApiResponse.of(pendingService.findAll());
     }
 
 
     @PostMapping("/accept/{id}")
-    @ApiOperation(value = "[테스트]요청을 승인한다 (AccessToken)")
+    @ApiOperation(value = "[Admin] 요청을 승인한다 (AccessToken)")
     public CommonApiResponse<PendingFindResponseDTO> acceptPending(
-            @PathVariable("id") Long id
-//            @ApiIgnore @AuthMember Member member
+            @PathVariable("id") Long id,
+            @ApiIgnore @AuthMember Member adminMember
     ) {
-        Member member = Member.builder().id(10L).build(); /////
+        return CommonApiResponse.of(pendingService.acceptPending(adminMember, id));
+    }
 
-        return CommonApiResponse.of(pendingService.acceptPending(member, id));
+    @PostMapping("/reject/{id}")
+    @ApiOperation(value = "요청을 거부한다 (AccessToken)")
+    public CommonApiResponse<PendingFindResponseDTO> rejectPending(
+            @PathVariable("id") Long id,
+            @RequestBody PendingRejectRequestDTO dto,
+            @ApiIgnore @AuthMember Member adminMember
+    ) {
+        return CommonApiResponse.of(pendingService.rejectPending(adminMember, id, dto));
     }
 }

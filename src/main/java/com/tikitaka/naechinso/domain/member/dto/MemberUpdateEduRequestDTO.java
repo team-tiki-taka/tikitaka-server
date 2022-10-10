@@ -36,8 +36,8 @@ public class MemberUpdateEduRequestDTO {
     @NotBlank(message = "인증 사진을 업로드 해주세요")
     private String eduImage;
 
-    public static MemberUpdateEduRequestDTO of(String content) {
-        JSONObject json = new JSONObject(content);
+    public static MemberUpdateEduRequestDTO of(String jsonStringContent) {
+        JSONObject json = new JSONObject(jsonStringContent);
         try {
             final String eduName = json.getString("eduName");
             final String eduMajor = json.getString("eduMajor");

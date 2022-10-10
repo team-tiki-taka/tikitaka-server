@@ -2,12 +2,12 @@ package com.tikitaka.naechinso.domain.pending;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateImageRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.pending.constant.PendingType;
 import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
+import com.tikitaka.naechinso.domain.pending.dto.PendingRejectRequestDTO;
+import com.tikitaka.naechinso.domain.pending.dto.PendingResponseDTO;
 import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateMemberImageRequestDTO;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
 import com.tikitaka.naechinso.global.error.ErrorCode;
@@ -50,7 +50,7 @@ public class PendingService {
     /**
      * 학력 인증 정보 검토를 요청한다
      * */
-    public PendingFindResponseDTO createPendingByEdu(Member authMember, MemberUpdateEduRequestDTO dto) {
+    public MemberCommonResponseDTO createPendingByEdu(Member authMember, MemberUpdateEduRequestDTO dto) {
         //영속성 컨텍스트 가져오기
         Member member = memberRepository.findById(authMember.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -71,14 +71,14 @@ public class PendingService {
                 .build();
 
         pendingRepository.save(pending);
-        return PendingFindResponseDTO.of(pending);
+        return MemberCommonResponseDTO.of(member);
     }
 
 
     /**
      * 직장 인증 정보 검토를 요청한다
      * */
-    public PendingFindResponseDTO createPendingByJob(Member authMember, MemberUpdateJobRequestDTO dto) {
+    public MemberCommonResponseDTO createPendingByJob(Member authMember, MemberUpdateJobRequestDTO dto) {
         //영속성 컨텍스트 가져오기
         Member member = memberRepository.findById(authMember.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -99,13 +99,13 @@ public class PendingService {
                 .build();
 
         pendingRepository.save(pending);
-        return PendingFindResponseDTO.of(pending);
+        return MemberCommonResponseDTO.of(member);
     }
 
     /**
      * 유저의 프로필 사진 검토를 요청한다
      * */
-    public PendingFindResponseDTO createPendingByMemberImage(Member authMember, MemberUpdateImageRequestDTO dto) {
+    public MemberDetailResponseDTO createPendingByMemberImage(Member authMember, MemberUpdateImageRequestDTO dto) {
         //영속성 컨텍스트 가져오기
         Member member = memberRepository.findById(authMember.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -130,7 +130,7 @@ public class PendingService {
                 .build();
 
         pendingRepository.save(pending);
-        return PendingFindResponseDTO.of(pending);
+        return MemberDetailResponseDTO.of(member);
     }
 
     /**
@@ -144,6 +144,11 @@ public class PendingService {
         //유저 정보가 없는 가입 승인 요청
         if (pendingMember == null) {
             throw new BadRequestException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        //이미 처리 완료된 요청
+        if (pending.getAdminId() != null) {
+            throw new BadRequestException(ErrorCode.PENDING_ALREADY_PROCESSED);
         }
 
         //어드민 유저가 아니면 접근 거부
@@ -170,6 +175,35 @@ public class PendingService {
         return PendingFindResponseDTO.of(pending);
     }
 
+    /**
+     * 유저의 요청을 거절하고 이유를 작성한다
+     * */
+    public PendingFindResponseDTO rejectPending(Member adminMember, Long pendingId, PendingRejectRequestDTO dto) {
+        Pending pending = pendingRepository.findById(pendingId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PENDING_NOT_FOUND));
+
+//        Member pendingMember = pending.getMember();
+//        //유저 정보가 없는  요청
+//        if (pendingMember == null) {
+//            throw new BadRequestException(ErrorCode.USER_NOT_FOUND);
+//        }
+
+        //어드민 유저가 아니면 접근 거부
+//        if (adminMember.getRole().getDetail() != "ROLE_ADMIN") {
+//            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED_USER);
+//        }
+
+        //이미 승인 되었거나 거부한 적 있는 요청
+        if (pending.getAdminId() != null) {
+            throw new BadRequestException(ErrorCode.PENDING_ALREADY_PROCESSED);
+        }
+
+        //요청을 거부함
+        pending.reject(adminMember, dto.getReason(), dto.getRejectImages());
+        pendingRepository.save(pending);
+
+        return PendingFindResponseDTO.of(pending);
+    }
 
 
     //대기 승인 중인 정보를 모두 가져온다
@@ -178,10 +212,11 @@ public class PendingService {
                 .stream().map(PendingFindResponseDTO::of).collect(Collectors.toList());
     }
 
-    public List<PendingFindResponseDTO> findAllByMemberId(Long memberId) {
+    public List<PendingResponseDTO> findAllByMemberId(Long memberId) {
         return pendingRepository.findAllByMemberId(memberId)
-                .stream().map(PendingFindResponseDTO::of).collect(Collectors.toList());
+                .stream().map(PendingResponseDTO::of).collect(Collectors.toList());
     }
+
     public List<PendingFindResponseDTO> findAll() {
         return pendingRepository.findAll()
                 .stream().map(PendingFindResponseDTO::of).collect(Collectors.toList());
