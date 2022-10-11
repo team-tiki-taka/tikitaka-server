@@ -1,12 +1,14 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
+import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import com.tikitaka.naechinso.global.error.ErrorCode;
@@ -120,6 +122,20 @@ public class Member extends BaseEntity {
     @JsonIgnore
     private List<Pending> pending = new ArrayList<>();
 
+    //포인트 내역
+    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    private List<Point> points = new ArrayList<>();
+
+    //내가 보낸 호감 내역
+    @OneToMany(mappedBy = "fromMember")
+    @JsonIgnore
+    private List<Match> matchesTo = new ArrayList<>();
+
+    //내가 받은 호감 내역
+    @OneToMany(mappedBy = "toMember")
+    @JsonIgnore
+    private List<Match> matchesFrom = new ArrayList<>();
 
     //내가 소개해준 사람들
     //mapped by 에는 연관관계 엔티티의 필드명을 적어줌
