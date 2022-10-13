@@ -221,4 +221,9 @@ public class PendingService {
         return pendingRepository.findAll()
                 .stream().map(PendingFindResponseDTO::of).collect(Collectors.toList());
     }
+
+    public Pending findById(Long id) {
+        return pendingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PENDING_NOT_FOUND));
+    }
 }

@@ -7,8 +7,6 @@ import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "match")

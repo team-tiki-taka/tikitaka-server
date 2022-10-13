@@ -130,11 +130,13 @@ public class Member extends BaseEntity {
     //내가 보낸 호감 내역
     @OneToMany(mappedBy = "fromMember")
     @JsonIgnore
+    @Builder.Default
     private List<Match> matchesTo = new ArrayList<>();
 
     //내가 받은 호감 내역
     @OneToMany(mappedBy = "toMember")
     @JsonIgnore
+    @Builder.Default
     private List<Match> matchesFrom = new ArrayList<>();
 
     //내가 소개해준 사람들
