@@ -89,12 +89,16 @@ public class Recommend extends BaseEntity {
     @Column(name = "rec_appeal")
     private String receiverAppeal;
 
+    @Column(name = "rec_appeal_detail")
+    private String receiverAppealDetail;
+
     @Column(name = "rec_period")
     private String receiverPeriod;
 
 
     public void update(RecommendAcceptRequestDTO requestDTO) {
         this.receiverAppeal = requestDTO.getAppeal();
+        this.receiverAppealDetail = requestDTO.getAppealDetail();
         this.receiverMeet = requestDTO.getMeet();
         this.receiverPersonality = requestDTO.getPersonality();
         this.receiverPeriod = requestDTO.getPeriod();

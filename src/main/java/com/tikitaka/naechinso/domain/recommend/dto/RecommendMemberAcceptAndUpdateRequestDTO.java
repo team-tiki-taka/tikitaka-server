@@ -41,11 +41,14 @@ public class RecommendMemberAcceptAndUpdateRequestDTO {
     private String personality;
 
     @ApiModelProperty(example = "짱")
-    @NotBlank(message = "친구의 매력을 입력해주세요")
+    @NotBlank(message = "친구의 매력 키워드를 입력해주세요")
     private String appeal;
+
+    @ApiModelProperty(example = "짱짱짜짱 멋진 개발자입니다")
+    @NotBlank(message = "친구의 자세한 매력을 입력해주세요")
+    private String appealDetail;
 
     @ApiModelProperty(example = "1년")
     @NotBlank(message = "만난 기간을 입력해주세요")
     private String period;
-
 }

@@ -88,6 +88,16 @@ public class MemberService {
         return MemberDetailResponseDTO.of(member);
     }
 
+
+    /**
+     * 랜덤 추천받은 상대의 프로필 카드를 가져오는 서비스 로직
+     * @// TODO: 2022/10/13 서로 연관 있는 상태가 아닐때 접근할 수 없도록 해야함
+     * */
+    public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Long id) {
+        Member oppositeMember = findById(id);
+        return MemberOppositeProfileResponseDTO.of(oppositeMember);
+    }
+
     public MemberDetailResponseDTO createDetail(Member authMember, MemberDetailJoinRequestDTO dto) {
         //영속성 유지를 위한 fetch
         Member member = findByMember(authMember);

@@ -27,14 +27,30 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenService;
 
-
-
     @GetMapping
     @ApiOperation(value = "유저 자신의 모든 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberCommonResponseDTO> getMyInformation(
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(memberService.readCommonMember(member));
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation(value = "고유 아이디의 유저를 가져온다 (AccessToken)")
+    public CommonApiResponse<MemberCommonResponseDTO> getMemberById(
+            @PathVariable("id") Long id
+//            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(MemberCommonResponseDTO.of(memberService.findById(id)));
+    }
+
+    @GetMapping("/{id}/profile")
+    @ApiOperation(value = "고유 아이디의 유저 프로필과 추천인 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<MemberOppositeProfileResponseDTO> getMemberProfileById(
+            @PathVariable("id") Long id,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.readOppositeMemberDetailAndRecommendById(id));
     }
 
     @GetMapping("/detail")

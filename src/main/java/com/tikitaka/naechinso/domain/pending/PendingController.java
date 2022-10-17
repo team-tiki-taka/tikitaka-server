@@ -16,7 +16,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-//@RequestMapping("/admin/pending")
 @RequestMapping("/pending")
 @RequiredArgsConstructor
 public class PendingController {
@@ -39,8 +38,16 @@ public class PendingController {
         return CommonApiResponse.of(pendingService.findAll());
     }
 
+    @GetMapping("/{id}")
+    @ApiOperation(value = "[Admin]고유 아이디에 해당하는 대기 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<PendingFindResponseDTO> getPendingById(
+            @PathVariable("id") Long id,
+            @ApiIgnore @AuthMember Member adminMember
+    ) {
+        return CommonApiResponse.of(PendingFindResponseDTO.of(pendingService.findById(id)));
+    }
 
-    @PostMapping("/accept/{id}")
+    @PostMapping("/{id}/accept")
     @ApiOperation(value = "[Admin] 요청을 승인한다 (AccessToken)")
     public CommonApiResponse<PendingFindResponseDTO> acceptPending(
             @PathVariable("id") Long id,
@@ -49,7 +56,7 @@ public class PendingController {
         return CommonApiResponse.of(pendingService.acceptPending(adminMember, id));
     }
 
-    @PostMapping("/reject/{id}")
+    @PostMapping("/{id}/reject")
     @ApiOperation(value = "요청을 거부한다 (AccessToken)")
     public CommonApiResponse<PendingFindResponseDTO> rejectPending(
             @PathVariable("id") Long id,

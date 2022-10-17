@@ -79,10 +79,6 @@ public class MemberDetail extends BaseEntity {
     @Builder.Default
     private Long point = 0L;
 
-    //    포인트 내역
-    @OneToMany(mappedBy = "member")
-    private List<Point> points = new ArrayList<>();
-
     // MemberDetail 을 소유한 Member 와 연결
     // Member Entity 와 1:1 조인
     // Member PK 그대로 사용

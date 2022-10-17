@@ -36,5 +36,5 @@ public class Point extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mem_id")
-    private MemberDetail member;
+    private Member member;
 }
