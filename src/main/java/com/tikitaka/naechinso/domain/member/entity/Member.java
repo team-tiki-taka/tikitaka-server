@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
@@ -149,6 +150,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "receiver")
     @JsonIgnore //순환참조 방지, 엔티티 프로퍼티 가려줌
     private List<Recommend> recommendReceived = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Card> cards;
 
 
     public void setDetail(MemberDetail memberDetail) {
