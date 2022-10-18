@@ -50,6 +50,7 @@ public enum ErrorCode {
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
     DUPLICATE_PENDING_REQUEST(BAD_REQUEST, "U005","동일한 종류의 심사 요청은 한 번만 보낼 수 있습니다"),
     RANDOM_USER_NOT_FOUND(NOT_FOUND, "U006","추천할 수 있는 유저가 더 이상 없습니다"),
+    FORBIDDEN_PROFILE(NOT_FOUND, "U007","해당 유저 프로필에 대한 접근 권한이 없습니다"),
 
 
     /* Recommend 관련 오류 */

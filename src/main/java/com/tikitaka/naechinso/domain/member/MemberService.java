@@ -1,5 +1,7 @@
 package com.tikitaka.naechinso.domain.member;
 
+import com.tikitaka.naechinso.domain.card.CardService;
+import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
@@ -34,6 +36,7 @@ public class MemberService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final PendingService pendingService;
+    private final CardService cardService;
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
 
@@ -94,10 +97,17 @@ public class MemberService {
 
     /**
      * 랜덤 추천받은 상대의 프로필 카드를 가져오는 서비스 로직
-     * @// TODO: 2022/10/13 서로 연관 있는 상태가 아닐때 접근할 수 없도록 해야함
+     * ACTIVE 한 카드에만 접근 권한이 있음
      * */
-    public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Long id) {
-        Member oppositeMember = findById(id);
+    public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Member authMember, Long id) {
+        //현재 ACTIVE 한 카드와 요청 id가 같지 않으면 에러
+        Card activeCard = cardService.findByMemberAndIsActiveTrue(authMember);
+        Long targetId = activeCard.getTargetId();
+        if (!targetId.equals(id)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = findById(targetId);
         return MemberOppositeProfileResponseDTO.of(oppositeMember);
     }
 
