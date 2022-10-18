@@ -27,20 +27,20 @@ public class CardService {
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
 
-    public CardResponseDTO createCard(Member authMember) {
-
-        Member member = memberRepository.findByMember(authMember)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        Card newCard = Card.builder()
-                .member(member)
-                .targetId(3L)
-                .build();
-
-        cardRepository.save(newCard);
-
-        return CardResponseDTO.of(newCard);
-    }
+//    public CardResponseDTO createCard(Member authMember) {
+//
+//        Member member = memberRepository.findByMember(authMember)
+//                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+//
+//        Card newCard = Card.builder()
+//                .member(member)
+//                .targetId(3L)
+//                .build();
+//
+//        cardRepository.save(newCard);
+//
+//        return CardResponseDTO.of(newCard);
+//    }
 
     /**
      * 추천 받았던 유저를 필터링한 랜덤 추천 카드를 만든다
@@ -60,11 +60,12 @@ public class CardService {
         existTargetMemberIds.add(member.getId());
 
         //새로운 추천 상대
-        Member newTargetMember = memberRepository.findTopByIdNotInAndGenderNot(existTargetMemberIds, memberGender)
+        Member newTargetMember = memberRepository.findTopByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND));
 
         Card newCard = Card.builder()
                 .member(member)
+                .target(newTargetMember)
                 .targetId(newTargetMember.getId())
                 .isActive(true)
                 .build();

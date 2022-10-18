@@ -146,21 +146,21 @@ public class TestController {
 
     }
 
-    @GetMapping("/create-cards-each")
-    @ApiOperation(value = "[*TEST*] 생성한 두 유저의 카드를 각각 생성한다")
-    public CommonApiResponse<Object> createCardsEach(
-    ) {
-        Member member1 = memberService.findByPhone("01011111111");
-        Member member2 = memberService.findByPhone("01012345678");
-
-        cardService.createCard(member1);
-        cardService.createCard(member1);
-        cardService.createCard(member2);
-        cardService.createCard(member2);
-
-        return CommonApiResponse.of(true);
-
-    }
+//    @GetMapping("/create-cards-each")
+//    @ApiOperation(value = "[*TEST*] 생성한 두 유저의 카드를 각각 생성한다")
+//    public CommonApiResponse<Object> createCardsEach(
+//    ) {
+//        Member member1 = memberService.findByPhone("01011111111");
+//        Member member2 = memberService.findByPhone("01012345678");
+//
+//        cardService.createCard(member1);
+//        cardService.createCard(member1);
+//        cardService.createCard(member2);
+//        cardService.createCard(member2);
+//
+//        return CommonApiResponse.of(true);
+//
+//    }
 
 
     @GetMapping("/create-job-pending-and-recommend-other")
@@ -352,8 +352,7 @@ public class TestController {
         memberRepository.deleteAll();
         recommendRepository.deleteAll();
 
-        List<Object> adminMemberInfo = Arrays.asList("01012345678", 25, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과"); //어드민 겸 추천인
-
+        List<Object> adminMemberInfo = Arrays.asList("01012345678", 25, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "자기관리, 귀여워, 차분해", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인, 상냥한, 섬세한", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"); //어드민 겸 추천인
 
         Member adminMember = memberService.findByPhone(memberService.joinCommonMember(
                 (String) adminMemberInfo.get(0),

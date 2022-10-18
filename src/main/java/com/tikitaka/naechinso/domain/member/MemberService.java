@@ -196,8 +196,8 @@ public class MemberService {
 
     /** 이미 추천받은 카드들에 있는 유저 ID 에 해당하지 않으며
      * 매개변수 성별과 값이 다른 유저 한명을 가져온다 */
-    public Member findTopByIdNotInAndGenderNot(Collection<Long> ids, Gender gender) {
-        return memberRepository.findTopByIdNotInAndGenderNot(ids, gender)
+    public Member findTopByIdNotInAndGenderNotAndDetailNotNull(Collection<Long> ids, Gender gender) {
+        return memberRepository.findTopByIdNotInAndGenderNotAndDetailNotNull(ids, gender)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND));
     }
 

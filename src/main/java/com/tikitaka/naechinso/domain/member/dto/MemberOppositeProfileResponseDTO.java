@@ -58,7 +58,7 @@ public class MemberOppositeProfileResponseDTO {
         MemberDetail detail = member.getDetail();
         //디테일 없는 유저로 시도
         if (detail == null) {
-            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+            throw new NotFoundException(ErrorCode.USER_NOT_SIGNED_UP);
         }
 
         //추천받은 적 없는 유저를 가져오는 것을 시도
@@ -136,4 +136,9 @@ public class MemberOppositeProfileResponseDTO {
         }
         return name;
     }
+
+    public String getAppeal() {
+        return this.recommend.getAppeal();
+    }
+
 }
