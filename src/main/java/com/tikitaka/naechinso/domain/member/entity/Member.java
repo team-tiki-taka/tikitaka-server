@@ -120,6 +120,7 @@ public class Member extends BaseEntity {
 
     //내 가입 대기 정보
     @OneToMany(mappedBy = "member")
+    @ToString.Exclude
     @JsonIgnore
     private List<Pending> pending = new ArrayList<>();
 
@@ -130,12 +131,14 @@ public class Member extends BaseEntity {
 
     //내가 보낸 호감 내역
     @OneToMany(mappedBy = "fromMember")
+    @ToString.Exclude
     @JsonIgnore
     @Builder.Default
     private List<Match> matchesTo = new ArrayList<>();
 
     //내가 받은 호감 내역
     @OneToMany(mappedBy = "toMember")
+    @ToString.Exclude
     @JsonIgnore
     @Builder.Default
     private List<Match> matchesFrom = new ArrayList<>();
@@ -143,15 +146,18 @@ public class Member extends BaseEntity {
     //내가 소개해준 사람들
     //mapped by 에는 연관관계 엔티티의 필드명을 적어줌
     @OneToMany(mappedBy = "sender")
+    @ToString.Exclude
     @JsonIgnore
     private List<Recommend> recommends = new ArrayList<>();
 
     //나를 소개해준 사람들
     @OneToMany(mappedBy = "receiver")
+    @ToString.Exclude
     @JsonIgnore //순환참조 방지, 엔티티 프로퍼티 가려줌
     private List<Recommend> recommendReceived = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @ToString.Exclude
     @JsonIgnore
     private List<Card> cards;
 

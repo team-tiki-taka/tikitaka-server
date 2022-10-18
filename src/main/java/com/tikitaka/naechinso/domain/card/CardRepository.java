@@ -9,12 +9,20 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
     int countByIsActive(boolean isActive);
 
     List<Card> findAllByMember(Member member);
+
+    Optional<Card> findByMemberAndIsActiveTrue(Member member);
+    Boolean existsByMemberAndIsActiveTrue(Member member);
+    @Query("select c.targetId " +
+            "from Card c " +
+            "where c.targetId <> :id")
+    List<Long> findTargetIdsByIdNot(Long id);
 
     @Query("select new com.tikitaka.naechinso.domain.card.dto.CardResponseDTO(c.targetId, c.isActive, c.createdAt) " +
             "from Card c " +

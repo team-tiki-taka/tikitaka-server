@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.member;
 
+import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
@@ -20,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -179,6 +182,13 @@ public class MemberService {
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    /** 이미 추천받은 카드들에 있는 유저 ID 에 해당하지 않으며
+     * 매개변수 성별과 값이 다른 유저 한명을 가져온다 */
+    public Member findTopByIdNotInAndGenderNot(Collection<Long> ids, Gender gender) {
+        return memberRepository.findTopByIdNotInAndGenderNot(ids, gender)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND));
     }
 
     public boolean existsById(Long memberId) {

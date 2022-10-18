@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @Slf4j
@@ -27,7 +24,7 @@ public class CardController {
     public CommonApiResponse<Object> getAllCardsByMember(
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(cardService.findAllByMember(member));
+        return CommonApiResponse.of(cardService.findAllDTOByMember(member));
     }
 
     @GetMapping("/find")
@@ -35,7 +32,7 @@ public class CardController {
     public CommonApiResponse<Object> getAllCards(
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(cardService.findAll());
+        return CommonApiResponse.of(cardService.findAllDTO());
     }
 
 
@@ -44,6 +41,14 @@ public class CardController {
     public CommonApiResponse<Object> createCardByMember(
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(cardService.createCard(member));
+        return CommonApiResponse.of(cardService.createRandomCard(member));
+    }
+
+    @PatchMapping
+    @ApiOperation(value = "현재 활성화된 카드를 거절한다 (AccessToken)")
+    public CommonApiResponse<Object> rejectCardByMember(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(cardService.rejectCard(member));
     }
 }

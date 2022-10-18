@@ -36,4 +36,8 @@ public class Card extends BaseEntity {
     @Column(name = "car_is_active")
     @Builder.Default
     private Boolean isActive = false;
+
+    public void disable() {
+        this.isActive = false;
+    }
 }
