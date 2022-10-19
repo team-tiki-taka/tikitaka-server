@@ -399,7 +399,9 @@ public class TestController {
                 Arrays.asList("01022299999", 25, Gender.W, "진하수", "edu-image020.jpg", "연세", "대학교", "기계공학과", "1~3년", "CMC에서 만남", "착함", "자기관리, 귀여워, 차분해", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 163, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인, 상냥한, 섬세한", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어")
         );
 
-        joinRequestList.forEach(info -> {
+        String accessToken = null;
+
+        for (List<Object> info : joinRequestList) {
             MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
                     (String) info.get(0),
                     MemberCommonJoinRequestDTO.builder()
@@ -458,8 +460,8 @@ public class TestController {
             );
 
 
-            System.out.println(senderDTO.getAccessToken());
-        });
-        return CommonApiResponse.of(true);
+           accessToken = senderDTO.getAccessToken();
+        }
+        return CommonApiResponse.of(accessToken);
     }
 }

@@ -30,13 +30,8 @@ public class Card extends BaseEntity {
     @JsonIgnore
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_target")
-    @JsonIgnore
-    private Member target;
-
-    @Column(name = "car_target_id")
-    private Long targetId;
+    @Column(name = "car_target_mem_id")
+    private Long targetMemberId;
 
     @Column(name = "car_is_active")
     @Builder.Default

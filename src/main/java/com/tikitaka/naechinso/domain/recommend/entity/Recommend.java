@@ -61,6 +61,16 @@ public class Recommend extends BaseEntity {
     private String senderJobLocation;
 
 
+//    @Column(name = "mem_edu_name")
+//    private String senderEduName;
+//
+//    @Column(name = "mem_edu_major")
+//    private String senderEduPart;
+//
+//    @Column(name = "mem_edu_level")
+//    private String senderEduLevel;
+
+
     /* 받는 사람이 아직 가입 안했으면 NULL 일수도 있음 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

@@ -108,16 +108,31 @@ public class MemberOppositeProfileResponseDTO {
         private String name;
         private Gender gender;
         private String appeal;
-        private String appealDetail;
+
+        private String jobName;
+        private String jobPart;
+        private String jobLocation;
+        private String eduName;
+        private String eduMajor;
+        private String eduLevel;
+
         private String meet;
         private String period;
+        private String appealDetail;
 
         public static Recommendation of(Recommend recommend) {
+            Member sender = recommend.getSender();
             return Recommendation.builder()
                     .name(hideName(recommend.getSenderName()))
                     .gender(recommend.getSenderGender())
                     .appeal(recommend.getReceiverAppeal())
                     .appealDetail(recommend.getReceiverAppealDetail())
+                    .eduName(sender.getEduName())
+                    .eduMajor(sender.getEduMajor())
+                    .eduLevel(sender.getEduLevel())
+                    .jobName(sender.getJobName())
+                    .jobPart(sender.getJobPart())
+                    .jobLocation(sender.getJobLocation())
                     .meet(recommend.getReceiverMeet())
                     .period(recommend.getReceiverPeriod())
                     .build();
@@ -138,6 +153,9 @@ public class MemberOppositeProfileResponseDTO {
     }
 
     public String getAppeal() {
+        if (this.recommend == null) {
+            return null;
+        }
         return this.recommend.getAppeal();
     }
 

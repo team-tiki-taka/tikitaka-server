@@ -102,7 +102,7 @@ public class MemberService {
     public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Member authMember, Long id) {
         //현재 ACTIVE 한 카드와 요청 id가 같지 않으면 에러
         Card activeCard = cardService.findByMemberAndIsActiveTrue(authMember);
-        Long targetId = activeCard.getTargetId();
+        Long targetId = activeCard.getTargetMemberId();
         if (!targetId.equals(id)) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
         }

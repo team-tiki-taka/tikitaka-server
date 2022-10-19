@@ -19,18 +19,18 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     Optional<Card> findByMemberAndIsActiveTrue(Member member);
     Boolean existsByMemberAndIsActiveTrue(Member member);
-    @Query("select c.targetId " +
+    @Query("select c.targetMemberId " +
             "from Card c " +
-            "where c.targetId <> :id")
+            "where c.targetMemberId <> :id")
     List<Long> findTargetIdsByIdNot(Long id);
 
-    @Query("select new com.tikitaka.naechinso.domain.card.dto.CardResponseDTO(c.targetId, c.isActive, c.createdAt) " +
+    @Query("select new com.tikitaka.naechinso.domain.card.dto.CardResponseDTO(c.targetMemberId, c.isActive, c.createdAt) " +
             "from Card c " +
             "join c.member m " +
             "where m = :member")
     List<CardResponseDTO> findAllDTOByMember(Member member);
 
-    @Query("select new com.tikitaka.naechinso.domain.card.dto.CardResponseDTO(c.targetId, c.isActive, c.createdAt) " +
+    @Query("select new com.tikitaka.naechinso.domain.card.dto.CardResponseDTO(c.targetMemberId, c.isActive, c.createdAt) " +
             "from Card c " +
             "join c.member m")
     List<CardResponseDTO> findAllDTO();
