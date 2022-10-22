@@ -83,6 +83,7 @@ public class RecommendService {
                     .receiverAge(dto.getAge())
                     .receiverGender(dto.getGender())
                     .receiverAppeal(dto.getAppeal())
+                    .receiverAppealDetail(dto.getAppealDetail())
                     .receiverMeet(dto.getMeet())
                     .receiverPersonality(dto.getPersonality())
                     .receiverPeriod(dto.getPeriod())

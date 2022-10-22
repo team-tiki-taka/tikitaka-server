@@ -50,9 +50,8 @@ public class MemberController {
             @PathVariable("id") Long id,
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(memberService.readOppositeMemberDetailAndRecommendById(id));
+        return CommonApiResponse.of(memberService.readOppositeMemberDetailAndRecommendById(member, id));
     }
-
     @GetMapping("/detail")
     @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberDetailResponseDTO> getMemberDetail(

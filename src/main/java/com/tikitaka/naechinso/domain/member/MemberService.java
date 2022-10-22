@@ -1,5 +1,8 @@
 package com.tikitaka.naechinso.domain.member;
 
+import com.tikitaka.naechinso.domain.card.CardService;
+import com.tikitaka.naechinso.domain.card.entity.Card;
+import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
@@ -20,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,6 +36,7 @@ public class MemberService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final PendingService pendingService;
+    private final CardService cardService;
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
 
@@ -91,10 +97,17 @@ public class MemberService {
 
     /**
      * 랜덤 추천받은 상대의 프로필 카드를 가져오는 서비스 로직
-     * @// TODO: 2022/10/13 서로 연관 있는 상태가 아닐때 접근할 수 없도록 해야함
+     * ACTIVE 한 카드에만 접근 권한이 있음
      * */
-    public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Long id) {
-        Member oppositeMember = findById(id);
+    public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Member authMember, Long id) {
+        //현재 ACTIVE 한 카드와 요청 id가 같지 않으면 에러
+        Card activeCard = cardService.findByMemberAndIsActiveTrue(authMember);
+        Long targetId = activeCard.getTargetMemberId();
+        if (!targetId.equals(id)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = findById(targetId);
         return MemberOppositeProfileResponseDTO.of(oppositeMember);
     }
 
@@ -179,6 +192,13 @@ public class MemberService {
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    /** 이미 추천받은 카드들에 있는 유저 ID 에 해당하지 않으며
+     * 매개변수 성별과 값이 다른 유저 한명을 가져온다 */
+    public Member findTopByIdNotInAndGenderNotAndDetailNotNull(Collection<Long> ids, Gender gender) {
+        return memberRepository.findTopByIdNotInAndGenderNotAndDetailNotNull(ids, gender)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND));
     }
 
     public boolean existsById(Long memberId) {

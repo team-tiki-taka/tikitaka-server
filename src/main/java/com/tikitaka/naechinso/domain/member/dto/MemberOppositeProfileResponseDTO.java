@@ -58,7 +58,7 @@ public class MemberOppositeProfileResponseDTO {
         MemberDetail detail = member.getDetail();
         //디테일 없는 유저로 시도
         if (detail == null) {
-            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+            throw new NotFoundException(ErrorCode.USER_NOT_SIGNED_UP);
         }
 
         //추천받은 적 없는 유저를 가져오는 것을 시도
@@ -108,16 +108,31 @@ public class MemberOppositeProfileResponseDTO {
         private String name;
         private Gender gender;
         private String appeal;
-        private String appealDetail;
+
+        private String jobName;
+        private String jobPart;
+        private String jobLocation;
+        private String eduName;
+        private String eduMajor;
+        private String eduLevel;
+
         private String meet;
         private String period;
+        private String appealDetail;
 
         public static Recommendation of(Recommend recommend) {
+            Member sender = recommend.getSender();
             return Recommendation.builder()
                     .name(hideName(recommend.getSenderName()))
                     .gender(recommend.getSenderGender())
                     .appeal(recommend.getReceiverAppeal())
                     .appealDetail(recommend.getReceiverAppealDetail())
+                    .eduName(sender.getEduName())
+                    .eduMajor(sender.getEduMajor())
+                    .eduLevel(sender.getEduLevel())
+                    .jobName(sender.getJobName())
+                    .jobPart(sender.getJobPart())
+                    .jobLocation(sender.getJobLocation())
                     .meet(recommend.getReceiverMeet())
                     .period(recommend.getReceiverPeriod())
                     .build();
@@ -136,4 +151,12 @@ public class MemberOppositeProfileResponseDTO {
         }
         return name;
     }
+
+    public String getAppeal() {
+        if (this.recommend == null) {
+            return null;
+        }
+        return this.recommend.getAppeal();
+    }
+
 }

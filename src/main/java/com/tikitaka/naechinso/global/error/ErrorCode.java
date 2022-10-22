@@ -49,6 +49,9 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND, "U003","해당 유저 정보를 찾을 수 없습니다"),
     NOT_FOLLOW(NOT_FOUND, "U004","팔로우 중이지 않습니다"),
     DUPLICATE_PENDING_REQUEST(BAD_REQUEST, "U005","동일한 종류의 심사 요청은 한 번만 보낼 수 있습니다"),
+    RANDOM_USER_NOT_FOUND(NOT_FOUND, "U006","추천할 수 있는 유저가 더 이상 없습니다"),
+    FORBIDDEN_PROFILE(FORBIDDEN, "U007","해당 유저 프로필에 대한 접근 권한이 없습니다"),
+    USER_NOT_SIGNED_UP(NOT_FOUND, "U008","정회원으로 가입된 유저가 아닙니다"),
 
 
     /* Recommend 관련 오류 */
@@ -75,6 +78,12 @@ public enum ErrorCode {
     /* 가입 대기 관련 */
     PENDING_NOT_FOUND(NOT_FOUND, "PEND000", "요청 대기 정보를 찾을 수 없습니다"),
     PENDING_ALREADY_PROCESSED(BAD_REQUEST, "PEND001", "이미 처리 완료된 요청입니다"),
+
+
+    /* 카드 관련 */
+    ACTIVE_CARD_NOT_FOUND(NOT_FOUND, "CARD000", "유효한 추천 카드를 찾을 수 없습니다"),
+    ACTIVE_CARD_ALREADY_EXIST(BAD_REQUEST, "CARD001", "추천 카드는 한 장씩만 받을 수 있습니다"),
+    CARD_LIMIT_EXCEED(BAD_REQUEST, "CARD002", "일일 추천 카드 한도를 초과했습니다"),
 
 
     ;
