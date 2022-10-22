@@ -48,6 +48,7 @@ public class CardService {
 
     /**
      * 추천 받았던 유저를 필터링한 랜덤 추천 카드를 만든다
+     * @// TODO: 2022/10/22 조건에 맞는 타겟 멤버 중에서 랜덤 선택하도록
      * */
     public CardThumbnailResponseDTO createRandomCard(Member authMember) {
         //이미 ACTIVE 한 카드가 있으면 에러
@@ -68,7 +69,7 @@ public class CardService {
         List<Long> existTargetMemberIds = member.getCards().stream().map(Card::getTargetMemberId).collect(Collectors.toList());
         existTargetMemberIds.add(member.getId());
 
-        //추천 받았던 적 없는 새로운 추천 상대
+        //추천 받았던 적 없는 새로운 추천 상대 ( todo : 이 중에서 랜덤으로 골라야함 )
         Member newTargetMember = memberRepository.findTopByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND));
 
@@ -108,6 +109,9 @@ public class CardService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ACTIVE_CARD_NOT_FOUND));
     }
 
+    /**
+     * 오늘 날짜를 기준으로
+     * */
     private long countCardByMemberAndCreatedAtBetween(Member member) {
         //서버 시간으로 00시00분부터 23시59분까지받은 카드 수 종합
         LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0,0,0));

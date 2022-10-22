@@ -458,10 +458,10 @@ public class TestController {
     @DeleteMapping("/drop-all-table")
     @ApiOperation(value = "[*TEST*] 모든 DB 테이블을 초기화")
     public CommonApiResponse<Object> dropAllTable(){
-        memberRepository.deleteAll();
-        memberDetailRepository.deleteAll();
         recommendRepository.deleteAll();
         cardRepository.deleteAll();
+        memberDetailRepository.deleteAll();
+        memberRepository.deleteAll();
         return CommonApiResponse.of(true);
     }
 }
