@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -69,9 +70,13 @@ public class CardService {
         List<Long> existTargetMemberIds = member.getCards().stream().map(Card::getTargetMemberId).collect(Collectors.toList());
         existTargetMemberIds.add(member.getId());
 
-        //추천 받았던 적 없는 새로운 추천 상대 ( todo : 이 중에서 랜덤으로 골라야함 )
-        Member newTargetMember = memberRepository.findTopByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND));
+        //추천 받았던 적 없는 새로운 추천 상대 리스트
+        List<Member> newTargetMemberList = memberRepository.findByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender);
+        if (newTargetMemberList.isEmpty()) {
+            throw new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND);
+        }
+        //(0 ~ size) 사이의 랜덤 인덱스 멤버 추출
+        Member newTargetMember = newTargetMemberList.get(new Random().nextInt(newTargetMemberList.size()));
 
         Card newCard = Card.builder()
                 .member(member)
