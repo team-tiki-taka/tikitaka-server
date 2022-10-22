@@ -29,7 +29,6 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class SmsCertificationServiceImpl implements SmsCertificationService {
-
     private final NaverSmsService naverSmsService;
     private final RedisService redisService;
     private final JwtTokenProvider jwtTokenProvider;

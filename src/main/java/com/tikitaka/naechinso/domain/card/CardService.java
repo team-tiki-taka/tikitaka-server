@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -45,19 +48,23 @@ public class CardService {
 
     /**
      * 추천 받았던 유저를 필터링한 랜덤 추천 카드를 만든다
-     * @// TODO: 2022/10/19 3번 횟수 제한 기능 추가
      * */
     public CardThumbnailResponseDTO createRandomCard(Member authMember) {
-        //아직 ACTIVE 한 카드가 있으면 에러
+        //이미 ACTIVE 한 카드가 있으면 에러
         if (cardRepository.existsByMemberAndIsActiveTrue(authMember)) {
             throw new BadRequestException(ErrorCode.ACTIVE_CARD_ALREADY_EXIST);
+        }
+
+        //하루에 세 장 이상 추천을 요청할 경우 에러
+        if (countCardByMemberAndCreatedAtBetween(authMember) >= 3) {
+            throw new BadRequestException(ErrorCode.CARD_LIMIT_EXCEED);
         }
 
         Member member = memberRepository.findByMember(authMember)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         Gender memberGender = member.getGender();
 
-        //이미 존재하는 카드에 담긴 유저 ID들
+        //이미 존재하는 카드에 담긴 유저 ID들 가져오기
         List<Long> existTargetMemberIds = member.getCards().stream().map(Card::getTargetMemberId).collect(Collectors.toList());
         existTargetMemberIds.add(member.getId());
 
@@ -75,7 +82,6 @@ public class CardService {
 
         return CardThumbnailResponseDTO.of(newCard, newTargetMember);
     }
-
 
     /**
      * 현재 ACTIVE 한 카드를 모두 거절하고 INACTIVE 상태로 만든다
@@ -100,5 +106,12 @@ public class CardService {
     public Card findByMemberAndIsActiveTrue(Member member) {
         return cardRepository.findByMemberAndIsActiveTrue(member)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ACTIVE_CARD_NOT_FOUND));
+    }
+
+    private long countCardByMemberAndCreatedAtBetween(Member member) {
+        //서버 시간으로 00시00분부터 23시59분까지받은 카드 수 종합
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0,0,0));
+        LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
+        return cardRepository.countByMemberAndCreatedAtBetween(member, startDatetime, endDatetime);
     }
 }

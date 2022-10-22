@@ -83,6 +83,7 @@ public enum ErrorCode {
     /* 카드 관련 */
     ACTIVE_CARD_NOT_FOUND(NOT_FOUND, "CARD000", "유효한 추천 카드를 찾을 수 없습니다"),
     ACTIVE_CARD_ALREADY_EXIST(BAD_REQUEST, "CARD001", "추천 카드는 한 장씩만 받을 수 있습니다"),
+    CARD_LIMIT_EXCEED(BAD_REQUEST, "CARD002", "일일 추천 카드 한도를 초과했습니다"),
 
 
     ;

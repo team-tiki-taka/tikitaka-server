@@ -39,7 +39,6 @@ public class CardController {
         return CommonApiResponse.of(cardService.findAllDTO());
     }
 
-
     @PostMapping
     @ApiOperation(value = "새로운 카드를 하나 생성한다 (AccessToken)")
     public CommonApiResponse<CardThumbnailResponseDTO> createCardByMember(

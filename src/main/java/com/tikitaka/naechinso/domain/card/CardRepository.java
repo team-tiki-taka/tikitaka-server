@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,9 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     Optional<Card> findByMemberAndIsActiveTrue(Member member);
     Boolean existsByMemberAndIsActiveTrue(Member member);
+
+    long countByMemberAndCreatedAtBetween(Member member, LocalDateTime start, LocalDateTime end);
+
     @Query("select c.targetMemberId " +
             "from Card c " +
             "where c.targetMemberId <> :id")

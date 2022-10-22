@@ -18,15 +18,12 @@ import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 
 /**
  * 프론트에서 테스트를 원할하게 진행하기 위한 컨트롤러
@@ -342,16 +339,9 @@ public class TestController {
         return CommonApiResponse.of(senderDTO);
     }
 
-
-
-
     @GetMapping("/create-multiple-users")
-    @ApiOperation(value = "[*TEST*] 멤버 DB를 초기화한 후, 정회원으로 가입한 유저를 남녀 10명씩 생성하고, 멤버 하나의 엑세스 토큰 반환")
+    @ApiOperation(value = "[*TEST*] 정회원으로 가입한 유저를 남녀 10명씩 생성하고, 그 중 마지막 여성 멤버 하나의 엑세스 토큰 반환")
     public CommonApiResponse<Object> createMultipleMembers() {
-
-        memberRepository.deleteAll();
-        recommendRepository.deleteAll();
-
         List<Object> adminMemberInfo = Arrays.asList("01012345678", 25, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "자기관리, 귀여워, 차분해", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인, 상냥한, 섬세한", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"); //어드민 겸 추천인
 
         Member adminMember = memberService.findByPhone(memberService.joinCommonMember(
@@ -463,5 +453,15 @@ public class TestController {
            accessToken = senderDTO.getAccessToken();
         }
         return CommonApiResponse.of(accessToken);
+    }
+
+    @DeleteMapping("/drop-all-table")
+    @ApiOperation(value = "[*TEST*] 모든 DB 테이블을 초기화")
+    public CommonApiResponse<Object> dropAllTable(){
+        memberRepository.deleteAll();
+        memberDetailRepository.deleteAll();
+        recommendRepository.deleteAll();
+        cardRepository.deleteAll();
+        return CommonApiResponse.of(true);
     }
 }
