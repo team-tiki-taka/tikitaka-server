@@ -88,15 +88,24 @@ public class SmsCertificationServiceImpl implements SmsCertificationService {
         String code = requestDTO.getCode();
         String key = VERIFICATION_PREFIX + phoneNumber;
 
-        //redis 에 해당 번호의 키가 없는 경우는 인증번호(3분) 만료로 처리
-        if (!redisService.hasKey(key)) {
-            throw new UnauthorizedException(ErrorCode.EXPIRED_VERIFICATION_CODE);
-        }
 
-        //redis 에 해당 번호의 키와 인증번호가 일치하지 않는 경우
-        if (!redisService.getValues(key).equals(code)) {
-            throw new UnauthorizedException(ErrorCode.MISMATCH_VERIFICATION_CODE);
+        /** *********** 임시 정책으로 제거 ********* */
+        if (springProfile == null || springProfile.equals("prod")) {
+            ///////////////////////////////////
+            ///////////////////////////////////
+            ///////////////////////////////////
+
+            //redis 에 해당 번호의 키가 없는 경우는 인증번호(3분) 만료로 처리
+            if (!redisService.hasKey(key)) {
+                throw new UnauthorizedException(ErrorCode.EXPIRED_VERIFICATION_CODE);
+            }
+
+            //redis 에 해당 번호의 키와 인증번호가 일치하지 않는 경우
+            if (!redisService.getValues(key).equals(code)) {
+                throw new UnauthorizedException(ErrorCode.MISMATCH_VERIFICATION_CODE);
+            }
         }
+        /** ******************** */
 
         //redis 인증 필터 성공하면
         try {
