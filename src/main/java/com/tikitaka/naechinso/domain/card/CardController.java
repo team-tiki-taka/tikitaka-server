@@ -1,16 +1,14 @@
 package com.tikitaka.naechinso.domain.card;
 
+import com.tikitaka.naechinso.domain.card.dto.CardOppositeMemberProfileResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardThumbnailResponseDTO;
-import com.tikitaka.naechinso.domain.match.MatchService;
-import com.tikitaka.naechinso.domain.match.dto.MatchListResponseDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -37,6 +35,15 @@ public class CardController {
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(cardService.findAllDTO());
+    }
+
+    @GetMapping("/{id}/profile")
+    @ApiOperation(value = "고유 아이디의 유저 프로필과 추천인 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<CardOppositeMemberProfileResponseDTO> getProfileByCardMember(
+            @PathVariable("id") Long id,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(cardService.findOppositeMemberDetailAndRecommendById(member, id));
     }
 
     @PostMapping

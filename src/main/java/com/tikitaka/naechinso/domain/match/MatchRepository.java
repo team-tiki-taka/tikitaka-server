@@ -49,6 +49,19 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             "AND m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.ACCEPTED")
     Optional<Match> findAllByIdAndMemberAndStatusIsAccept(Long id, Member member);
 
+    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
+            "FROM Match m " +
+            "JOIN m.fromMember f JOIN m.toMember t " +
+            "WHERE f.id = :id OR t.id = :id")
+    Boolean existsByTargetId(Long id);
+
+    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
+            "FROM Match m " +
+            "JOIN m.fromMember f JOIN m.toMember t " +
+            "WHERE (f.id = :id OR t.id = :id) " +
+            "AND m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.OPEN")
+    Boolean existsByTargetIdAndStatusIsOpen(Long id);
+
     Optional<Match> findByIdAndToMemberAndStatus(Long id, Member member, MatchStatus status);
 
     Optional<Match> findByIdAndStatus(Long id, MatchStatus status);

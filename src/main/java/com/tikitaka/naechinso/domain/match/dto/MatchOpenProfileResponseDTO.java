@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 @Builder
 @ToString
-public class MatchOppositeProfileResponseDTO {
+public class MatchOpenProfileResponseDTO {
     private List<String> images;
     private String name;
     private int age;
@@ -73,7 +73,7 @@ public class MatchOppositeProfileResponseDTO {
         private String appealDetail;
     }
 
-    public static MatchOppositeProfileResponseDTO of(Member targetMember) {
+    public static MatchOpenProfileResponseDTO of(Member targetMember) {
         MemberDetail detail = targetMember.getDetail();
         //디테일 없는 유저로 시도
         if (detail == null) {
@@ -89,7 +89,7 @@ public class MatchOppositeProfileResponseDTO {
             for (Recommend recommend : targetMember.getRecommendReceived()) {
                 //추천 상태 검증
                 if (recommend.getSender() != null && recommend.getReceiver() != null) {
-                    return MatchOppositeProfileResponseDTO.builder()
+                    return MatchOpenProfileResponseDTO.builder()
                             .images(detail.getImages())
                             .name(targetMember.getName())
                             .phone(targetMember.getPhone())
