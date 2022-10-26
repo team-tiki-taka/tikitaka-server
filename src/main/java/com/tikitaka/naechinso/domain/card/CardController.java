@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.card;
 
+import com.tikitaka.naechinso.domain.card.dto.CardCountResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardOppositeMemberProfileResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardThumbnailResponseDTO;
@@ -26,7 +27,7 @@ public class CardController {
     public CommonApiResponse<List<CardResponseDTO>> getAllCardsByMember(
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(cardService.findAllDTOByMember(member));
+        return CommonApiResponse.of(cardService.findAllCard(member));
     }
 
     @GetMapping("/find")
@@ -35,6 +36,14 @@ public class CardController {
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(cardService.findAllDTO());
+    }
+
+    @GetMapping("/count")
+    @ApiOperation(value = "오늘의 남은 추천 횟수를 반환한다 (AccessToken)")
+    public CommonApiResponse<CardCountResponseDTO> getRemainingCount(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(cardService.getRemainingCount(member));
     }
 
     @GetMapping("/{id}/profile")
@@ -47,7 +56,7 @@ public class CardController {
     }
 
     @PostMapping
-    @ApiOperation(value = "새로운 카드를 하나 생성한다 (AccessToken)")
+    @ApiOperation(value = "새로운 추천을 받는다 (AccessToken)")
     public CommonApiResponse<CardThumbnailResponseDTO> createCardByMember(
             @ApiIgnore @AuthMember Member member
     ) {

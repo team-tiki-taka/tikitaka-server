@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.card;
 
+import com.tikitaka.naechinso.domain.card.dto.CardCountResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardOppositeMemberProfileResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardThumbnailResponseDTO;
@@ -13,12 +14,16 @@ import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -29,6 +34,26 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
+
+
+    /**
+     * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일)
+     */
+    public List<CardResponseDTO> findAllCard(Member authMember){
+        return cardRepository.findAllDTOByMember(authMember);
+    }
+
+    /**
+     * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일)
+     */
+    public CardCountResponseDTO getRemainingCount(Member authMember) {
+        long count = 3L - countCardByMemberAndCreatedAtBetween(authMember);
+        if (count < 0) {
+            return new CardCountResponseDTO(0L);
+        }
+        else return new CardCountResponseDTO(count);
+    }
+
 
     /**
      * 추천 받았던 유저를 필터링한 랜덤 추천 카드를 만든다
