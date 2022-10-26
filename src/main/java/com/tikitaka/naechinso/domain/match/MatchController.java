@@ -58,7 +58,7 @@ public class MatchController {
     @GetMapping("/{memberId}/profile")
     @ApiOperation(value = "고유 아이디에 해당하는 유저 프로필 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MatchBasicProfileResponseDTO> getBasicProfileById(
-            @PathVariable("id") Long id,
+            @PathVariable("memberId") Long id,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(matchService.getBasicProfileById(member, id));
@@ -76,7 +76,7 @@ public class MatchController {
     @PostMapping("/{id}/accept")
     @ApiOperation(value = "현재 호감을 보낸 상대를 수락하여 매칭을 성사시킨다 (AccessToken)")
     public CommonApiResponse<MatchResponseDTO> accept(
-            @PathVariable("memberId") Long id,
+            @PathVariable("id") Long id,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(matchService.accept(member, id));

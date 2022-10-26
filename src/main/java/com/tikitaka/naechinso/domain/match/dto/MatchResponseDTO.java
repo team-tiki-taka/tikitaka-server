@@ -21,14 +21,7 @@ public class MatchResponseDTO {
 
     private MatchStatus status;
 
-    private String phone;
-    private Long fromMemberId;
-
-    private Long toMemberId;
-
-    private String createdAt;
-
-    private String dueDate;
+    private Long targetMemberId;
 
     public static MatchResponseDTO of(Match match) {
         if (match.getFromMember() == null || match.getToMember() == null) {
@@ -37,16 +30,7 @@ public class MatchResponseDTO {
         return MatchResponseDTO.builder()
                 .id(match.getId())
                 .status(match.getStatus())
-                .fromMemberId(match.getFromMember().getId())
-                .toMemberId(match.getToMember().getId())
-                .createdAt(match.getCreatedAt().toString())
+                .targetMemberId(match.getToMember().getId())
                 .build();
-    }
-
-    public MatchResponseDTO(Match match) {
-        if (match.getFromMember() == null || match.getToMember() == null) {
-            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
-        }
-        this.fromMemberId = match.getFromMember().getId();
     }
 }
