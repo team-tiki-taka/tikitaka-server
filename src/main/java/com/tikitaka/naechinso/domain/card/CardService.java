@@ -56,7 +56,6 @@ public class CardService {
         if (cardRepository.existsByMemberAndIsActiveTrue(authMember)) {
             throw new BadRequestException(ErrorCode.ACTIVE_CARD_ALREADY_EXIST);
         }
-
         //하루에 세 장 이상 추천을 요청할 경우 에러
         if (countCardByMemberAndCreatedAtBetween(authMember) >= 3) {
             throw new BadRequestException(ErrorCode.CARD_LIMIT_EXCEED);
@@ -119,7 +118,7 @@ public class CardService {
      * */
     private long countCardByMemberAndCreatedAtBetween(Member member) {
         //서버 시간으로 00시00분부터 23시59분까지받은 카드 수 종합
-        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0,0,0));
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
         return cardRepository.countByMemberAndCreatedAtBetween(member, startDatetime, endDatetime);
     }

@@ -104,7 +104,7 @@ public class MemberOppositeProfileResponseDTO {
     @Getter
     @Builder
     @ToString
-    private static class Recommendation {
+    public static class Recommendation {
         private String name;
         private Gender gender;
         private String appeal;
@@ -151,12 +151,4 @@ public class MemberOppositeProfileResponseDTO {
         }
         return name;
     }
-
-    public String getAppeal() {
-        if (this.recommend == null) {
-            return null;
-        }
-        return this.recommend.getAppeal();
-    }
-
 }

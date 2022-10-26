@@ -22,25 +22,42 @@ import springfox.documentation.annotations.ApiIgnore;
 public class MatchController {
     private final MatchService matchService;
     private final CardService cardService;
-    @GetMapping
-    @ApiOperation(value = "매칭페이지에 진입 시 자신의 모든 매칭 정보를 가져온다 (AccessToken)")
+    @GetMapping("/from")
+    @ApiOperation(value = "내가 받은 호감 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<MatchListResponseDTO> getAllMatchByMemberFrom(
+            @ApiIgnore @AuthMember Member member
+    ) {
+//        return CommonApiResponse.of(matchService.findAllMatchDTOBySender(member));
+        return null;
+    }
+
+    @GetMapping("/to")
+    @ApiOperation(value = "내가 보낸 호감 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<MatchListResponseDTO> getAllMatchByMemberTo(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(matchService.findAllByMember(member));
+    }
+
+    @GetMapping("/complete")
+    @ApiOperation(value = "서로 호감을 보낸 성사된 매칭 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MatchListResponseDTO> getAllMatchByMember(
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(matchService.findAllByMember(member));
     }
 
-    @PostMapping("/like/send")
+    @PostMapping("/like")
     @ApiOperation(value = "현재 활성화된 카드의 상대에게 호감을 보낸다 (AccessToken)")
-    public CommonApiResponse<MatchListResponseDTO> sendLike(
+    public CommonApiResponse<MatchListResponseDTO> like(
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(matchService.findAllByMember(member));
     }
 
-    @PostMapping("/like/{id}/accept")
+    @PostMapping("/{id}/accept")
     @ApiOperation(value = "현재 호감을 보낸 상대를 수락하여 매칭을 성사시킨다 (AccessToken)")
-    public CommonApiResponse<MatchListResponseDTO> acceptLike(
+    public CommonApiResponse<MatchListResponseDTO> accept(
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(matchService.findAllByMember(member));
