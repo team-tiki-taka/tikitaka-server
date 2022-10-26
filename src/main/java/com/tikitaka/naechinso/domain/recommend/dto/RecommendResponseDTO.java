@@ -19,6 +19,8 @@ public class RecommendResponseDTO {
 
     private Gender gender;
 
+    private int age;
+
     private String meet;
 
     private String appeal;
@@ -54,6 +56,7 @@ public class RecommendResponseDTO {
                 .receiverId(receiverId)
                 .name(recommend.getReceiverName())
                 .gender(recommend.getReceiverGender())
+                .age(recommend.getReceiverAge())
                 .meet(recommend.getReceiverMeet())
                 .appeal(recommend.getReceiverAppeal())
                 .appealDetail(recommend.getReceiverAppealDetail())

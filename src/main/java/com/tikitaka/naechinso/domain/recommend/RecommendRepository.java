@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
 public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     List<Recommend> findAllByReceiver_Id(Long id);
     List<Recommend> findAllByReceiverPhone(String phone);
