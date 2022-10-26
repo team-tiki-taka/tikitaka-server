@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByPhone(String phone);
