@@ -1,26 +1,30 @@
-package com.tikitaka.naechinso.domain.card.dto;
+package com.tikitaka.naechinso.domain.match.dto;
 
+import com.tikitaka.naechinso.domain.card.dto.CardThumbnailResponseDTO;
 import com.tikitaka.naechinso.domain.card.entity.Card;
+import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
+import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.dto.MemberOppositeProfileResponseDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.*;
 
-import java.time.*;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Builder
 @ToString
-public class CardThumbnailResponseDTO {
+public class MatchThumbnailResponseDTO {
+    private Long id;
     private Long targetMemberId;
-    private Boolean isActive;
+    private MatchStatus status;
     private String createdAt;
 
     @Builder.Default
@@ -64,20 +68,25 @@ public class CardThumbnailResponseDTO {
         private String appealDetail;
     }
 
-    public static CardThumbnailResponseDTO of(Card card, Member targetMember) {
-        if (targetMember == null) {
-            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+    public static MatchThumbnailResponseDTO of(Match match, Member member) {
+        Member targetMember;
+
+        //매칭 주체에 따라 상대의 정보를 가져옴
+        if (member.equals(match.getToMember())) {
+            System.out.println("member.equals(match.getToMember()) = " + member.equals(match.getToMember()));
+            targetMember = match.getFromMember();
+        } else {
+            targetMember = match.getToMember();
         }
 
-        //상대 프로필 dto 에서 가져옴
         MemberOppositeProfileResponseDTO dto = MemberOppositeProfileResponseDTO.of(targetMember);
-
-        return CardThumbnailResponseDTO.builder()
-                .targetMemberId(card.getTargetMemberId())
-                .isActive(card.getIsActive())
-                .createdAt(card.getCreatedAt().toString())
-                .dueDate(generateDueDate(card.getCreatedAt()))
-                .images(targetMember.getDetail().getImages())
+        return MatchThumbnailResponseDTO.builder()
+                .id(match.getId())
+                .targetMemberId(targetMember.getId())
+                .status(match.getStatus())
+                .createdAt(match.getCreatedAt().toString())
+                .dueDate(generateDueDate(match.getCreatedAt()))
+                .images(dto.getImages())
                 .name(dto.getName())
                 .age(dto.getAge())
                 .address(dto.getAddress())

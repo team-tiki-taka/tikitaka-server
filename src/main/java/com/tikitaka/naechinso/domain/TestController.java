@@ -2,6 +2,11 @@ package com.tikitaka.naechinso.domain;
 
 import com.tikitaka.naechinso.domain.card.CardRepository;
 import com.tikitaka.naechinso.domain.card.CardService;
+import com.tikitaka.naechinso.domain.match.MatchRepository;
+import com.tikitaka.naechinso.domain.match.MatchService;
+import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
+import com.tikitaka.naechinso.domain.match.dto.MatchResponseDTO;
+import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.MemberDetailRepository;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.MemberService;
@@ -14,11 +19,13 @@ import com.tikitaka.naechinso.domain.recommend.RecommendRepository;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendBySenderRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendResponseDTO;
+import com.tikitaka.naechinso.global.annotation.AuthMember;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,8 +49,10 @@ public class TestController {
     private final PendingService pendingService;
     private final CardService cardService;
     private final CardRepository cardRepository;
+    private final MatchService matchService;
+    private final MatchRepository matchRepository;
 
-    @GetMapping("/request-member")
+    @GetMapping("/create-recommend-request-member")
     @ApiOperation(value = "[*TEST*] 추천사를 요청하는 유저를 생성하고 엑세스 토큰을 반환한다")
     public CommonApiResponse<Object> generateRecommendRequestUser(
     ) {
@@ -66,8 +75,8 @@ public class TestController {
         return CommonApiResponse.of(responseDTO);
     }
 
-    @GetMapping("/recommend-send")
-    @ApiOperation(value = "[*TEST*] 추천사를 요청하는 유저를 생성하고 엑세스 토큰을 반환한다")
+    @GetMapping("/create-recommend-received-member")
+    @ApiOperation(value = "[*TEST*] 추천사를 받은 멤버를 임시 유저로 가입시킨 후 엑세스 토큰을 반환한다")
     public CommonApiResponse<Object> generateRecommendReceiver(
     ) {
 
@@ -453,6 +462,22 @@ public class TestController {
            accessToken = senderDTO.getAccessToken();
         }
         return CommonApiResponse.of(accessToken);
+    }
+
+    @GetMapping("/create-match")
+    @ApiOperation(value = "[*TEST*] 나에게 호감을 보낸 매칭을 하나 생성한다")
+    public CommonApiResponse<Object> dropAllTable(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        Match match = Match.builder()
+                .fromMember(memberService.findById(20L))
+                .toMember(memberService.findByMember(member))
+                .status(MatchStatus.PENDING)
+                .build();
+
+        matchRepository.save(match);
+
+        return CommonApiResponse.of(MatchResponseDTO.of(match));
     }
 
     @DeleteMapping("/drop-all-table")

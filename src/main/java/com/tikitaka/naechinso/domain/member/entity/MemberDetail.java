@@ -17,7 +17,7 @@ import java.util.List;
  * @author gengminy 220924
  * */
 @Entity
-@Table(name = "member_detail")
+@Table(name = "Member_detail")
 @Getter
 @Builder
 @AllArgsConstructor

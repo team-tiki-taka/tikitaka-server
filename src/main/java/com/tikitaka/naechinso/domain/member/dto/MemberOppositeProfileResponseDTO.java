@@ -8,6 +8,7 @@ import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import com.tikitaka.naechinso.global.util.CustomStringUtil;
 import lombok.*;
 import org.springframework.security.core.parameters.P;
 
@@ -49,10 +50,48 @@ public class MemberOppositeProfileResponseDTO {
     private String style;
     private String introduce;
 
-
     private String mbti;
-
     private Recommendation recommend;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    @ToString
+    public static class Recommendation {
+        private String name;
+        private Gender gender;
+        private String appeal;
+
+        private String jobName;
+        private String jobPart;
+        private String jobLocation;
+        private String eduName;
+        private String eduMajor;
+        private String eduLevel;
+
+        private String meet;
+        private String period;
+        private String appealDetail;
+
+        public static Recommendation of(Recommend recommend) {
+            Member sender = recommend.getSender();
+            return Recommendation.builder()
+                    .name(CustomStringUtil.hideName(recommend.getSenderName()))
+                    .gender(recommend.getSenderGender())
+                    .appeal(recommend.getReceiverAppeal())
+                    .appealDetail(recommend.getReceiverAppealDetail())
+                    .eduName(sender.getEduName())
+                    .eduMajor(sender.getEduMajor())
+                    .eduLevel(sender.getEduLevel())
+                    .jobName(sender.getJobName())
+                    .jobPart(sender.getJobPart())
+                    .jobLocation(sender.getJobLocation())
+                    .meet(recommend.getReceiverMeet())
+                    .period(recommend.getReceiverPeriod())
+                    .build();
+        }
+    }
 
     public static MemberOppositeProfileResponseDTO of(Member member) {
         MemberDetail detail = member.getDetail();
@@ -71,7 +110,7 @@ public class MemberOppositeProfileResponseDTO {
             if (recommend.getSender() != null && recommend.getReceiver() != null) {
                 return MemberOppositeProfileResponseDTO.builder()
                         .images(detail.getImages())
-                        .name(hideName(member.getName()))
+                        .name(CustomStringUtil.hideName(member.getName()))
                         .age(member.getAge())
                         .address(detail.getAddress())
                         .jobName(member.getJobName())
@@ -97,66 +136,4 @@ public class MemberOppositeProfileResponseDTO {
         }
         throw new NotFoundException(ErrorCode.RECOMMEND_NOT_FOUND);
     }
-
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Builder
-    @ToString
-    private static class Recommendation {
-        private String name;
-        private Gender gender;
-        private String appeal;
-
-        private String jobName;
-        private String jobPart;
-        private String jobLocation;
-        private String eduName;
-        private String eduMajor;
-        private String eduLevel;
-
-        private String meet;
-        private String period;
-        private String appealDetail;
-
-        public static Recommendation of(Recommend recommend) {
-            Member sender = recommend.getSender();
-            return Recommendation.builder()
-                    .name(hideName(recommend.getSenderName()))
-                    .gender(recommend.getSenderGender())
-                    .appeal(recommend.getReceiverAppeal())
-                    .appealDetail(recommend.getReceiverAppealDetail())
-                    .eduName(sender.getEduName())
-                    .eduMajor(sender.getEduMajor())
-                    .eduLevel(sender.getEduLevel())
-                    .jobName(sender.getJobName())
-                    .jobPart(sender.getJobPart())
-                    .jobLocation(sender.getJobLocation())
-                    .meet(recommend.getReceiverMeet())
-                    .period(recommend.getReceiverPeriod())
-                    .build();
-        }
-    }
-
-    private static String hideName(String name) {
-        if (name.length() == 1) {
-            return "*";
-        } else if (name.length() == 2) {
-            return name.charAt(0) + "*";
-        } else if (name.length() > 2) {
-            return name.charAt(0)
-                    + "*".repeat(name.length() - 2)
-                    + name.charAt(name.length() - 1);
-        }
-        return name;
-    }
-
-    public String getAppeal() {
-        if (this.recommend == null) {
-            return null;
-        }
-        return this.recommend.getAppeal();
-    }
-
 }

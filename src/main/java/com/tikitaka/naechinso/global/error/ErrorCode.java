@@ -65,6 +65,14 @@ public enum ErrorCode {
     RECOMMEND_SENDER_UNAUTHORIZED(UNAUTHORIZED, "R007","추천인의 인증이 아직 완료되지 않았습니다"),
     RECOMMEND_SENDER_NOT_EXIST(BAD_REQUEST, "R008","추천인 정보가 올바르지 않습니다"),
 
+
+    /* Match 오류 */
+    MATCH_NOT_FOUND(NOT_FOUND, "MATCH000", "매칭 정보를 찾을 수 없습니다"),
+    FORBIDDEN_MATCH(FORBIDDEN, "MATCH001", "해당 매칭 정보에 대한 접근 권한이 없습니다"),
+    MATCH_ALREADY_OPEN(BAD_REQUEST, "MATCH002", "이미 번호 오픈권을 사용했습니다"),
+    MATCH_ALREADY_ACCEPTED(BAD_REQUEST, "MATCH002", "이미 호감을 수락했습니다"),
+    BAD_MATCH_STATUS(BAD_REQUEST, "MATCH003", "매칭 상태 정보가 유효하지 않습니다"),
+
     /* Validation 오류 */
     PARAMETER_NOT_VALID(BAD_REQUEST, "P000", "인자가 유효하지 않습니다"),
 
