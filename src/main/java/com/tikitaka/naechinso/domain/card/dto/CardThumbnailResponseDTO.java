@@ -108,9 +108,6 @@ public class CardThumbnailResponseDTO {
     private static long generateDueDate(LocalDateTime createdAt) {
         LocalDateTime endDatetime = LocalDateTime.of(createdAt.toLocalDate().plusDays(7), LocalTime.of(23,59,59));
         long dueDate = Duration.between(LocalDateTime.now(), endDatetime).toDays();
-
-        System.out.println("endDatetime = " + endDatetime);
-
         if (dueDate < 0) {
             return 0;
         }

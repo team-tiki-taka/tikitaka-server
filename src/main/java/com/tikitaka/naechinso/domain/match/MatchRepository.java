@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.match;
 
+import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
 import com.tikitaka.naechinso.domain.match.dto.MatchResponseDTO;
 import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.entity.Member;
@@ -11,9 +12,46 @@ import java.util.Optional;
 
 public interface MatchRepository extends JpaRepository<Match, Long> {
 
-    List<Match> findAllByFromMember(Member member);
-    List<Match> findAllByToMember(Member member);
+    /* OPEN 이나 ACCEPT 상태가 아닌 것들만 가져와야함 */
 
+    List<Match> findAllByFromMemberAndStatusNotIn(Member member, List<MatchStatus> statusList);
+
+    List<Match> findAllByToMemberAndStatusNotIn(Member member, List<MatchStatus> statusList);
+
+    @Query("SELECT m " +
+            "FROM Match m " +
+            "JOIN m.toMember t " +
+            "WHERE t = :member " +
+            "AND m.status <> com.tikitaka.naechinso.domain.match.constant.MatchStatus.ACCEPTED " +
+            "AND m.status <> com.tikitaka.naechinso.domain.match.constant.MatchStatus.OPEN")
+    List<Match> findAllByToMemberNotComplete(Member member);
+
+    @Query("SELECT m " +
+            "FROM Match m " +
+            "JOIN m.fromMember f " +
+            "WHERE f = :member " +
+            "AND m.status <> com.tikitaka.naechinso.domain.match.constant.MatchStatus.ACCEPTED " +
+            "AND m.status <> com.tikitaka.naechinso.domain.match.constant.MatchStatus.OPEN")
+    List<Match> findAllByFromMemberNotComplete(Member member);
+
+    @Query("SELECT m " +
+            "FROM Match m " +
+            "JOIN m.fromMember f JOIN m.toMember t " +
+            "WHERE (f = :member OR t = :member) " +
+            "AND (m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.ACCEPTED " +
+            "OR m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.OPEN)")
+    List<Match> findAllByMemberComplete(Member member);
+
+    @Query("SELECT m " +
+            "FROM Match m " +
+            "JOIN m.fromMember f JOIN m.toMember t " +
+            "WHERE m.id = :id AND (f = :member OR t = :member) " +
+            "AND m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.ACCEPTED")
+    Optional<Match> findAllByIdAndMemberAndStatusIsAccept(Long id, Member member);
+
+    Optional<Match> findByIdAndToMemberAndStatus(Long id, Member member, MatchStatus status);
+
+    Optional<Match> findByIdAndStatus(Long id, MatchStatus status);
 
 //    @Query("select new com.tikitaka.naechinso.domain.match.dto.MatchResponseDTO(mat, m1, m2) " +
 //            "from Match mat " +

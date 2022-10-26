@@ -22,7 +22,6 @@ public class MatchResponseDTO {
     private MatchStatus status;
 
     private String phone;
-
     private Long fromMemberId;
 
     private Long toMemberId;

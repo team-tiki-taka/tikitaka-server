@@ -8,6 +8,7 @@ import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import com.tikitaka.naechinso.global.util.CustomStringUtil;
 import lombok.*;
 import org.springframework.security.core.parameters.P;
 
@@ -49,55 +50,8 @@ public class MemberOppositeProfileResponseDTO {
     private String style;
     private String introduce;
 
-
     private String mbti;
-
     private Recommendation recommend;
-
-    public static MemberOppositeProfileResponseDTO of(Member member) {
-        MemberDetail detail = member.getDetail();
-        //디테일 없는 유저로 시도
-        if (detail == null) {
-            throw new NotFoundException(ErrorCode.USER_NOT_SIGNED_UP);
-        }
-
-        //추천받은 적 없는 유저를 가져오는 것을 시도
-        if (member.getRecommendReceived() == null){
-            throw new NotFoundException(ErrorCode.RECOMMEND_NOT_FOUND);
-        }
-
-        for (Recommend recommend: member.getRecommendReceived()) {
-            //추천 상태 검증
-            if (recommend.getSender() != null && recommend.getReceiver() != null) {
-                return MemberOppositeProfileResponseDTO.builder()
-                        .images(detail.getImages())
-                        .name(hideName(member.getName()))
-                        .age(member.getAge())
-                        .address(detail.getAddress())
-                        .jobName(member.getJobName())
-                        .jobPart(member.getJobPart())
-                        .jobLocation(member.getJobLocation())
-                        .eduName(member.getEduName())
-                        .eduMajor(member.getEduMajor())
-                        .eduLevel(member.getEduLevel())
-                        .gender(member.getGender())
-                        .personality(detail.getPersonality())
-                        .religion(detail.getReligion())
-                        .height(detail.getHeight())
-                        .smoke(detail.getSmoke())
-                        .drink(detail.getDrink())
-                        .hobby(detail.getHobby())
-                        .style(detail.getStyle())
-                        .introduce(detail.getIntroduce())
-                        .mbti(detail.getMbti())
-                        .recommend(Recommendation.of(recommend))
-                        .build();
-
-            }
-        }
-        throw new NotFoundException(ErrorCode.RECOMMEND_NOT_FOUND);
-    }
-
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -123,7 +77,7 @@ public class MemberOppositeProfileResponseDTO {
         public static Recommendation of(Recommend recommend) {
             Member sender = recommend.getSender();
             return Recommendation.builder()
-                    .name(hideName(recommend.getSenderName()))
+                    .name(CustomStringUtil.hideName(recommend.getSenderName()))
                     .gender(recommend.getSenderGender())
                     .appeal(recommend.getReceiverAppeal())
                     .appealDetail(recommend.getReceiverAppealDetail())
@@ -139,16 +93,47 @@ public class MemberOppositeProfileResponseDTO {
         }
     }
 
-    private static String hideName(String name) {
-        if (name.length() == 1) {
-            return "*";
-        } else if (name.length() == 2) {
-            return name.charAt(0) + "*";
-        } else if (name.length() > 2) {
-            return name.charAt(0)
-                    + "*".repeat(name.length() - 2)
-                    + name.charAt(name.length() - 1);
+    public static MemberOppositeProfileResponseDTO of(Member member) {
+        MemberDetail detail = member.getDetail();
+        //디테일 없는 유저로 시도
+        if (detail == null) {
+            throw new NotFoundException(ErrorCode.USER_NOT_SIGNED_UP);
         }
-        return name;
+
+        //추천받은 적 없는 유저를 가져오는 것을 시도
+        if (member.getRecommendReceived() == null){
+            throw new NotFoundException(ErrorCode.RECOMMEND_NOT_FOUND);
+        }
+
+        for (Recommend recommend: member.getRecommendReceived()) {
+            //추천 상태 검증
+            if (recommend.getSender() != null && recommend.getReceiver() != null) {
+                return MemberOppositeProfileResponseDTO.builder()
+                        .images(detail.getImages())
+                        .name(CustomStringUtil.hideName(member.getName()))
+                        .age(member.getAge())
+                        .address(detail.getAddress())
+                        .jobName(member.getJobName())
+                        .jobPart(member.getJobPart())
+                        .jobLocation(member.getJobLocation())
+                        .eduName(member.getEduName())
+                        .eduMajor(member.getEduMajor())
+                        .eduLevel(member.getEduLevel())
+                        .gender(member.getGender())
+                        .personality(detail.getPersonality())
+                        .religion(detail.getReligion())
+                        .height(detail.getHeight())
+                        .smoke(detail.getSmoke())
+                        .drink(detail.getDrink())
+                        .hobby(detail.getHobby())
+                        .style(detail.getStyle())
+                        .introduce(detail.getIntroduce())
+                        .mbti(detail.getMbti())
+                        .recommend(Recommendation.of(recommend))
+                        .build();
+
+            }
+        }
+        throw new NotFoundException(ErrorCode.RECOMMEND_NOT_FOUND);
     }
 }

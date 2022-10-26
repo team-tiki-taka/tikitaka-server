@@ -9,7 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "match")
+@Table(name = "Match")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -38,5 +38,14 @@ public class Match extends BaseEntity {
     @JoinColumn(name = "mem_to_id")
     @JsonIgnore
     private Member toMember;
+
+    /* 서로 호감을 보내어 매칭 수락 */
+    public void accept() {
+        this.status = MatchStatus.ACCEPTED;
+    }
+    /* 번호 오픈권 사용 */
+    public void open() {
+        this.status = MatchStatus.OPEN;
+    }
 
 }
