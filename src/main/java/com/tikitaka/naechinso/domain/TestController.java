@@ -233,11 +233,8 @@ public class TestController {
     }
 
     @GetMapping("/create-two-detail-user")
-    @ApiOperation(value = "[*TEST*] 멤버 DB를 초기화한 후, 정회원으로 가입한 유저를 둘 생성하고 그 중 첫 번째 유저의 엑세스 토큰을 반환한다")
+    @ApiOperation(value = "[*TEST*] 정회원으로 가입한 유저를 둘 생성하고 그 중 첫 번째 유저의 엑세스 토큰을 반환한다")
     public CommonApiResponse<Object> createTwoRegularMember() {
-
-        memberRepository.deleteAll();
-        recommendRepository.deleteAll();
 
         MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
                 "01012345678",
@@ -457,7 +454,6 @@ public class TestController {
                             .style((String) info.get(23))
                             .build()
             );
-
 
            accessToken = senderDTO.getAccessToken();
         }

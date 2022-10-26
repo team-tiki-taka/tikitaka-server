@@ -1,18 +1,14 @@
 package com.tikitaka.naechinso.domain.match;
 
 import com.tikitaka.naechinso.domain.card.CardRepository;
-import com.tikitaka.naechinso.domain.card.CardService;
+import com.tikitaka.naechinso.domain.card.dto.CardOppositeMemberProfileResponseDTO;
 import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
-import com.tikitaka.naechinso.domain.match.dto.MatchListResponseDTO;
-import com.tikitaka.naechinso.domain.match.dto.MatchResponseDTO;
-import com.tikitaka.naechinso.domain.match.dto.MatchThumbnailResponseDTO;
+import com.tikitaka.naechinso.domain.match.dto.*;
 import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
-import com.tikitaka.naechinso.domain.member.MemberService;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.error.ErrorCode;
-import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -131,6 +126,36 @@ public class MatchService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * 호감 주거나 받은 상대의 프로필 정보를 가져옴
+     * */
+    public MatchBasicProfileResponseDTO getBasicProfileById(Member authMember, Long id) {
+        //관련 매칭 정보가 없으면 403
+        if(!matchRepository.existsByTargetId(id)){
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return MatchBasicProfileResponseDTO.of(oppositeMember);
+    }
+
+    /**
+     * 호감 주거나 받은 상대의 프로필 정보를 가져옴
+     * */
+    public MatchOpenProfileResponseDTO getOpenProfileById(Member authMember, Long id) {
+        //OPEN 상태인 매칭 정보가 없다면 에러
+        if(!matchRepository.existsByTargetIdAndStatusIsOpen(id)){
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return MatchOpenProfileResponseDTO.of(oppositeMember);
+    }
 
     public MatchListResponseDTO findAllByMember(Member authMember) {
         return MatchListResponseDTO.of(authMember);

@@ -44,14 +44,15 @@ public class MemberController {
         return CommonApiResponse.of(MemberCommonResponseDTO.of(memberService.findById(id)));
     }
 
-    @GetMapping("/{id}/profile")
-    @ApiOperation(value = "고유 아이디의 유저 프로필과 추천인 정보를 가져온다 (AccessToken)")
-    public CommonApiResponse<MemberOppositeProfileResponseDTO> getMemberProfileById(
-            @PathVariable("id") Long id,
-            @ApiIgnore @AuthMember Member member
-    ) {
-        return CommonApiResponse.of(memberService.readOppositeMemberDetailAndRecommendById(member, id));
-    }
+//    @GetMapping("/{id}/profile")
+//    @ApiOperation(value = "고유 아이디의 유저 프로필과 추천인 정보를 가져온다 (AccessToken)")
+//    public CommonApiResponse<MemberOppositeProfileResponseDTO> getMemberProfileById(
+//            @PathVariable("id") Long id,
+//            @ApiIgnore @AuthMember Member member
+//    ) {
+//        return CommonApiResponse.of(memberService.readOppositeMemberDetailAndRecommendById(member, id));
+//    }
+
     @GetMapping("/detail")
     @ApiOperation(value = "회원가입 세부 정보를 가져온다 (AccessToken)")
     public CommonApiResponse<MemberDetailResponseDTO> getMemberDetail(

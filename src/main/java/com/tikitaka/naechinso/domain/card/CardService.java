@@ -1,26 +1,29 @@
 package com.tikitaka.naechinso.domain.card;
 
+import com.tikitaka.naechinso.domain.card.dto.CardCountResponseDTO;
+import com.tikitaka.naechinso.domain.card.dto.CardOppositeMemberProfileResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardResponseDTO;
 import com.tikitaka.naechinso.domain.card.dto.CardThumbnailResponseDTO;
 import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
-import com.tikitaka.naechinso.domain.member.MemberService;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
+import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -32,24 +35,28 @@ public class CardService {
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
 
-//    public CardResponseDTO createCard(Member authMember) {
-//
-//        Member member = memberRepository.findByMember(authMember)
-//                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-//
-//        Card newCard = Card.builder()
-//                .member(member)
-//                .targetId(3L)
-//                .build();
-//
-//        cardRepository.save(newCard);
-//
-//        return CardResponseDTO.of(newCard);
-//    }
+
+    /**
+     * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일)
+     */
+    public List<CardResponseDTO> findAllCard(Member authMember){
+        return cardRepository.findAllDTOByMember(authMember);
+    }
+
+    /**
+     * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일)
+     */
+    public CardCountResponseDTO getRemainingCount(Member authMember) {
+        long count = 3L - countCardByMemberAndCreatedAtBetween(authMember);
+        if (count < 0) {
+            return new CardCountResponseDTO(0L);
+        }
+        else return new CardCountResponseDTO(count);
+    }
+
 
     /**
      * 추천 받았던 유저를 필터링한 랜덤 추천 카드를 만든다
-     * @// TODO: 2022/10/22 조건에 맞는 타겟 멤버 중에서 랜덤 선택하도록
      * */
     public CardThumbnailResponseDTO createRandomCard(Member authMember) {
         //이미 ACTIVE 한 카드가 있으면 에러
@@ -98,6 +105,23 @@ public class CardService {
         cardRepository.save(activeCard);
 
         return CardResponseDTO.of(activeCard);
+    }
+
+    /**
+     * 랜덤 추천받은 상대의 프로필 카드를 가져오는 서비스 로직
+     * ACTIVE 한 카드에만 접근 권한이 있음
+     * */
+    public CardOppositeMemberProfileResponseDTO findOppositeMemberDetailAndRecommendById(Member authMember, Long id) {
+        //현재 ACTIVE 한 카드와 요청 id가 같지 않으면 에러
+        Card activeCard = findByMemberAndIsActiveTrue(authMember);
+        Long targetId = activeCard.getTargetMemberId();
+        if (!targetId.equals(id)) {
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        return CardOppositeMemberProfileResponseDTO.of(oppositeMember);
     }
 
     public List<CardResponseDTO> findAllDTOByMember(Member member) {

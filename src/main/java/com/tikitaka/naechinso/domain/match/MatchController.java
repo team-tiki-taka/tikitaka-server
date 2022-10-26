@@ -1,7 +1,8 @@
 package com.tikitaka.naechinso.domain.match;
 
 import com.tikitaka.naechinso.domain.card.CardService;
-import com.tikitaka.naechinso.domain.match.dto.MatchListResponseDTO;
+import com.tikitaka.naechinso.domain.match.dto.MatchBasicProfileResponseDTO;
+import com.tikitaka.naechinso.domain.match.dto.MatchOpenProfileResponseDTO;
 import com.tikitaka.naechinso.domain.match.dto.MatchResponseDTO;
 import com.tikitaka.naechinso.domain.match.dto.MatchThumbnailResponseDTO;
 import com.tikitaka.naechinso.domain.member.entity.Member;
@@ -54,10 +55,28 @@ public class MatchController {
         return CommonApiResponse.of(matchService.like(member));
     }
 
+    @GetMapping("/{memberId}/profile")
+    @ApiOperation(value = "고유 아이디에 해당하는 유저 프로필 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<MatchBasicProfileResponseDTO> getBasicProfileById(
+            @PathVariable("id") Long id,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(matchService.getBasicProfileById(member, id));
+    }
+
+    @GetMapping("/{memberId}/profile/open")
+    @ApiOperation(value = "번호 오픈을 사용한 고유 아이디 유저의 프로필 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<MatchOpenProfileResponseDTO> getOpenProfileById(
+            @PathVariable("memberId") Long id,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(matchService.getOpenProfileById(member, id));
+    }
+
     @PostMapping("/{id}/accept")
     @ApiOperation(value = "현재 호감을 보낸 상대를 수락하여 매칭을 성사시킨다 (AccessToken)")
     public CommonApiResponse<MatchResponseDTO> accept(
-            @PathVariable("id") Long id,
+            @PathVariable("memberId") Long id,
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(matchService.accept(member, id));
