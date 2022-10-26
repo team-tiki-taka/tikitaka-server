@@ -111,15 +111,11 @@ public class CardService {
      * 랜덤 추천받은 상대의 프로필 카드를 가져오는 서비스 로직
      * ACTIVE 한 카드에만 접근 권한이 있음
      * */
-    public CardOppositeMemberProfileResponseDTO findOppositeMemberDetailAndRecommendById(Member authMember, Long id) {
-        //현재 ACTIVE 한 카드와 요청 id가 같지 않으면 에러
+    public CardOppositeMemberProfileResponseDTO getCardProfileById(Member authMember) {
         Card activeCard = findByMemberAndIsActiveTrue(authMember);
         Long targetId = activeCard.getTargetMemberId();
-        if (!targetId.equals(id)) {
-            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
-        }
 
-        Member oppositeMember = memberRepository.findByMember(authMember)
+        Member oppositeMember = memberRepository.findById(targetId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         return CardOppositeMemberProfileResponseDTO.of(oppositeMember);
     }

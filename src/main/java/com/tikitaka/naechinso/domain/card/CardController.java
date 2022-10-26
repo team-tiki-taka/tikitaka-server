@@ -46,13 +46,12 @@ public class CardController {
         return CommonApiResponse.of(cardService.getRemainingCount(member));
     }
 
-    @GetMapping("/{id}/profile")
-    @ApiOperation(value = "고유 아이디의 유저 프로필과 추천인 정보를 가져온다 (AccessToken)")
-    public CommonApiResponse<CardOppositeMemberProfileResponseDTO> getProfileByCardMember(
-            @PathVariable("id") Long id,
+    @GetMapping("/profile")
+    @ApiOperation(value = "현재 활성화된 카드의 상대 프로필과 추천인 정보를 가져온다 (AccessToken)")
+    public CommonApiResponse<CardOppositeMemberProfileResponseDTO> getProfileByCard(
             @ApiIgnore @AuthMember Member member
     ) {
-        return CommonApiResponse.of(cardService.findOppositeMemberDetailAndRecommendById(member, id));
+        return CommonApiResponse.of(cardService.getCardProfileById(member));
     }
 
     @PostMapping

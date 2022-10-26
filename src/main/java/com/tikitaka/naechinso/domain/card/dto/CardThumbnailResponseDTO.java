@@ -7,6 +7,7 @@ import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import com.tikitaka.naechinso.global.util.DateUtil;
 import lombok.*;
 
 import java.time.*;
@@ -76,7 +77,7 @@ public class CardThumbnailResponseDTO {
                 .targetMemberId(card.getTargetMemberId())
                 .isActive(card.getIsActive())
                 .createdAt(card.getCreatedAt().toString())
-                .dueDate(generateDueDate(card.getCreatedAt()))
+                .dueDate(DateUtil.getDueDay(card.getCreatedAt(), 7L))
                 .images(targetMember.getDetail().getImages())
                 .name(dto.getName())
                 .age(dto.getAge())
@@ -105,12 +106,4 @@ public class CardThumbnailResponseDTO {
                 .build();
     }
 
-    private static long generateDueDate(LocalDateTime createdAt) {
-        LocalDateTime endDatetime = LocalDateTime.of(createdAt.toLocalDate().plusDays(7), LocalTime.of(23,59,59));
-        long dueDate = Duration.between(LocalDateTime.now(), endDatetime).toDays();
-        if (dueDate < 0) {
-            return 0;
-        }
-        return dueDate;
-    }
 }
