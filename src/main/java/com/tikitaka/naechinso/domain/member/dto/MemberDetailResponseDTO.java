@@ -95,7 +95,6 @@ public class MemberDetailResponseDTO {
                 .hobby(detail.getHobby())
                 .style(detail.getStyle())
                 .images(detail.getImages())
-                .point(detail.getPoint())
                 .build();
     }
 

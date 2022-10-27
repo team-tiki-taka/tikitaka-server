@@ -9,10 +9,12 @@ import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
+import com.tikitaka.naechinso.domain.point.constant.PointType;
 import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.*;
 
@@ -113,6 +115,10 @@ public class Member extends BaseEntity {
     @Builder.Default
     private Boolean joinAccepted = false;
 
+    @Column(name = "mem_point")
+    @Builder.Default
+    private Long point = 0L;
+
     //멤버 디테일 정보
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "mem_detail")
@@ -195,6 +201,37 @@ public class Member extends BaseEntity {
             throw new UnauthorizedException(ErrorCode._UNAUTHORIZED);
         }
         return this.detail.updateImage(images);
+    }
+
+    /** 포인트를 충전합니다 */
+    public void chargePoint(long value) {
+        this.point += value;
+    }
+
+    /** 포인트를 사용합니다 */
+    public void usePoint(long value) {
+        if (this.point - value >= 0) {
+            this.point -= value;
+        } else {
+            throw new BadRequestException(ErrorCode.POINT_NOT_ENOUGH);
+        }
+    }
+    
+    public boolean validatePoint() {
+        long sum = 0;
+        for (Point pointHistory : this.points) {
+            if (pointHistory.getType() == PointType.CHARGE) {
+                sum += pointHistory.getValue();
+            } else if (pointHistory.getType() == PointType.USE){
+                sum -= pointHistory.getValue();
+            }
+        }
+
+        if (sum != point) {
+            System.out.println("잔여 포인트 검증 오류");
+            return false;
+        }
+        return true;
     }
 
     public void acceptJobImage() {
