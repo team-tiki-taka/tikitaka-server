@@ -75,10 +75,6 @@ public class MemberDetail extends BaseEntity {
     @Column(name = "mem_image_accepted")
     private Boolean image_accepted;
 
-    @Column(name = "mem_point")
-    @Builder.Default
-    private Long point = 0L;
-
     // MemberDetail 을 소유한 Member 와 연결
     // Member Entity 와 1:1 조인
     // Member PK 그대로 사용

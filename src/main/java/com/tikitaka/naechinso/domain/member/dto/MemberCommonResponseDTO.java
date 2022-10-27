@@ -54,6 +54,8 @@ public class MemberCommonResponseDTO {
 
     private Boolean eduAccepted;
 
+    private long point;
+
     public static MemberCommonResponseDTO of(Member member) {
         return MemberCommonResponseDTO.builder()
                 .phone(member.getPhone())
@@ -71,6 +73,7 @@ public class MemberCommonResponseDTO {
                 .eduLevel(member.getEduLevel())
                 .eduImage(member.getEduImage())
                 .eduAccepted(member.getEduAccepted())
+                .point(member.getPoint())
                 .build();
     }
 }

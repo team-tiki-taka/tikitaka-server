@@ -94,6 +94,9 @@ public enum ErrorCode {
     CARD_LIMIT_EXCEED(BAD_REQUEST, "CARD002", "일일 추천 카드 한도를 초과했습니다"),
 
 
+    /* 포인트 관련 */
+    POINT_NOT_ENOUGH(BAD_REQUEST, "POINT000", "포인트가 부족합니다");
+
     ;
 
     private final HttpStatus httpStatus;
