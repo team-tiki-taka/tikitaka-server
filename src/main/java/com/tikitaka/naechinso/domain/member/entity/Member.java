@@ -8,6 +8,7 @@ import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
+import com.tikitaka.naechinso.domain.notification.entity.Notification;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
 import com.tikitaka.naechinso.domain.point.constant.PointType;
 import com.tikitaka.naechinso.domain.point.entity.Point;
@@ -134,6 +135,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     @JsonIgnore
     private List<Point> points = new ArrayList<>();
+
+    //내 가입 대기 정보
+    @OneToMany(mappedBy = "member")
+    @ToString.Exclude
+    @JsonIgnore
+    private List<Notification> notifications = new ArrayList<>();
 
     //내가 보낸 호감 내역
     @OneToMany(mappedBy = "fromMember")
