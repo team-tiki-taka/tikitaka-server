@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface PendingRepository extends JpaRepository<Pending, Long> {
     List<Pending> findAllByMemberId(Long memberId);
 

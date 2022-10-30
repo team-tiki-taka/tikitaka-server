@@ -15,15 +15,21 @@ public enum ErrorCode {
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "C000", "서버 에러, 관리자에게 문의 바랍니다"),
     _BAD_REQUEST(BAD_REQUEST, "C001", "잘못된 요청입니다"),
     _UNAUTHORIZED(UNAUTHORIZED, "C002", "권한이 없습니다"),
-
     _METHOD_NOT_ALLOWED(METHOD_NOT_ALLOWED, "C003", "지원하지 않는 Http Method 입니다"),
     _UNSUPPORTED_MEDIA_TYPE(UNSUPPORTED_MEDIA_TYPE, "C004", "지원하지 않는 Http Media PendingType 입니다"),
     _INVALID_REQUEST_PARAMETER(BAD_REQUEST, "C005", "유효하지 않은 Request Parameter 입니다"),
     CANNOT_CREATE_RECOMMEND(INTERNAL_SERVER_ERROR, "C006", "추천사 작성에 실패했습니다"),
     CANNOT_CREATE_RECOMMEND_REQUEST(INTERNAL_SERVER_ERROR, "C007", "추천사 요청에 실패했습니다"),
-
     NOT_MULTIPART_HEADER(BAD_REQUEST, "C008", "Multipart 헤더가 아닙니다"),
     AMAZON_ACCESS_DENIED(FORBIDDEN, "C009", "Amazon S3 접근이 거부되었습니다"),
+
+
+    /* DB 관련 오류 */
+    CANNOT_CREATE_TUPLE(INTERNAL_SERVER_ERROR, "DB000", "새로운 인스턴스 생성을 실패했습니다"),
+    CANNOT_UPDATE_TUPLE(INTERNAL_SERVER_ERROR, "DB001", "인스턴스 업데이트에 실패했습니다"),
+
+    /* 알림 관련 오류 */
+    CANNOT_SEND_PUSH_NOTIFICATION(INTERNAL_SERVER_ERROR, "NOTICE000", "푸시 알림 전송에 실패했습니다"),
 
     /* Auth 관련 오류 */
     NO_TOKEN(UNAUTHORIZED, "AUTH000", "토큰이 존재하지 않습니다"),
@@ -52,6 +58,8 @@ public enum ErrorCode {
     RANDOM_USER_NOT_FOUND(NOT_FOUND, "U006","추천할 수 있는 유저가 더 이상 없습니다"),
     FORBIDDEN_PROFILE(FORBIDDEN, "U007","해당 유저 프로필에 대한 접근 권한이 없습니다"),
     USER_NOT_SIGNED_UP(NOT_FOUND, "U008","정회원으로 가입된 유저가 아닙니다"),
+    USER_ALREADY_LOGGED_IN(BAD_REQUEST, "U009","이미 로그인 상태입니다"),
+    USER_ALREADY_LOGGED_OUT(BAD_REQUEST, "U010","이미 로그아웃 상태입니다"),
 
 
     /* Recommend 관련 오류 */

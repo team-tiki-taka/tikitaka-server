@@ -462,7 +462,7 @@ public class TestController {
 
     @GetMapping("/create-match")
     @ApiOperation(value = "[*TEST*] 나에게 호감을 보낸 매칭을 하나 생성한다")
-    public CommonApiResponse<Object> dropAllTable(
+    public CommonApiResponse<Object> createMatch(
             @ApiIgnore @AuthMember Member member
     ) {
         Match match = Match.builder()

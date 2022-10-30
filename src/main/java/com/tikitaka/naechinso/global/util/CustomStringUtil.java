@@ -2,7 +2,9 @@ package com.tikitaka.naechinso.global.util;
 
 public class CustomStringUtil {
     public static String hideName(String name) {
-        if (name.length() == 1) {
+        if (name == null) {
+            return null;
+        } else if (name.length() == 1) {
             return "*";
         } else if (name.length() == 2) {
             return name.charAt(0) + "*";

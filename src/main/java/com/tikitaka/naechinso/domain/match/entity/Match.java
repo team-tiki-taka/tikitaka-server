@@ -39,6 +39,10 @@ public class Match extends BaseEntity {
     @JsonIgnore
     private Member toMember;
 
+    /* 호감 거절 */
+    public void reject() {
+        this.status = MatchStatus.REJECTED;
+    }
     /* 서로 호감을 보내어 매칭 수락 */
     public void accept() {
         this.status = MatchStatus.ACCEPTED;
