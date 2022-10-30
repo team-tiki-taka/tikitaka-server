@@ -176,6 +176,16 @@ public class MemberService {
     }
 
     /**
+     * 동의 정보 여부를 수정한다
+     * */
+    public MemberAcceptsResponseDTO updateAccepts(Member authMember, MemberUpdateAcceptsRequestDTO dto){
+        Member member = findByMember(authMember);
+        member.updateAccepts(dto);
+        memberRepository.save(member);
+        return MemberAcceptsResponseDTO.of(member);
+    }
+
+    /**
      * MemberDetail 의 프로필 이미지를 업로드 한다
      * */
     public MemberDetailResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){

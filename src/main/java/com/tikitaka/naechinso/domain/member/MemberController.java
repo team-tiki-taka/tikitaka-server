@@ -144,6 +144,15 @@ public class MemberController {
         return CommonApiResponse.of(memberService.updateImage(member, dto));
     }
 
+    @PatchMapping("/accept")
+    @ApiOperation(value = "동의 정보 여부를 업데이트 한다 (AccessToken)")
+    public CommonApiResponse<MemberAcceptsResponseDTO> updateAccepts(
+            @Valid @RequestBody MemberUpdateAcceptsRequestDTO dto,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.updateAccepts(member, dto));
+    }
+
 
     //페이징 처리 추가할 예정
     @GetMapping("/find")
