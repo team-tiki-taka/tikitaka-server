@@ -28,6 +28,11 @@ spring:
       swagger:
         use-model-v3: false
 
+fcm:
+  key:
+    path: naechinso-fcm.json
+    scope: https://www.googleapis.com/auth/cloud-platform
+
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace

@@ -1,8 +1,7 @@
-package com.tikitaka.naechinso.domain.notification.dto;
+package com.tikitaka.naechinso.infra.notification.dto;
 
-import com.tikitaka.naechinso.domain.notification.constant.NotificationType;
-import com.tikitaka.naechinso.domain.notification.entity.Notification;
-import com.tikitaka.naechinso.domain.point.dto.PointHistoryResponseDTO;
+import com.tikitaka.naechinso.infra.notification.constant.NotificationType;
+import com.tikitaka.naechinso.infra.notification.entity.Notification;
 import lombok.*;
 
 import java.util.ArrayList;

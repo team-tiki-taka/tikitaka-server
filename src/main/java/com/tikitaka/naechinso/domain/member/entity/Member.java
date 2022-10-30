@@ -8,7 +8,6 @@ import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
 import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
-import com.tikitaka.naechinso.domain.notification.entity.Notification;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
 import com.tikitaka.naechinso.domain.point.constant.PointType;
 import com.tikitaka.naechinso.domain.point.entity.Point;
@@ -34,7 +33,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 public class Member extends BaseEntity {
 
     @Id
@@ -80,6 +78,10 @@ public class Member extends BaseEntity {
     @Builder.Default
     private boolean acceptsMarketing = false;
 
+    @Column(name = "mem_accepts_push")
+    @Builder.Default
+    private boolean acceptsPush = true;
+
     @Column(name = "mem_job_name")
     private String jobName;
 
@@ -120,6 +122,10 @@ public class Member extends BaseEntity {
     @Builder.Default
     private Long point = 0L;
 
+    @Column(name = "mem_fcm_token")
+    @Builder.Default
+    private String fcmToken = "";
+
     //멤버 디테일 정보
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "mem_detail")
@@ -129,18 +135,20 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     @ToString.Exclude
     @JsonIgnore
+    @Builder.Default
     private List<Pending> pending = new ArrayList<>();
 
     //포인트 내역
     @OneToMany(mappedBy = "member")
-    @JsonIgnore
-    private List<Point> points = new ArrayList<>();
-
-    //내 가입 대기 정보
-    @OneToMany(mappedBy = "member")
     @ToString.Exclude
     @JsonIgnore
-    private List<Notification> notifications = new ArrayList<>();
+    @Builder.Default
+    private List<Point> points = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "member")
+//    @ToString.Exclude
+//    @JsonIgnore
+//    private List<Notification> notifications = new ArrayList<>();
 
     //내가 보낸 호감 내역
     @OneToMany(mappedBy = "fromMember")
@@ -161,18 +169,21 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "sender")
     @ToString.Exclude
     @JsonIgnore
+    @Builder.Default
     private List<Recommend> recommends = new ArrayList<>();
 
     //나를 소개해준 사람들
     @OneToMany(mappedBy = "receiver")
     @ToString.Exclude
     @JsonIgnore //순환참조 방지, 엔티티 프로퍼티 가려줌
+    @Builder.Default
     private List<Recommend> recommendReceived = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
-    private List<Card> cards;
+    @Builder.Default
+    private List<Card> cards = new ArrayList<>();
 
 
     public void setDetail(MemberDetail memberDetail) {

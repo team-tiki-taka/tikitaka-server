@@ -82,6 +82,15 @@ public class MatchController {
         return CommonApiResponse.of(matchService.accept(member, id));
     }
 
+    @PostMapping("/{id}/reject")
+    @ApiOperation(value = "해당 상대의 호감을 거절한다 (AccessToken)")
+    public CommonApiResponse<MatchResponseDTO> reject(
+            @PathVariable("id") Long id,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(matchService.reject(member, id));
+    }
+
     @PostMapping("/{id}/open")
     @ApiOperation(value = "현재 호감을 보낸 상대의 번호 오픈을 요청한다 (AccessToken)")
     public CommonApiResponse<MatchResponseDTO> openPhone(

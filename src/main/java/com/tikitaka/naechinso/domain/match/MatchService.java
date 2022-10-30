@@ -6,13 +6,21 @@ import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
 import com.tikitaka.naechinso.domain.match.dto.*;
 import com.tikitaka.naechinso.domain.match.entity.Match;
+import com.tikitaka.naechinso.domain.match.event.MatchLikeEvent;
+import com.tikitaka.naechinso.domain.match.event.MatchOpenEvent;
+import com.tikitaka.naechinso.domain.match.event.MatchResponseEvent;
 import com.tikitaka.naechinso.domain.member.MemberRepository;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
+import com.tikitaka.naechinso.global.error.exception.InternalServerException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +36,7 @@ public class MatchService {
     private final MemberRepository memberRepository;
     private final MatchRepository matchRepository;
     private final CardRepository cardRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 활성화된 카드에 해당하는 상대에게 호감을 보낸다
@@ -53,21 +62,69 @@ public class MatchService {
         matchRepository.save(match);
         cardRepository.save(activeCard);
 
+        //알림 이벤트 전송
+        try {
+            applicationEventPublisher.publishEvent(new MatchLikeEvent(authMember, targetMember));
+        } catch (Exception e) {
+            log.error("푸시 알림 전송에 실패했습니다 - {}", e.getMessage());
+        }
+
         return MatchResponseDTO.of(match);
     }
 
+    /**
+     * 호감을 보낸 상대를 거절한다
+     * @param authMember
+     * @return
+     */
+    public MatchResponseDTO reject(Member authMember, Long matchId) {
+        Match match = matchRepository.findByIdAndToMemberAndStatus(matchId, authMember, MatchStatus.PENDING)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MATCH_NOT_FOUND));
+
+        Member fromMember = match.getFromMember();
+
+        match.reject();
+        matchRepository.save(match);
+
+        //알림 이벤트 전송
+        if (fromMember.isAcceptsPush()) {
+            try {
+                MatchResponseEvent event = new MatchResponseEvent(fromMember, authMember, false);
+                applicationEventPublisher.publishEvent(event);
+
+            } catch (Exception e) {
+                log.error("푸시 알림 전송에 실패했습니다 - {}", e.getMessage());
+            }
+        }
+
+        return MatchResponseDTO.of(match);
+    }
 
     /**
-     * 활성화된 카드에 해당하는 상대에게 호감을 보낸다
+     * 호감을 보낸 상대를 수락한다
      * @param authMember
      * @return
      */
     public MatchResponseDTO accept(Member authMember, Long matchId) {
-        Match match = matchRepository.findByIdAndToMemberAndStatus(matchId, authMember,MatchStatus.PENDING)
+        Match match = matchRepository.findByIdAndToMemberAndStatus(matchId, authMember, MatchStatus.PENDING)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MATCH_NOT_FOUND));
+
+        Member fromMember = match.getFromMember();
 
         match.accept();
         matchRepository.save(match);
+
+        //알림 이벤트 전송
+        if (fromMember.isAcceptsPush()) {
+            try {
+                MatchResponseEvent event = new MatchResponseEvent(fromMember, authMember, true);
+                applicationEventPublisher.publishEvent(event);
+
+            } catch (Exception e) {
+                log.error("푸시 알림 전송에 실패했습니다 - {}", e.getMessage());
+            }
+        }
+
         return MatchResponseDTO.of(match);
     }
 
@@ -88,6 +145,14 @@ public class MatchService {
 
         match.open();
         matchRepository.save(match);
+
+        //알림 이벤트 전송
+        try {
+            Member opposite = authMember.equals(match.getFromMember()) ? match.getToMember() : match.getFromMember();
+            applicationEventPublisher.publishEvent(new MatchOpenEvent(authMember, opposite));
+        } catch (Exception e) {
+            log.error("푸시 알림 전송에 실패했습니다 - {}", e.getMessage());
+        }
 
         return MatchResponseDTO.of(match);
     }

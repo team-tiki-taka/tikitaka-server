@@ -40,6 +40,9 @@ dependencies {
 	//AWS S3
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.2'
 
+	//Firebase FCM
+	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
+
 	//jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 

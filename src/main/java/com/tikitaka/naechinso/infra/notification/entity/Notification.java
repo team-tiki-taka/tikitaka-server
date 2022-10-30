@@ -1,8 +1,8 @@
-package com.tikitaka.naechinso.domain.notification.entity;
+package com.tikitaka.naechinso.infra.notification.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tikitaka.naechinso.domain.member.entity.Member;
-import com.tikitaka.naechinso.domain.notification.constant.NotificationType;
+import com.tikitaka.naechinso.infra.notification.constant.NotificationType;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
 
@@ -21,11 +21,13 @@ public class Notification extends BaseEntity {
     @GeneratedValue
     private Long id;
 
-    /* 알림 주인 */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mem_id")
-    @JsonIgnore
-    private Member member;
+//    /* 알림 주인 */
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "mem_id")
+//    @JsonIgnore
+//    private Member member;
+    @Column(name = "mem_id")
+    private Long memberId;
 
     @Column(name = "not_type")
     @Enumerated(EnumType.STRING)

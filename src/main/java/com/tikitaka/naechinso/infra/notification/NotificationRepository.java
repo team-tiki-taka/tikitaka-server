@@ -1,6 +1,6 @@
-package com.tikitaka.naechinso.domain.notification;
+package com.tikitaka.naechinso.infra.notification;
 
-import com.tikitaka.naechinso.domain.notification.entity.Notification;
+import com.tikitaka.naechinso.infra.notification.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {

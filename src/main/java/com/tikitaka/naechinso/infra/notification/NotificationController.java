@@ -1,4 +1,4 @@
-package com.tikitaka.naechinso.domain.notification;
+package com.tikitaka.naechinso.infra.notification;
 
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
