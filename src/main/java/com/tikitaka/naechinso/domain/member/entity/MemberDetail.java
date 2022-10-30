@@ -69,7 +69,12 @@ public class MemberDetail extends BaseEntity {
     private String images;
 
     @Column(name = "mem_image_accepted")
-    private Boolean image_accepted;
+    private boolean image_accepted;
+
+    private boolean deleted;
+    public void setDeleted() {
+        this.deleted = true;
+    }
 
     // MemberDetail 을 소유한 Member 와 연결
     // Member Entity 와 1:1 조인
@@ -79,7 +84,6 @@ public class MemberDetail extends BaseEntity {
     @JoinColumn(name = "mem_id")
     @JsonIgnore
     private Member member;
-
 
     public static MemberDetail of(MemberDetailJoinRequestDTO dto) {
         return MemberDetail.builder()

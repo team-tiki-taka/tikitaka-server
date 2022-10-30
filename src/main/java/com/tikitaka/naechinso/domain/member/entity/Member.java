@@ -132,6 +132,13 @@ public class Member extends BaseEntity {
 
     private boolean deleted = Boolean.FALSE;
 
+    /**
+     * soft delete 처리 로직
+     */
+    public void setDeleted(){
+        this.deleted = true;
+    }
+
     //멤버 디테일 정보
     @OneToOne(mappedBy = "member")
     @JoinColumn(name = "mem_detail")
@@ -190,7 +197,6 @@ public class Member extends BaseEntity {
     @JsonIgnore
     @Builder.Default
     private List<Card> cards = new ArrayList<>();
-
 
     public void setDetail(MemberDetail memberDetail) {
         this.detail = memberDetail;
