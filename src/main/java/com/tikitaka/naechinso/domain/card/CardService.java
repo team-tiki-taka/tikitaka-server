@@ -10,20 +10,15 @@ import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
-import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -37,10 +32,20 @@ public class CardService {
 
 
     /**
-     * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일)
+     * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일용)
      */
-    public List<CardResponseDTO> findAllCard(Member authMember){
-        return cardRepository.findAllDTOByMember(authMember);
+    public List<CardOppositeMemberProfileResponseDTO> findAllCard(Member authMember){
+        return cardRepository.findAllByMember(authMember).stream().map(
+                card -> {
+                    Member targetMember = memberRepository.findById(card.getTargetMemberId())
+                            .orElse(null);
+
+                    if (targetMember == null) {
+                        return null;
+                    }
+                    return CardOppositeMemberProfileResponseDTO.of(targetMember);
+                }
+        ).collect(Collectors.toList());
     }
 
     /**
@@ -53,7 +58,6 @@ public class CardService {
         }
         else return new CardCountResponseDTO(count);
     }
-
 
     /**
      * 추천 받았던 유저를 필터링한 랜덤 추천 카드를 만든다

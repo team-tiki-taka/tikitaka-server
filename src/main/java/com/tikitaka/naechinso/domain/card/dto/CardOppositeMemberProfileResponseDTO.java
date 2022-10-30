@@ -67,9 +67,9 @@ public class CardOppositeMemberProfileResponseDTO {
         private String period;
         private String appealDetail;
 
-        public static CardOppositeMemberProfileResponseDTO.Recommendation of(Recommend recommend) {
+        public static Recommendation of(Recommend recommend) {
             Member sender = recommend.getSender();
-            return CardOppositeMemberProfileResponseDTO.Recommendation.builder()
+            return Recommendation.builder()
                     .name(CustomStringUtil.hideName(recommend.getSenderName()))
                     .gender(recommend.getSenderGender())
                     .appeal(recommend.getReceiverAppeal())

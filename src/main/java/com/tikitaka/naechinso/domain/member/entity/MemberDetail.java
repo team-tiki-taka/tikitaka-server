@@ -6,6 +6,8 @@ import com.tikitaka.naechinso.domain.point.entity.Point;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,17 +25,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = {"member"})
-@EqualsAndHashCode(exclude = {"member"}) //one to one cycle hashcode 방지
 public class MemberDetail extends BaseEntity {
     // member_detail_id => mem_id
     @Id
     @Column(name = "mem_id")
     private Long id;
-
-//    //추천해준 사람의 PK
-//    @ManyToOne
-//    @JoinColumn(name = "mem_id2")
-//    private Member recommender;
 
     @Column(name = "mem_height")
     private int height;

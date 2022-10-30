@@ -158,11 +158,7 @@ public class MemberService {
      * 사진 필드는 Pending 에서 승인 후 처리한다
      * */
     public MemberCommonResponseDTO updateJobRequest(Member authMember, MemberUpdateJobRequestDTO dto){
-//        member.updateJob(dto);
-//        memberRepository.save(member);
-
         //직업 정보 승인 요청
-
         return pendingService.createPendingByJob(authMember, dto);
     }
 
@@ -192,6 +188,20 @@ public class MemberService {
         return pendingService.createPendingByMemberImage(authMember, dto);
     }
 
+    /**
+     * MemberDetail 의 프로필 이미지를 업로드 한다
+     * */
+    public Member delete(Member authMember){
+        Member member = findByMember(authMember);
+
+        memberRepository.delete(authMember);
+
+        System.out.println("member.getCreatedAt() = " + member.getCreatedAt());
+        System.out.println("member.getUpdatedAt() = " + member.getUpdatedAt());
+        System.out.println("member.getDeletedAt() = " + member.isDeleted());
+
+        return member;
+    }
 
     public void validateToken(Member authMember) {
         if (authMember == null) {
