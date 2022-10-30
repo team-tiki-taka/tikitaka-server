@@ -71,7 +71,7 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS512, encodedKey)
                 .compact();
 
-        //redis에 해당 userId 의 리프레시 토큰 등록
+        //redis에 해당 phone number 의 리프레시 토큰 등록
         redisService.setValues(
                 jwtDTO.getPhoneNumber(),
                 refreshToken,
@@ -192,13 +192,13 @@ public class JwtTokenProvider {
 
     /** Redis Memory 의 RefreshToken 과
      * User 의 RefreshToken 이 일치하는지 확인
-     * @param userId 검증하려는 유저 아이디
+     * @param phone 검증하려는 유저 휴대전화
      * @param refreshToken 검증하려는 리프레시 토큰
      */
-    public void validateRefreshToken(String userId, String refreshToken) {
-        String redisRt = redisService.getValues(userId);
-        if (!refreshToken.equals(redisRt)) {
-            throw new BadRequestException(ErrorCode.EXPIRED_TOKEN);
+    public void validateRefreshToken(String phone, String refreshToken) {
+        String redisRefreshToken = redisService.getValues(phone);
+        if (!refreshToken.equals(redisRefreshToken)) {
+            throw new BadRequestException(ErrorCode.EXPIRED_REFRESH_TOKEN);
         }
     }
 
@@ -214,7 +214,6 @@ public class JwtTokenProvider {
         }
         return parseClaims(registerToken).getSubject();
     }
-
 
     /**
      * JWT 토큰에서 claims 추출

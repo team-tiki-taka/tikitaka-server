@@ -5,6 +5,8 @@ import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
 import com.tikitaka.naechinso.global.annotation.AuthMember;
+import com.tikitaka.naechinso.global.common.request.TokenRequestDTO;
+import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.CommonApiResponse;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
 import io.swagger.annotations.ApiOperation;
@@ -78,6 +80,15 @@ public class MemberController {
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(memberService.forceLogin(member, requestDTO));
+    }
+
+    @PostMapping("/reissue")
+    @ApiOperation(value = "리프레시 토큰을 통해 새로운 토큰을 발급받는다 (RefreshToken)")
+    public CommonApiResponse<TokenResponseDTO> reissue(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestHeader("Refresh") String refreshToken
+    ) {
+        return CommonApiResponse.of(memberService.reissue(accessToken, refreshToken));
     }
 
     @PostMapping("/logout")

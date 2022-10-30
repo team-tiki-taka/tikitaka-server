@@ -11,6 +11,7 @@ import com.tikitaka.naechinso.domain.pending.constant.PendingType;
 import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
 import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateMemberImageRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
+import com.tikitaka.naechinso.global.common.request.TokenRequestDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
 import com.tikitaka.naechinso.global.config.security.dto.JwtDTO;
 import com.tikitaka.naechinso.global.config.security.jwt.JwtTokenProvider;
@@ -80,6 +81,22 @@ public class MemberService {
         memberRepository.save(member);
 
         return new MemberLoginResponseDTO("");
+    }
+
+    /**
+     * 로그인 -> Fcm Token DB에 등록한다
+     * */
+    public TokenResponseDTO reissue(String accessToken, String refreshToken) {
+        String phone;
+        try {
+            phone = jwtTokenProvider.parseClaims(accessToken).getSubject();
+        } catch (Exception e) {
+            throw new BadRequestException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        jwtTokenProvider.validateRefreshToken(phone, refreshToken);
+        Member authMember = findByPhone(phone);
+        return jwtTokenProvider.generateToken(new JwtDTO(phone, authMember.getRole().toString()));
     }
 
 
@@ -189,16 +206,14 @@ public class MemberService {
     }
 
     /**
-     * MemberDetail 의 프로필 이미지를 업로드 한다
+     * soft delete (수정 필요)
      * */
     public Member delete(Member authMember){
         Member member = findByMember(authMember);
 
-        memberRepository.delete(authMember);
-
-        System.out.println("member.getCreatedAt() = " + member.getCreatedAt());
-        System.out.println("member.getUpdatedAt() = " + member.getUpdatedAt());
-        System.out.println("member.getDeletedAt() = " + member.isDeleted());
+        member.setDeleted();
+        member.getDetail().setDeleted();
+        memberRepository.save(member);
 
         return member;
     }
