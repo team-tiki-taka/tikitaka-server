@@ -62,6 +62,32 @@ public class MemberController {
         return CommonApiResponse.of(res);
     }
 
+    @PostMapping("/login")
+    @ApiOperation(value = "FCM Token 을 등록하여 로그인 처리를 진행한다 (AccessToken)")
+    public CommonApiResponse<MemberLoginResponseDTO> login(
+            @Valid @RequestBody MemberLoginRequestDTO requestDTO,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.login(member, requestDTO));
+    }
+
+    @PostMapping("/login/force")
+    @ApiOperation(value = "FCM Token 을 교체한다 (AccessToken)")
+    public CommonApiResponse<MemberLoginResponseDTO> forceLogin(
+            @Valid @RequestBody MemberLoginRequestDTO requestDTO,
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.forceLogin(member, requestDTO));
+    }
+
+    @PostMapping("/logout")
+    @ApiOperation(value = "FCM Token 을 삭제하여 로그아웃 처리한다 (AccessToken)")
+    public CommonApiResponse<MemberLoginResponseDTO> logout(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.logout(member));
+    }
+
     @PostMapping("/join")
     @ApiOperation(value = "유저를 공통 정보로 가입시킨다 (RegisterToken)")
     public CommonApiResponse<MemberCommonJoinResponseDTO> createCommonMember(

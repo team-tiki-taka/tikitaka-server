@@ -20,6 +20,7 @@ import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import com.tikitaka.naechinso.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,31 +31,57 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class MemberService {
-
     private final JwtTokenProvider jwtTokenProvider;
     private final PendingService pendingService;
-    private final CardService cardService;
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
 
-    public Member findByPhone(String phone) {
-        return memberRepository.findByPhone(phone)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    public Member findByMember(Member member) {
-        return findByPhone(member.getPhone());
-    }
-
-    public List<MemberFindResponseDTO> findAll() {
-        return memberRepository.findAll().stream()
-                .map(MemberFindResponseDTO::of).collect(Collectors.toList());
-    }
-
-    public MemberCommonResponseDTO readCommonMember(Member authMember) {
+    /**
+     * 로그인 -> Fcm Token DB에 등록한다
+     * */
+    public MemberLoginResponseDTO login(Member authMember, MemberLoginRequestDTO requestDTO) {
         Member member = findByMember(authMember);
-        return MemberCommonResponseDTO.of(member);
+
+        //이미 로그인 된 상태
+        if (!StringUtils.isBlank(member.getFcmToken())) {
+            throw new BadRequestException(ErrorCode.USER_ALREADY_LOGGED_IN);
+        }
+
+        member.setFcmToken(requestDTO.getFcmToken());
+        memberRepository.save(member);
+
+        return new MemberLoginResponseDTO(requestDTO.getFcmToken());
     }
+
+    /**
+     * 강제 로그인 -> Fcm Token 을 교체한다
+     * */
+    public MemberLoginResponseDTO forceLogin(Member authMember, MemberLoginRequestDTO requestDTO) {
+        Member member = findByMember(authMember);
+
+        member.setFcmToken(requestDTO.getFcmToken());
+        memberRepository.save(member);
+
+        return new MemberLoginResponseDTO(requestDTO.getFcmToken());
+    }
+
+    /**
+     * 로그아웃 -> Fcm Token DB에서 삭제한다
+     * */
+    public MemberLoginResponseDTO logout(Member authMember) {
+        Member member = findByMember(authMember);
+
+        //이미 로그아웃 된 상태
+        if (StringUtils.isBlank(member.getFcmToken())) {
+            throw new BadRequestException(ErrorCode.USER_ALREADY_LOGGED_OUT);
+        }
+
+        member.setFcmToken("");
+        memberRepository.save(member);
+
+        return new MemberLoginResponseDTO("");
+    }
+
 
     public MemberCommonJoinResponseDTO joinCommonMember(String phone, MemberCommonJoinRequestDTO dto) {
         //이미 존재하는 유저일 경우 400
@@ -90,23 +117,6 @@ public class MemberService {
     public MemberDetailResponseDTO readDetail(Member member) {
         return MemberDetailResponseDTO.of(member);
     }
-
-
-//    /**
-//     * 랜덤 추천받은 상대의 프로필 카드를 가져오는 서비스 로직
-//     * ACTIVE 한 카드에만 접근 권한이 있음
-//     * */
-//    public MemberOppositeProfileResponseDTO readOppositeMemberDetailAndRecommendById(Member authMember, Long id) {
-//        //현재 ACTIVE 한 카드와 요청 id가 같지 않으면 에러
-//        Card activeCard = cardService.findByMemberAndIsActiveTrue(authMember);
-//        Long targetId = activeCard.getTargetMemberId();
-//        if (!targetId.equals(id)) {
-//            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
-//        }
-//
-//        Member oppositeMember = findById(targetId);
-//        return MemberOppositeProfileResponseDTO.of(oppositeMember);
-//    }
 
     public MemberDetailResponseDTO createDetail(Member authMember, MemberDetailJoinRequestDTO dto) {
         //영속성 유지를 위한 fetch
@@ -205,4 +215,23 @@ public class MemberService {
         return memberRepository.existsById(memberId);
     }
 
+
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public Member findByMember(Member member) {
+        return findByPhone(member.getPhone());
+    }
+
+    public List<MemberFindResponseDTO> findAll() {
+        return memberRepository.findAll().stream()
+                .map(MemberFindResponseDTO::of).collect(Collectors.toList());
+    }
+
+    public MemberCommonResponseDTO readCommonMember(Member authMember) {
+        Member member = findByMember(authMember);
+        return MemberCommonResponseDTO.of(member);
+    }
 }

@@ -58,6 +58,8 @@ public enum ErrorCode {
     RANDOM_USER_NOT_FOUND(NOT_FOUND, "U006","추천할 수 있는 유저가 더 이상 없습니다"),
     FORBIDDEN_PROFILE(FORBIDDEN, "U007","해당 유저 프로필에 대한 접근 권한이 없습니다"),
     USER_NOT_SIGNED_UP(NOT_FOUND, "U008","정회원으로 가입된 유저가 아닙니다"),
+    USER_ALREADY_LOGGED_IN(BAD_REQUEST, "U009","이미 로그인 상태입니다"),
+    USER_ALREADY_LOGGED_OUT(BAD_REQUEST, "U010","이미 로그아웃 상태입니다"),
 
 
     /* Recommend 관련 오류 */

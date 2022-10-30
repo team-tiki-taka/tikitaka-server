@@ -260,7 +260,8 @@ public class Member extends BaseEntity {
         this.eduAccepted = true;
     }
 
-
+    public void setFcmToken(String token) { this.fcmToken = token; }
+    public void deleteFcmToken() { this.fcmToken = ""; }
 
 
 
