@@ -88,6 +88,14 @@ public class MemberController {
         return CommonApiResponse.of(memberService.logout(member));
     }
 
+    @DeleteMapping("/delete")
+    @ApiOperation(value = "회원 탈퇴 처리한다 (soft delete) (AccessToken)")
+    public CommonApiResponse<Object> delete(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        return CommonApiResponse.of(memberService.delete(member));
+    }
+
     @PostMapping("/join")
     @ApiOperation(value = "유저를 공통 정보로 가입시킨다 (RegisterToken)")
     public CommonApiResponse<MemberCommonJoinResponseDTO> createCommonMember(
