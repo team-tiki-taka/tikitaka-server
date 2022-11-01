@@ -3,8 +3,8 @@ server:
 
 spring:
   servlet:
-    #file upload size
     multipart:
+      #file upload size
       max-file-size: 3MB
 
   profiles:
