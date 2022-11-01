@@ -22,6 +22,7 @@ public enum ErrorCode {
     CANNOT_CREATE_RECOMMEND_REQUEST(INTERNAL_SERVER_ERROR, "C007", "추천사 요청에 실패했습니다"),
     NOT_MULTIPART_HEADER(BAD_REQUEST, "C008", "Multipart 헤더가 아닙니다"),
     AMAZON_ACCESS_DENIED(FORBIDDEN, "C009", "Amazon S3 접근이 거부되었습니다"),
+    MAX_FILE_SIZE_EXCEEDED(BAD_REQUEST, "C010", "허용된 최대 파일 크기를 초과했습니다"),
 
 
     /* DB 관련 오류 */
@@ -48,6 +49,7 @@ public enum ErrorCode {
     INVALID_USER_TOKEN(UNAUTHORIZED, "AUTH013", "서버에 토큰과 일치하는 정보가 없습니다"),
 
     LOGIN_FAILED(UNAUTHORIZED, "AUTH014", "로그인에 실패했습니다"),
+    INVALID_ACCESS_TOKEN(UNAUTHORIZED, "AUTH015", "유효하지 않은 엑세스 토큰입니다"),
 
 
     /* User 관련 오류 */

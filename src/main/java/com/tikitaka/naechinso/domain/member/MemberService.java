@@ -67,7 +67,7 @@ public class MemberService {
     }
 
     /**
-     * 로그아웃 -> Fcm Token DB에서 삭제한다
+     * 로그아웃 -> Register Token 및 Fcm Token DB에서 삭제한다
      * */
     public MemberLoginResponseDTO logout(Member authMember) {
         Member member = findByMember(authMember);
@@ -77,6 +77,10 @@ public class MemberService {
             throw new BadRequestException(ErrorCode.USER_ALREADY_LOGGED_OUT);
         }
 
+        //redis 에서 registerToken 삭제
+        jwtTokenProvider.deleteRegisterToken(member.getPhone());
+
+        //푸시 알림 등록 해제
         member.setFcmToken("");
         memberRepository.save(member);
 
@@ -85,17 +89,23 @@ public class MemberService {
 
     /**
      * 로그인 -> Fcm Token DB에 등록한다
+     * @// TODO: 2022/10/30 노션에 정리
      * */
     public TokenResponseDTO reissue(String accessToken, String refreshToken) {
         String phone;
+
+        if (!jwtTokenProvider.validateTokenExceptExpiration(accessToken)){
+            throw new BadRequestException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }
+
         try {
             phone = jwtTokenProvider.parseClaims(accessToken).getSubject();
         } catch (Exception e) {
             throw new BadRequestException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        jwtTokenProvider.validateRefreshToken(phone, refreshToken);
         Member authMember = findByPhone(phone);
+        jwtTokenProvider.validateRefreshToken(phone, refreshToken);
         return jwtTokenProvider.generateToken(new JwtDTO(phone, authMember.getRole().toString()));
     }
 
