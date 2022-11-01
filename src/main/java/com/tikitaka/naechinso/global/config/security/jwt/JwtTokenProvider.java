@@ -20,6 +20,8 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -118,6 +120,22 @@ public class JwtTokenProvider {
         return registerToken;
     }
 
+    /** Redis 에서 RegistrerToken 을 제거
+     * @param phone 로그아웃 요청 유저
+     * @return true if redis 서버에 토큰이 있었을 경우
+     * false if 토큰이 없었을 경우
+     */
+    public boolean deleteRegisterToken(String phone) {
+        try {
+            if (redisService.hasKey(phone)) {
+                redisService.deleteValues(phone);
+                return true;
+            }
+        } catch (Exception e) {
+            log.error("Redis 로그아웃 요청을 실패했습니다");
+        }
+        return false;
+    }
 
     public Authentication getAuthentication(HttpServletRequest request, String accessToken) {
         Claims claims = parseClaims(accessToken);
@@ -188,6 +206,24 @@ public class JwtTokenProvider {
             request.setAttribute("exception", ErrorCode.NO_TOKEN.getCode());
         }
         return false;
+    }
+    /**
+     * 토큰 예외 중 만료 상황만 검증 함수
+     * @param token 검사하려는 JWT 토큰
+     * @returns boolean
+     * */
+    public boolean validateTokenExceptExpiration(String token) {
+        final String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
+        try {
+            Jwts.parser().setSigningKey(encodedKey).parseClaimsJws(token);
+            return true;
+//            Jws<Claims> claims = Jwts.parser().setSigningKey(encodedKey).parseClaimsJws(token);
+//            return claims.getBody().getExpiration().before(new Date());
+        } catch(ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /** Redis Memory 의 RefreshToken 과

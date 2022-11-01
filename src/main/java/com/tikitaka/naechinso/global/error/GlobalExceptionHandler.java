@@ -15,6 +15,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 
 import java.util.Arrays;
@@ -107,6 +108,17 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.LOGIN_FAILED);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    /**
+     * 업로드 최대 용량을 초과했을 경우
+     */
+    @ExceptionHandler({MaxUploadSizeExceededException.class})
+    protected ResponseEntity<ErrorResponse> handleMultipartException(MaxUploadSizeExceededException e) {
+        log.error("handleMaxUploadSizeExceededException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.MAX_FILE_SIZE_EXCEEDED);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     /**
      * 파일 업로드 시 멀티파트 헤더를 설정하지 않았을때 에러
