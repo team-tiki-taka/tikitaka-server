@@ -23,6 +23,7 @@ public enum ErrorCode {
     NOT_MULTIPART_HEADER(BAD_REQUEST, "C008", "Multipart 헤더가 아닙니다"),
     AMAZON_ACCESS_DENIED(FORBIDDEN, "C009", "Amazon S3 접근이 거부되었습니다"),
     MAX_FILE_SIZE_EXCEEDED(BAD_REQUEST, "C010", "허용된 최대 파일 크기를 초과했습니다"),
+    INVALID_REQUEST_PART(BAD_REQUEST, "C011", "올바르지 않은 파라미터 형식입니다"),
 
 
     /* DB 관련 오류 */

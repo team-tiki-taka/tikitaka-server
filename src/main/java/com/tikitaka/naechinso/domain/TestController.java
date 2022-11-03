@@ -14,7 +14,9 @@ import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.member.entity.MemberDetail;
+import com.tikitaka.naechinso.domain.pending.PendingRepository;
 import com.tikitaka.naechinso.domain.pending.PendingService;
+import com.tikitaka.naechinso.domain.point.PointRepository;
 import com.tikitaka.naechinso.domain.recommend.RecommendRepository;
 import com.tikitaka.naechinso.domain.recommend.RecommendService;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendBySenderRequestDTO;
@@ -47,10 +49,14 @@ public class TestController {
     private final RecommendService recommendService;
     private final RecommendRepository recommendRepository;
     private final PendingService pendingService;
+    private final PendingRepository pendingRepository;
+
     private final CardService cardService;
     private final CardRepository cardRepository;
     private final MatchService matchService;
     private final MatchRepository matchRepository;
+    private final PointRepository pointRepository;
+
 
     @GetMapping("/create-recommend-request-member")
     @ApiOperation(value = "[*TEST*] 추천사를 요청하는 유저를 생성하고 엑세스 토큰을 반환한다")
@@ -480,6 +486,8 @@ public class TestController {
     @ApiOperation(value = "[*TEST*] 모든 DB 테이블을 초기화")
     public CommonApiResponse<Object> dropAllTable(){
         matchRepository.deleteAll();
+        pointRepository.deleteAll();
+        pendingRepository.deleteAll();
         recommendRepository.deleteAll();
         cardRepository.deleteAll();
         memberDetailRepository.deleteAll();

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.Arrays;
 
@@ -119,6 +120,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * RequestPart 의 인자로 잘못된 값을 넘겼을 경우 발생하는 에러
+     */
+    @ExceptionHandler({MissingServletRequestPartException.class})
+    protected ResponseEntity<ErrorResponse> handleMultipartException(MissingServletRequestPartException e) {
+        log.error("handleMissingServletRequestPartException", e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_REQUEST_PART);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     /**
      * 파일 업로드 시 멀티파트 헤더를 설정하지 않았을때 에러
