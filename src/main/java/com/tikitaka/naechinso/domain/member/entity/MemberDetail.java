@@ -50,8 +50,8 @@ public class MemberDetail extends BaseEntity {
     @Builder.Default
     private String mbti = "";
 
-    @Column(name = "mem_personality")
-    private String personality;
+    @Column(name = "mem_personalities")
+    private String personalities;
 
     @Column(name = "mem_introduce")
     @Builder.Default
@@ -93,7 +93,7 @@ public class MemberDetail extends BaseEntity {
                 .drink(dto.getDrink())
                 .smoke(dto.getSmoke())
                 .mbti(dto.getMbti())
-                .personality(dto.getPersonality())
+                .personalities(StringUtils.join(dto.getPersonalities(), ","))
                 .introduce(dto.getIntroduce())
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
@@ -109,13 +109,20 @@ public class MemberDetail extends BaseEntity {
                 .drink(dto.getDrink())
                 .smoke(dto.getSmoke())
                 .mbti(dto.getMbti())
-                .personality(dto.getPersonality())
+                .personalities(StringUtils.join(dto.getPersonalities(), ","))
                 .introduce(dto.getIntroduce())
                 .hobby(dto.getHobby())
                 .style(dto.getStyle())
 //                .images(StringUtils.join(dto.getImages(), ",")) // image pending
                 .member(member)
                 .build();
+    }
+
+    public List<String> getPersonalities(){
+        if (this.personalities != null) {
+            return List.of(this.personalities.split(","));
+        }
+        return List.of();
     }
 
     public List<String> getImages() {

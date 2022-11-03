@@ -33,7 +33,7 @@ public class CardOppositeMemberProfileResponseDTO {
     private String eduMajor;
     private String eduLevel;
 
-    private String personality;
+    private List<String> personalities;
     private String religion;
     private int height;
     private String smoke;
@@ -54,7 +54,7 @@ public class CardOppositeMemberProfileResponseDTO {
     public static class Recommendation {
         private String name;
         private Gender gender;
-        private String appeal;
+        private List<String> appeals;
 
         private String jobName;
         private String jobPart;
@@ -72,7 +72,7 @@ public class CardOppositeMemberProfileResponseDTO {
             return Recommendation.builder()
                     .name(CustomStringUtil.hideName(recommend.getSenderName()))
                     .gender(recommend.getSenderGender())
-                    .appeal(recommend.getReceiverAppeal())
+                    .appeals(recommend.getReceiverAppeals())
                     .appealDetail(recommend.getReceiverAppealDetail())
                     .eduName(sender.getEduName())
                     .eduMajor(sender.getEduMajor())
@@ -113,7 +113,7 @@ public class CardOppositeMemberProfileResponseDTO {
                         .eduMajor(member.getEduMajor())
                         .eduLevel(member.getEduLevel())
                         .gender(member.getGender())
-                        .personality(detail.getPersonality())
+                        .personalities(detail.getPersonalities())
                         .religion(detail.getReligion())
                         .height(detail.getHeight())
                         .smoke(detail.getSmoke())

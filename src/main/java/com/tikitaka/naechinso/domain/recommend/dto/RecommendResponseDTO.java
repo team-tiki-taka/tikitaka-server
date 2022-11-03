@@ -4,6 +4,8 @@ import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -23,7 +25,7 @@ public class RecommendResponseDTO {
 
     private String meet;
 
-    private String appeal;
+    private List<String> appeals;
 
     private String appealDetail;
 
@@ -58,7 +60,7 @@ public class RecommendResponseDTO {
                 .gender(recommend.getReceiverGender())
                 .age(recommend.getReceiverAge())
                 .meet(recommend.getReceiverMeet())
-                .appeal(recommend.getReceiverAppeal())
+                .appeals(recommend.getReceiverAppeals())
                 .appealDetail(recommend.getReceiverAppealDetail())
                 .period(recommend.getReceiverPeriod())
                 .build();

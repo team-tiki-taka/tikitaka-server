@@ -7,8 +7,10 @@ import com.tikitaka.naechinso.domain.recommend.dto.RecommendAcceptRequestDTO;
 import com.tikitaka.naechinso.domain.recommend.dto.RecommendMemberAcceptRequestDTO;
 import com.tikitaka.naechinso.global.config.entity.BaseEntity;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -93,11 +95,8 @@ public class Recommend extends BaseEntity {
     @Column(name = "rec_meet")
     private String receiverMeet;
 
-    @Column(name = "rec_personality")
-    private String receiverPersonality;
-
-    @Column(name = "rec_appeal")
-    private String receiverAppeal;
+    @Column(name = "rec_appeals")
+    private String receiverAppeals;
 
     @Column(name = "rec_appeal_detail")
     private String receiverAppealDetail;
@@ -107,10 +106,16 @@ public class Recommend extends BaseEntity {
 
 
     public void update(RecommendAcceptRequestDTO requestDTO) {
-        this.receiverAppeal = requestDTO.getAppeal();
+        this.receiverAppeals = StringUtils.join(requestDTO.getAppeals(), ",");
         this.receiverAppealDetail = requestDTO.getAppealDetail();
         this.receiverMeet = requestDTO.getMeet();
-        this.receiverPersonality = requestDTO.getPersonality();
         this.receiverPeriod = requestDTO.getPeriod();
+    }
+
+    public List<String> getReceiverAppeals() {
+        if (this.receiverAppeals != null) {
+            return List.of(this.receiverAppeals.split(","));
+        }
+        return List.of();
     }
 }

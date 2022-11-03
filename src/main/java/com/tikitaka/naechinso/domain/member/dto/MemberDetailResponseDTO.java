@@ -45,7 +45,7 @@ public class MemberDetailResponseDTO {
 
     private String mbti;
 
-    private String personality;
+    private List<String> personalities;
 
     private String introduce;
 
@@ -90,11 +90,12 @@ public class MemberDetailResponseDTO {
                 .drink(detail.getDrink())
                 .smoke(detail.getSmoke())
                 .mbti(detail.getMbti())
-                .personality(detail.getPersonality())
+                .personalities(detail.getPersonalities())
                 .introduce(detail.getIntroduce())
                 .hobby(detail.getHobby())
                 .style(detail.getStyle())
                 .images(detail.getImages())
+                .point(0L)
                 .build();
     }
 
