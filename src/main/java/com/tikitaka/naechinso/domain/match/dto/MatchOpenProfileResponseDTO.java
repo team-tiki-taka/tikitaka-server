@@ -38,7 +38,7 @@ public class MatchOpenProfileResponseDTO {
     private String eduMajor;
     private String eduLevel;
 
-    private String personality;
+    private List<String> personalities;
     private String religion;
     private int height;
     private String smoke;
@@ -59,7 +59,7 @@ public class MatchOpenProfileResponseDTO {
     public static class Recommendation {
         private String name;
         private Gender gender;
-        private String appeal;
+        private List<String> appeals;
 
         private String jobName;
         private String jobPart;
@@ -102,7 +102,7 @@ public class MatchOpenProfileResponseDTO {
                             .eduMajor(targetMember.getEduMajor())
                             .eduLevel(targetMember.getEduLevel())
                             .gender(targetMember.getGender())
-                            .personality(detail.getPersonality())
+                            .personalities(detail.getPersonalities())
                             .religion(detail.getReligion())
                             .height(detail.getHeight())
                             .smoke(detail.getSmoke())
@@ -114,7 +114,7 @@ public class MatchOpenProfileResponseDTO {
                             .recommend(Recommendation.builder()
                                     .name(CustomStringUtil.hideName(recommend.getSenderName()))
                                     .gender(recommend.getSenderGender())
-                                    .appeal(recommend.getReceiverAppeal())
+                                    .appeals(recommend.getReceiverAppeals())
                                     .appealDetail(recommend.getReceiverAppealDetail())
                                     .eduName(recommend.getSender().getEduName())
                                     .eduMajor(recommend.getSender().getEduMajor())

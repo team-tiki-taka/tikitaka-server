@@ -51,7 +51,7 @@ public class CardThumbnailResponseDTO {
     private static class Recommendation {
         private String name;
         private Gender gender;
-        private String appeal;
+        private List<String> appeals;
 
         private String jobName;
         private String jobPart;
@@ -92,7 +92,7 @@ public class CardThumbnailResponseDTO {
                 .recommend(Recommendation.builder()
                         .name(dto.getRecommend().getName())
                         .gender(dto.getRecommend().getGender())
-                        .appeal(dto.getRecommend().getAppeal())
+                        .appeals(dto.getRecommend().getAppeals())
                         .jobName(dto.getRecommend().getJobName())
                         .jobLocation(dto.getRecommend().getJobLocation())
                         .jobPart(dto.getRecommend().getJobPart())

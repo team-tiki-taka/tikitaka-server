@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.*;
+import java.util.List;
 
 /** 내친소 회원이 다른 유저를 추천할 때 사용할 DTO
  * @author gengminy 221003
@@ -18,13 +19,10 @@ public class RecommendMemberAcceptRequestDTO {
     @NotBlank(message = "만나게 된 계기를 입력해주세요")
     private String meet;
 
-    @ApiModelProperty(example = "최고")
-    @NotBlank(message = "친구의 성격 키워드를 입력해주세요")
-    private String personality;
-
-    @ApiModelProperty(example = "짱")
-    @NotBlank(message = "친구의 매력 키워드를 입력해주세요")
-    private String appeal;
+    @ApiModelProperty(example = "[\"패션센스 \uD83E\uDDE5\", \"사랑꾼 \uD83D\uDC97\", \"애교쟁이 \uD83D\uDE18\"]")
+    @Size(min = 3, max = 3, message = "매력 키워드 3개를 입력해야 합니다")
+    @NotNull
+    private List<String> appeals;
 
     @ApiModelProperty(example = "짱짱짜짱 멋진 개발자입니다")
     @NotBlank(message = "친구의 자세한 매력을 입력해주세요")

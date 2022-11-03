@@ -43,9 +43,10 @@ public class MemberDetailUpdateRequestDTO {
     @Length(max = 4, message = "올바른 MBTI 정보를 입력하세요")
     private String mbti;
 
-    @ApiModelProperty(example = "직관적")
-    @NotBlank(message = "성격 정보를 입력해야 합니다")
-    private String personality;
+    @ApiModelProperty(example = "[\"열정적인 \uD83D\uDD25\", \"지적인 \uD83E\uDDD0\", \"상냥한 ☺️\"]")
+    @Size(min = 3, max = 3, message = "성격 키워드 3개를 입력해야 합니다")
+    @NotNull
+    private List<String> personalities;
 
     @ApiModelProperty(example = "반갑습니다")
     @NotBlank(message = "자기 소개를 입력해야 합니다")

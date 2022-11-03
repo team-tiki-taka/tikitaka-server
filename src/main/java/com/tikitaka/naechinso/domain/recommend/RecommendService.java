@@ -11,6 +11,7 @@ import com.tikitaka.naechinso.global.error.exception.InternalServerException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,10 +83,9 @@ public class RecommendService {
                     .receiverName(dto.getName())
                     .receiverAge(dto.getAge())
                     .receiverGender(dto.getGender())
-                    .receiverAppeal(dto.getAppeal())
+                    .receiverAppeals(StringUtils.join(dto.getAppeals(), ","))
                     .receiverAppealDetail(dto.getAppealDetail())
                     .receiverMeet(dto.getMeet())
-                    .receiverPersonality(dto.getPersonality())
                     .receiverPeriod(dto.getPeriod())
                     .build();
 
