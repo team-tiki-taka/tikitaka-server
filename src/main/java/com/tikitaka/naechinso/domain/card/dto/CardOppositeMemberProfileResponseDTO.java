@@ -18,6 +18,8 @@ import java.util.List;
 @ToString
 public class CardOppositeMemberProfileResponseDTO {
 
+    private Long targetMemberId;
+
     private List<String> images;
     private String name;
     private int age;
@@ -102,6 +104,7 @@ public class CardOppositeMemberProfileResponseDTO {
             //추천 상태 검증
             if (recommend.getSender() != null && recommend.getReceiver() != null) {
                 return CardOppositeMemberProfileResponseDTO.builder()
+                        .targetMemberId(member.getId())
                         .images(detail.getImages())
                         .name(CustomStringUtil.hideName(member.getName()))
                         .age(member.getAge())
