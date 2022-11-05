@@ -10,6 +10,8 @@ import com.tikitaka.naechinso.domain.pending.PendingService;
 import com.tikitaka.naechinso.domain.pending.constant.PendingType;
 import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
 import com.tikitaka.naechinso.domain.pending.dto.PendingUpdateMemberImageRequestDTO;
+import com.tikitaka.naechinso.domain.recommend.RecommendRepository;
+import com.tikitaka.naechinso.domain.recommend.dto.RecommendReceiverDTO;
 import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import com.tikitaka.naechinso.global.common.request.TokenRequestDTO;
 import com.tikitaka.naechinso.global.common.response.TokenResponseDTO;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PendingService pendingService;
+    private final RecommendRepository recommendRepository;
     private final MemberRepository memberRepository;
     private final MemberDetailRepository memberDetailRepository;
 
@@ -91,7 +94,7 @@ public class MemberService {
      * 로그인 -> Fcm Token DB에 등록한다
      * @// TODO: 2022/10/30 노션에 정리
      * */
-    public TokenResponseDTO reissue(String accessToken, String refreshToken) {
+    public MemberReissueResponseDTO reissue(String accessToken, String refreshToken) {
         String phone;
 
         if (!jwtTokenProvider.validateTokenExceptExpiration(accessToken)){
@@ -105,8 +108,34 @@ public class MemberService {
         }
 
         Member authMember = findByPhone(phone);
+
+        //가입 여부 (detail == null) 확인 후 받은 추천서 꺼내옴
+        final Boolean hasDetail = authMember.getDetail() != null;
+
+        //만약 정회원이 아니라면 받은 추천 목록을 가져옴
+        List<RecommendReceiverDTO> recommendReceived;
+        if (!hasDetail) {
+            recommendReceived = recommendRepository.findAllByReceiverPhoneAndSenderNotNull(phone)
+                    .stream().map(RecommendReceiverDTO::of).collect(Collectors.toList());
+        } else {
+            recommendReceived = null;
+        }
+
+        //유저 밴 여부 가져오기
+        final Boolean isBanned = false;
+
         jwtTokenProvider.validateRefreshToken(phone, refreshToken);
-        return jwtTokenProvider.generateToken(new JwtDTO(phone, authMember.getRole().toString()));
+
+        TokenResponseDTO tokenResponseDTO = jwtTokenProvider.generateToken(new JwtDTO(phone, authMember.getRole().toString()));
+
+
+        return MemberReissueResponseDTO.builder()
+                .accessToken(tokenResponseDTO.getAccessToken())
+                .refreshToken(tokenResponseDTO.getRefreshToken())
+                .recommendReceived(recommendReceived)
+                .isActive(hasDetail)
+                .isBanned(isBanned)
+                .build();
     }
 
 
@@ -145,6 +174,11 @@ public class MemberService {
         return MemberDetailResponseDTO.of(member);
     }
 
+
+    /**
+     *  추천사를 받은 유저의 세부 회원 가입
+     * @// TODO: 2022/11/05 기본 정보도 추가로 수정
+     **/
     public MemberDetailResponseDTO createDetail(Member authMember, MemberDetailJoinRequestDTO dto) {
         //영속성 유지를 위한 fetch
         Member member = findByMember(authMember);

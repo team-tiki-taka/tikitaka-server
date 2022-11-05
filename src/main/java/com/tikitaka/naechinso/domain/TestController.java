@@ -86,30 +86,37 @@ public class TestController {
     @ApiOperation(value = "[*TEST*] 추천사를 받은 멤버를 임시 유저로 가입시킨 후 엑세스 토큰을 반환한다")
     public CommonApiResponse<Object> generateRecommendReceiver(
     ) {
-
-        //sender
-        MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
-                "01011112222",
+        List<Object> senderMemberInfo = Arrays.asList("01010101010", 25, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "자기관리, 귀여워, 차분해", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인, 상냥한, 섬세한", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"); //추천인
+        Member sender = memberService.findByPhone(memberService.joinCommonMember(
+                (String) senderMemberInfo.get(0),
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
-                        .gender(Gender.M)
-                        .name("닉")
+                        .age((int) senderMemberInfo.get(1))
+                        .gender((Gender) senderMemberInfo.get(2))
+                        .name((String) senderMemberInfo.get(3))
                         .acceptsInfo(true)
                         .acceptsLocation(true)
                         .acceptsMarketing(true)
                         .acceptsReligion(true)
                         .acceptsService(true)
-                        .build());
+                        .build()).getPhone());
+        sender.updateEdu(MemberUpdateEduRequestDTO.builder()
+                .eduImage((String) senderMemberInfo.get(4))
+                .eduName((String) senderMemberInfo.get(5))
+                .eduLevel((String) senderMemberInfo.get(6))
+                .eduMajor((String) senderMemberInfo.get(7))
+                .build());
+        memberRepository.save(sender);
+        memberRepository.flush();
 
-        Member sender = memberService.findByPhone(senderDTO.getPhone());
 
-        //sender
+        List<Object> receiverInfo = Arrays.asList("01012345678", 25, Gender.W, "진하수", "edu-image020.jpg", "연세", "대학교", "기계공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 163, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어");
+        //receiver
         MemberCommonJoinResponseDTO receiverDTO = memberService.joinCommonMember(
-                "01012345678",
+                (String) receiverInfo.get(0),
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
-                        .gender(Gender.M)
-                        .name("닉")
+                        .age((int) receiverInfo.get(1))
+                        .gender((Gender) receiverInfo.get(2))
+                        .name((String) receiverInfo.get(3))
                         .acceptsInfo(true)
                         .acceptsLocation(true)
                         .acceptsMarketing(true)
@@ -119,15 +126,15 @@ public class TestController {
 
         RecommendResponseDTO recommend = recommendService.createRecommend(sender, RecommendBySenderRequestDTO
                 .builder()
-                .age(25)
-                .period("1년")
-                .appeals(List.of("[패션센스 \uD83E\uDDE5", "사랑꾼 \uD83D\uDC97", "애교쟁이 \uD83D\uDE18"))
-                .phone("01012345678")
-                .meet("CMC에서")
-                .gender(Gender.M)
-                .name("닉")
+                .phone((String) receiverInfo.get(0))
+                .age((int) receiverInfo.get(1))
+                .gender((Gender) receiverInfo.get(2))
+                .name((String) receiverInfo.get(3))
+                .period((String) receiverInfo.get(8))
+                .meet((String) receiverInfo.get(9))
+                .appeals(List.of(StringUtils.split((String) receiverInfo.get(11), ",")))
+                .appealDetail((String) receiverInfo.get(12))
                 .build());
-
 
         return CommonApiResponse.of(receiverDTO);
     }
