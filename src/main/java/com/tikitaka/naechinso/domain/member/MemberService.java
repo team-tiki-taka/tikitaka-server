@@ -207,7 +207,12 @@ public class MemberService {
                 memberDetailRepository.save(detail);
 
                 member.setDetail(detail);
-                pendingService.createPendingByMemberImage(member, new MemberUpdateImageRequestDTO(dto.getImages()));
+
+                /** 임시 정책 221105 */
+//                pendingService.createPendingByMemberImage(member, new MemberUpdateImageRequestDTO(dto.getImages()));
+                member.updateImage(dto.getImages());
+                /** 임시 정책 221105 */
+
                 return MemberDetailResponseDTO.of(detail);
             }
         }
@@ -222,7 +227,13 @@ public class MemberService {
      * */
     public MemberCommonResponseDTO updateJobRequest(Member authMember, MemberUpdateJobRequestDTO dto){
         //직업 정보 승인 요청
-        return pendingService.createPendingByJob(authMember, dto);
+//        return pendingService.createPendingByJob(authMember, dto);
+        /** 임시 정책 221105 */
+        Member member = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        member.updateJob(dto);
+        return MemberCommonResponseDTO.of(member);
+        /** 임시 정책 221105 */
     }
 
     /**
@@ -231,7 +242,13 @@ public class MemberService {
      * */
     public MemberCommonResponseDTO updateEduRequest(Member authMember, MemberUpdateEduRequestDTO dto){
         //학력 정보 승인 요청
-        return pendingService.createPendingByEdu(authMember, dto);
+//        return pendingService.createPendingByEdu(authMember, dto);
+        /** 임시 정책 221105 */
+        Member member = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        member.updateEdu(dto);
+        return MemberCommonResponseDTO.of(member);
+        /** 임시 정책 221105 */
     }
 
     /**
@@ -248,7 +265,13 @@ public class MemberService {
      * MemberDetail 의 프로필 이미지를 업로드 한다
      * */
     public MemberDetailResponseDTO updateImage(Member authMember, MemberUpdateImageRequestDTO dto){
-        return pendingService.createPendingByMemberImage(authMember, dto);
+        /** 임시 정책 221105 */
+//        return pendingService.createPendingByMemberImage(authMember, dto);
+        Member member = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        member.updateImage(dto.getImages());
+        return MemberDetailResponseDTO.of(member);
+        /** 임시 정책 221105 */
     }
 
     /**
