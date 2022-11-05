@@ -15,7 +15,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = {"fromMember", "toMember"})
-@EqualsAndHashCode
 public class Match extends BaseEntity {
     @Id
     @Column(name = "mat_id")
@@ -26,6 +25,10 @@ public class Match extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private MatchStatus status = MatchStatus.WAIT;
+
+    @Column(name = "mat_is_expired")
+    @Builder.Default
+    private Boolean isExpired = false;
 
     /* 호감을 보내는 사람 */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,6 +42,10 @@ public class Match extends BaseEntity {
     @JsonIgnore
     private Member toMember;
 
+    /* 만료 */
+    public void expire() {
+        this.isExpired = true;
+    }
     /* 호감 거절 */
     public void reject() {
         this.status = MatchStatus.REJECTED;

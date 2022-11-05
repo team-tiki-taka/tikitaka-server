@@ -1,5 +1,6 @@
 package com.tikitaka.naechinso.domain.match;
 
+import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
 import com.tikitaka.naechinso.domain.match.dto.MatchResponseDTO;
 import com.tikitaka.naechinso.domain.match.entity.Match;
@@ -7,6 +8,7 @@ import com.tikitaka.naechinso.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +65,9 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     Boolean existsByTargetIdAndStatusIsOpen(Long id);
 
     Optional<Match> findByIdAndToMemberAndStatus(Long id, Member member, MatchStatus status);
+
+    /** time 이전의 not expired 된 모든 카드를 가져옴 */
+    List<Match> findAllByIsExpiredFalseAndCreatedAtBefore(LocalDateTime time);
 
     Optional<Match> findByIdAndStatus(Long id, MatchStatus status);
 

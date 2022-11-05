@@ -2,6 +2,7 @@ package com.tikitaka.naechinso.domain;
 
 import com.tikitaka.naechinso.domain.card.CardRepository;
 import com.tikitaka.naechinso.domain.card.CardService;
+import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.match.MatchRepository;
 import com.tikitaka.naechinso.domain.match.MatchService;
 import com.tikitaka.naechinso.domain.match.constant.MatchStatus;
@@ -483,6 +484,29 @@ public class TestController {
         matchRepository.save(match);
 
         return CommonApiResponse.of(MatchResponseDTO.of(match));
+    }
+
+    @GetMapping("/create-match-in-row")
+    @ApiOperation(value = "[*TEST*] accessToken 의 유저가 소유한 매칭 정보를 10 개 무작위 생성한다")
+    public CommonApiResponse<Object> createCardInRowEight(
+            @ApiIgnore @AuthMember Member member
+    ) {
+        Member findMember = memberService.findByMember(member);
+        List<Match> matchList = List.of(
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.ACCEPTED).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.OPEN).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.OPEN).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.ACCEPTED).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.PENDING).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.PENDING).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.PENDING).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.PENDING).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.PENDING).build(),
+                Match.builder().fromMember(findMember).toMember(findMember).isExpired(false).status(MatchStatus.PENDING).build()
+        );
+
+        matchRepository.saveAllAndFlush(matchList);
+        return CommonApiResponse.of(matchList);
     }
 
     @DeleteMapping("/drop-all-table")

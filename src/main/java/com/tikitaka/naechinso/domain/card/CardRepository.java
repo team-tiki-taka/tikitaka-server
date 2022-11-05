@@ -20,6 +20,8 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     long countByMemberAndCreatedAtBetween(Member member, LocalDateTime start, LocalDateTime end);
 
+    List<Card> findAllByIsActiveTrue();
+
     @Query("select c.targetMemberId " +
             "from Card c " +
             "where c.targetMemberId <> :id")
