@@ -26,9 +26,9 @@ public class MemberCommonJoinRequestDTO {
     @Enum(enumClass = Gender.class, message = "성별 입력이 올바르지 않습니다. M 또는 W가 필요합니다")
     private Gender gender;
 
-    @ApiModelProperty(example = "25")
-    @Min(value = 25, message = "25-35세까지만 가입 가능합니다")
-    @Max(value = 35, message = "25-35세까지만 가입 가능합니다")
+    @ApiModelProperty(example = "1998")
+    @Min(value = 1988, message = "1988-1998 년생까지만 가입 가능합니다")
+    @Max(value = 1998, message = "1988-1998 년생까지만 가입 가능합니다")
     private int age;
 
     @NotNull(message = "서비스 이용약관 동의가 필요합니다")
