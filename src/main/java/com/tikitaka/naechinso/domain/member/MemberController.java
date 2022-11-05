@@ -84,7 +84,7 @@ public class MemberController {
 
     @PostMapping("/reissue")
     @ApiOperation(value = "리프레시 토큰을 통해 새로운 토큰을 발급받는다 (RefreshToken)")
-    public CommonApiResponse<TokenResponseDTO> reissue(
+    public CommonApiResponse<MemberReissueResponseDTO> reissue(
             @RequestHeader("Authorization") String accessToken,
             @RequestHeader("Refresh") String refreshToken
     ) {

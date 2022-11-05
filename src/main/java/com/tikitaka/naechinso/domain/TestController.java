@@ -66,7 +66,7 @@ public class TestController {
         MemberCommonJoinResponseDTO responseDTO = memberService.joinCommonMember(
                 "01012345678",
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
+                        .age(1998)
                         .gender(Gender.M)
                         .name("닉")
                         .acceptsInfo(true)
@@ -86,30 +86,37 @@ public class TestController {
     @ApiOperation(value = "[*TEST*] 추천사를 받은 멤버를 임시 유저로 가입시킨 후 엑세스 토큰을 반환한다")
     public CommonApiResponse<Object> generateRecommendReceiver(
     ) {
-
-        //sender
-        MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
-                "01011112222",
+        List<Object> senderMemberInfo = Arrays.asList("01010101010", 1998, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "자기관리, 귀여워, 차분해", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인, 상냥한, 섬세한", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"); //추천인
+        Member sender = memberService.findByPhone(memberService.joinCommonMember(
+                (String) senderMemberInfo.get(0),
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
-                        .gender(Gender.M)
-                        .name("닉")
+                        .age((int) senderMemberInfo.get(1))
+                        .gender((Gender) senderMemberInfo.get(2))
+                        .name((String) senderMemberInfo.get(3))
                         .acceptsInfo(true)
                         .acceptsLocation(true)
                         .acceptsMarketing(true)
                         .acceptsReligion(true)
                         .acceptsService(true)
-                        .build());
+                        .build()).getPhone());
+        sender.updateEdu(MemberUpdateEduRequestDTO.builder()
+                .eduImage((String) senderMemberInfo.get(4))
+                .eduName((String) senderMemberInfo.get(5))
+                .eduLevel((String) senderMemberInfo.get(6))
+                .eduMajor((String) senderMemberInfo.get(7))
+                .build());
+        memberRepository.save(sender);
+        memberRepository.flush();
 
-        Member sender = memberService.findByPhone(senderDTO.getPhone());
 
-        //sender
+        List<Object> receiverInfo = Arrays.asList("01012345678", 1998, Gender.W, "진하수", "edu-image020.jpg", "연세", "대학교", "기계공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 163, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어");
+        //receiver
         MemberCommonJoinResponseDTO receiverDTO = memberService.joinCommonMember(
-                "01012345678",
+                (String) receiverInfo.get(0),
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
-                        .gender(Gender.M)
-                        .name("닉")
+                        .age((int) receiverInfo.get(1))
+                        .gender((Gender) receiverInfo.get(2))
+                        .name((String) receiverInfo.get(3))
                         .acceptsInfo(true)
                         .acceptsLocation(true)
                         .acceptsMarketing(true)
@@ -119,15 +126,15 @@ public class TestController {
 
         RecommendResponseDTO recommend = recommendService.createRecommend(sender, RecommendBySenderRequestDTO
                 .builder()
-                .age(25)
-                .period("1년")
-                .appeals(List.of("[패션센스 \uD83E\uDDE5", "사랑꾼 \uD83D\uDC97", "애교쟁이 \uD83D\uDE18"))
-                .phone("01012345678")
-                .meet("CMC에서")
-                .gender(Gender.M)
-                .name("닉")
+                .phone((String) receiverInfo.get(0))
+                .age((int) receiverInfo.get(1))
+                .gender((Gender) receiverInfo.get(2))
+                .name((String) receiverInfo.get(3))
+                .period((String) receiverInfo.get(8))
+                .meet((String) receiverInfo.get(9))
+                .appeals(List.of(StringUtils.split((String) receiverInfo.get(11), ",")))
+                .appealDetail((String) receiverInfo.get(12))
                 .build());
-
 
         return CommonApiResponse.of(receiverDTO);
     }
@@ -140,7 +147,7 @@ public class TestController {
         MemberCommonJoinResponseDTO responseDTO = memberService.joinCommonMember(
                 "01012345678",
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
+                        .age(1998)
                         .gender(Gender.M)
                         .name("닉")
                         .acceptsInfo(true)
@@ -182,7 +189,7 @@ public class TestController {
         MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
                 "01012345678",
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
+                        .age(1998)
                         .gender(Gender.M)
                         .name("닉")
                         .acceptsInfo(true)
@@ -199,7 +206,7 @@ public class TestController {
         MemberCommonJoinResponseDTO receiverDTO = memberService.joinCommonMember(
                 "01011111111",
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
+                        .age(1998)
                         .gender(Gender.M)
                         .name("닉")
                         .acceptsInfo(true)
@@ -212,7 +219,7 @@ public class TestController {
 
         System.out.println("recommend = " + recommendService.createRecommend(member1, RecommendBySenderRequestDTO
                 .builder()
-                .age(25)
+                .age(1998)
                 .period("1년")
                 .appeals(List.of("[패션센스 \uD83E\uDDE5", "사랑꾼 \uD83D\uDC97", "애교쟁이 \uD83D\uDE18"))
                 .phone("01011111111")
@@ -244,7 +251,7 @@ public class TestController {
         MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
                 "01012345678",
                 MemberCommonJoinRequestDTO.builder()
-                        .age(25)
+                        .age(1998)
                         .gender(Gender.W)
                         .name("아이유")
                         .acceptsInfo(true)
@@ -265,7 +272,7 @@ public class TestController {
         MemberCommonJoinResponseDTO receiverDTO = memberService.joinCommonMember(
                 "01011111111",
                 MemberCommonJoinRequestDTO.builder()
-                        .age(28)
+                        .age(1995)
                         .gender(Gender.M)
                         .name("지드래곤")
                         .acceptsInfo(true)
@@ -285,7 +292,7 @@ public class TestController {
 
         recommendService.createRecommend(member2, RecommendBySenderRequestDTO
                 .builder()
-                .age(25)
+                .age(1998)
                 .period("3달")
                 .appeals(List.of("[패션센스 \uD83E\uDDE5", "사랑꾼 \uD83D\uDC97", "애교쟁이 \uD83D\uDE18"))
                 .appealDetail("짱짱짱 멋짐")
@@ -298,7 +305,7 @@ public class TestController {
 
         recommendService.createRecommend(member1, RecommendBySenderRequestDTO
                 .builder()
-                .age(25)
+                .age(1998)
                 .period("1년")
                 .appeals(List.of("[패션센스 \uD83E\uDDE5", "사랑꾼 \uD83D\uDC97", "애교쟁이 \uD83D\uDE18"))
                 .appealDetail("짱짱짱 멋짐")
@@ -351,7 +358,7 @@ public class TestController {
     @GetMapping("/create-multiple-users")
     @ApiOperation(value = "[*TEST*] 정회원으로 가입한 유저를 남녀 10명씩 생성하고, 그 중 마지막 여성 멤버 하나의 엑세스 토큰 반환")
     public CommonApiResponse<Object> createMultipleMembers() {
-        List<Object> adminMemberInfo = Arrays.asList("01012345678", 25, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"); //어드민 겸 추천인
+        List<Object> adminMemberInfo = Arrays.asList("01012345678", 1998, Gender.M, "노경닉", "edu-image-admin.jpg", "홍익", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"); //어드민 겸 추천인
 
         Member adminMember = memberService.findByPhone(memberService.joinCommonMember(
                 (String) adminMemberInfo.get(0),
@@ -375,27 +382,27 @@ public class TestController {
         memberRepository.save(adminMember);
 
         final List<List<Object>> joinRequestList = Arrays.asList(
-                Arrays.asList("01011111111", 25, Gender.M, "허시준", "edu-image001.jpg", "서강", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "\"패션센스 \uD83E\uDDE5\", \"사랑꾼 \uD83D\uDC97\", \"애교쟁이 \uD83D\uDE18\"", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01012222222", 26, Gender.M, "민성진", "edu-image002.jpg", "한국", "고등학교", "자동차정비", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 185, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01013333333", 27, Gender.M, "김상혁", "edu-image003.jpg", "서울", "대학원", "인공지능공학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 182, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01014444444", 28, Gender.M, "권영성", "edu-image004.jpg", "홍익", "대학교", "시각디자인학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 183, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "불교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01015555555", 29, Gender.M, "배규빈", "edu-image005.jpg", "한성", "고등학교", "상업", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 178, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01016666666", 30, Gender.M, "권민기", "edu-image006.jpg", "서울", "고등학교", "디자인", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 172, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01017777777", 31, Gender.M, "김민성", "edu-image007.jpg", "연세", "대학원", "영어영문학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 173, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ENFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01018888888", 32, Gender.M, "임정혁", "edu-image008.jpg", "연세", "대학교", "전기전자공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 175, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01019999999", 33, Gender.M, "성재오", "edu-image009.jpg", "이대부속", "고등학교", "공학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 168, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01010000000", 25, Gender.M, "차재훈", "edu-image010.jpg", "국민", "대학교", "미디어학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 176, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01011111111", 1998, Gender.M, "허시준", "edu-image001.jpg", "서강", "대학교", "컴퓨터공학과", "1~3년", "CMC에서 만남", "착함", "\"패션센스 \uD83E\uDDE5\", \"사랑꾼 \uD83D\uDC97\", \"애교쟁이 \uD83D\uDE18\"", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 180, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01012222222", 1997, Gender.M, "민성진", "edu-image002.jpg", "한국", "고등학교", "자동차정비", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 185, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01013333333", 1996, Gender.M, "김상혁", "edu-image003.jpg", "서울", "대학원", "인공지능공학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 182, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01014444444", 1995, Gender.M, "권영성", "edu-image004.jpg", "홍익", "대학교", "시각디자인학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 183, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "불교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01015555555", 1994, Gender.M, "배규빈", "edu-image005.jpg", "한성", "고등학교", "상업", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 178, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01016666666", 1993, Gender.M, "권민기", "edu-image006.jpg", "서울", "고등학교", "디자인", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 172, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01017777777", 1992, Gender.M, "김민성", "edu-image007.jpg", "연세", "대학원", "영어영문학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 173, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ENFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01018888888", 1991, Gender.M, "임정혁", "edu-image008.jpg", "연세", "대학교", "전기전자공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 175, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01019999999", 1990, Gender.M, "성재오", "edu-image009.jpg", "이대부속", "고등학교", "공학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 168, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01010000000", 1989, Gender.M, "차재훈", "edu-image010.jpg", "국민", "대학교", "미디어학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 176, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
 
-                Arrays.asList("01022200000", 25, Gender.W, "민장효", "edu-image011.jpg", "서강", "대학원", "물류학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 160, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022211111", 25, Gender.W, "김민서", "edu-image012.jpg", "홍익", "대학교", "조소과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 162, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022222222", 25, Gender.W, "노혜지", "edu-image013.jpg", "한국", "고등학교", "디자인", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 165, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ENFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022233333", 25, Gender.W, "류라해", "edu-image014.jpg", "이화여자", "대학교", "사이버보안학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 155, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022244444", 25, Gender.W, "민예지", "edu-image015.jpg", "이화여자", "대학교", "국어국문학과", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 150, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022255555", 25, Gender.W, "류유주", "edu-image016.jpg", "한국", "고등학교", "공학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 174, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INTP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022266666", 25, Gender.W, "임혜서", "edu-image017.jpg", "서울", "대학원", "법학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 172, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "불교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022277777", 25, Gender.W, "임한하", "edu-image018.jpg", "서울", "대학교", "의상학과", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 168, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ENTP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022288888", 25, Gender.W, "권민영", "edu-image019.jpg", "고려", "대학교", "의학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 175, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
-                Arrays.asList("01022299999", 25, Gender.W, "진하수", "edu-image020.jpg", "연세", "대학교", "기계공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 163, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어")
+                Arrays.asList("01022200000", 1998, Gender.W, "민장효", "edu-image011.jpg", "서강", "대학원", "물류학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 160, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022211111", 1998, Gender.W, "김민서", "edu-image012.jpg", "홍익", "대학교", "조소과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 162, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022222222", 1998, Gender.W, "노혜지", "edu-image013.jpg", "한국", "고등학교", "디자인", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 165, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ENFP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022233333", 1998, Gender.W, "류라해", "edu-image014.jpg", "이화여자", "대학교", "사이버보안학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 155, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022244444", 1998, Gender.W, "민예지", "edu-image015.jpg", "이화여자", "대학교", "국어국문학과", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 150, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022255555", 1998, Gender.W, "류유주", "edu-image016.jpg", "한국", "고등학교", "공학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 174, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "INTP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "기독교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022266666", 1998, Gender.W, "임혜서", "edu-image017.jpg", "서울", "대학원", "법학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 172, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "불교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022277777", 1998, Gender.W, "임한하", "edu-image018.jpg", "서울", "대학교", "의상학과", "3~5년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 168, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ENTP", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022288888", 1998, Gender.W, "권민영", "edu-image019.jpg", "고려", "대학교", "의학", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 175, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESFJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어"),
+                Arrays.asList("01022299999", 1998, Gender.W, "진하수", "edu-image020.jpg", "연세", "대학교", "기계공학과", "1~3년", "CMC에서 만남", "착함", "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18", "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야", "서울시 마포구", "1병", 163, "내친소 사용하기", "profile-001-01.png,profile-001-02.png,profile-001-03.png", "반갑습니다 내친소 여러분!", "ESTJ", "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️", "무교", "비흡연자", "같이 취미를 즐길 수 있는 연애를 하고 싶어")
         );
 
         String accessToken = null;
