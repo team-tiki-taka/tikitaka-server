@@ -86,6 +86,10 @@ public class MatchService {
     public MatchResponseDTO reject(Member authMember, Long matchId) {
         Match match = matchRepository.findByIdAndToMemberAndStatus(matchId, authMember, MatchStatus.PENDING)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MATCH_NOT_FOUND));
+        //만료된 매칭
+        if (match.getIsExpired()) {
+            throw new BadRequestException(ErrorCode.EXPIRED_MATCH);
+        }
 
         Member fromMember = match.getFromMember();
 
@@ -114,6 +118,10 @@ public class MatchService {
     public MatchResponseDTO accept(Member authMember, Long matchId) {
         Match match = matchRepository.findByIdAndToMemberAndStatus(matchId, authMember, MatchStatus.PENDING)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MATCH_NOT_FOUND));
+        //만료된 매칭
+        if (match.getIsExpired()) {
+            throw new BadRequestException(ErrorCode.EXPIRED_MATCH);
+        }
 
         Member fromMember = match.getFromMember();
 
@@ -142,6 +150,10 @@ public class MatchService {
     public MatchResponseDTO openPhone(Member authMember, Long matchId) {
         Match match = matchRepository.findByIdAndStatus(matchId, MatchStatus.ACCEPTED)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MATCH_NOT_FOUND));
+        //만료된 매칭
+        if (match.getIsExpired()) {
+            throw new BadRequestException(ErrorCode.EXPIRED_MATCH);
+        }
 
         //유저에게 속하지 않은 매칭에 대한 유효하지 않은 요청
         if (!match.getFromMember().getId().equals(authMember.getId())
@@ -163,6 +175,36 @@ public class MatchService {
         return MatchResponseDTO.of(match);
     }
 
+
+    /**
+     * 호감 주거나 받은 상대의 프로필 정보를 가져옴
+     * */
+    public MatchBasicProfileResponseDTO getBasicProfileById(Member authMember, Long id) {
+        //관련 매칭 정보가 없으면 403
+        if(!matchRepository.existsByTargetIdAndIsExpiredFalse(id)){
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return MatchBasicProfileResponseDTO.of(oppositeMember);
+    }
+
+    /**
+     * 호감 주거나 받은 상대의 프로필 정보를 가져옴
+     * */
+    public MatchOpenProfileResponseDTO getOpenProfileById(Member authMember, Long id) {
+        //OPEN 상태인 매칭 정보가 없다면 에러
+        if(!matchRepository.existsByTargetIdAndIsExpiredFalseAndStatusIsOpen(id)){
+            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
+        }
+
+        Member oppositeMember = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return MatchOpenProfileResponseDTO.of(oppositeMember);
+    }
 
     /**
      * 호감을 받은 매칭 정보를 모두 가져온다
@@ -197,40 +239,10 @@ public class MatchService {
                 .collect(Collectors.toList());
     }
 
-
-    /**
-     * 호감 주거나 받은 상대의 프로필 정보를 가져옴
-     * */
-    public MatchBasicProfileResponseDTO getBasicProfileById(Member authMember, Long id) {
-        //관련 매칭 정보가 없으면 403
-        if(!matchRepository.existsByTargetId(id)){
-            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
-        }
-
-        Member oppositeMember = memberRepository.findByMember(authMember)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        return MatchBasicProfileResponseDTO.of(oppositeMember);
-    }
-
-    /**
-     * 호감 주거나 받은 상대의 프로필 정보를 가져옴
-     * */
-    public MatchOpenProfileResponseDTO getOpenProfileById(Member authMember, Long id) {
-        //OPEN 상태인 매칭 정보가 없다면 에러
-        if(!matchRepository.existsByTargetIdAndStatusIsOpen(id)){
-            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
-        }
-
-        Member oppositeMember = memberRepository.findByMember(authMember)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        return MatchOpenProfileResponseDTO.of(oppositeMember);
-    }
-
     public MatchListResponseDTO findAllByMember(Member authMember) {
         return MatchListResponseDTO.of(authMember);
     }
+
 
     /**
      * 매일 00시00분 마다 기간이 지난 카드 자동 만료
