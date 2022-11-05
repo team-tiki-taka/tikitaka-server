@@ -5,10 +5,7 @@ import com.tikitaka.naechinso.domain.card.entity.Card;
 import com.tikitaka.naechinso.domain.match.entity.Match;
 import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.constant.Role;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateAcceptsRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateCommonRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateEduRequestDTO;
-import com.tikitaka.naechinso.domain.member.dto.MemberUpdateJobRequestDTO;
+import com.tikitaka.naechinso.domain.member.dto.*;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
 import com.tikitaka.naechinso.domain.point.constant.PointType;
 import com.tikitaka.naechinso.domain.point.entity.Point;
@@ -200,6 +197,12 @@ public class Member extends BaseEntity {
 
     public void setDetail(MemberDetail memberDetail) {
         this.detail = memberDetail;
+    }
+
+    public void updateCommonInfo(MemberDetailJoinRequestDTO requestDTO) {
+        this.name = requestDTO.getName();
+        this.age = requestDTO.getAge();
+        this.gender = requestDTO.getGender();
     }
 
     public void updateAccepts(MemberUpdateAcceptsRequestDTO requestDTO) {

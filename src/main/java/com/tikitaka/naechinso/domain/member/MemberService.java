@@ -128,7 +128,6 @@ public class MemberService {
 
         TokenResponseDTO tokenResponseDTO = jwtTokenProvider.generateToken(new JwtDTO(phone, authMember.getRole().toString()));
 
-
         return MemberReissueResponseDTO.builder()
                 .accessToken(tokenResponseDTO.getAccessToken())
                 .refreshToken(tokenResponseDTO.getRefreshToken())
@@ -201,6 +200,9 @@ public class MemberService {
 
             //받은 추천사 중 한명이라도 인증이 완료된 상태면 정회원 가입 실행
             if (recommend.getSender().getJobAccepted() || recommend.getSender().getEduAccepted()) {
+                member.updateCommonInfo(dto);
+                memberRepository.save(member);
+
                 MemberDetail detail = MemberDetail.of(member, dto);
                 memberDetailRepository.save(detail);
 
