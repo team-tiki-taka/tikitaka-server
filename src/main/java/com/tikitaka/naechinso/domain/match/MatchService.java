@@ -21,9 +21,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +41,8 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final CardRepository cardRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    int EXPIRY_DATE_DAY = 3;
 
     /**
      * 활성화된 카드에 해당하는 상대에게 호감을 보낸다
@@ -224,5 +230,20 @@ public class MatchService {
 
     public MatchListResponseDTO findAllByMember(Member authMember) {
         return MatchListResponseDTO.of(authMember);
+    }
+
+    /**
+     * 매일 00시00분 마다 기간이 지난 카드 자동 만료
+     */
+    @Scheduled(cron = "0 0 0 * * ?") //daily at 00:00
+    protected void scheduleTask() {
+        //현재 시간으로 부터 3일 전의 00시 00분 이전 시각
+        LocalDateTime compareDateTime = LocalDateTime.of(LocalDate.now().minusDays(EXPIRY_DATE_DAY), LocalTime.of(0,0,0));
+        //그 이전의 카드는 만료되었으므로 모두 가져옴
+        List<Match> matchList = matchRepository.findAllByIsExpiredFalseAndCreatedAtBefore(compareDateTime);
+        //만료
+        matchList.forEach(Match::expire);
+        log.info("Scheduling System Automatically Expire Matches :: Affected Matches Count - {}", matchList.size());
+        matchRepository.saveAll(matchList);
     }
 }

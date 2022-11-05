@@ -11,8 +11,10 @@ import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
+import com.tikitaka.naechinso.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,7 +31,6 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
-
 
     /**
      * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일용)
@@ -138,7 +139,7 @@ public class CardService {
     }
 
     /**
-     * 오늘 날짜를 기준으로
+     * 오늘 날짜를 기준으로 하루동안 받은 카드 개수 반환
      * */
     private long countCardByMemberAndCreatedAtBetween(Member member) {
         //서버 시간으로 00시00분부터 23시59분까지받은 카드 수 종합
