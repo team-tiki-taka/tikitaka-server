@@ -84,6 +84,7 @@ public enum ErrorCode {
     MATCH_ALREADY_OPEN(BAD_REQUEST, "MATCH002", "이미 번호 오픈권을 사용했습니다"),
     MATCH_ALREADY_ACCEPTED(BAD_REQUEST, "MATCH002", "이미 호감을 수락했습니다"),
     BAD_MATCH_STATUS(BAD_REQUEST, "MATCH003", "매칭 상태 정보가 유효하지 않습니다"),
+    EXPIRED_MATCH(BAD_REQUEST, "MATCH004", "매칭 상태가 만료되었습니다"),
 
     /* Validation 오류 */
     PARAMETER_NOT_VALID(BAD_REQUEST, "P000", "인자가 유효하지 않습니다"),

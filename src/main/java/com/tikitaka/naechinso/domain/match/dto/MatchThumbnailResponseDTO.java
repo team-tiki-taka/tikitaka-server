@@ -30,7 +30,7 @@ public class MatchThumbnailResponseDTO {
     @Builder.Default
     private long dueDate = 0L;
 
-    private List<String> images;
+    private String image;
     private String name;
     private int age;
     private String address;
@@ -39,7 +39,6 @@ public class MatchThumbnailResponseDTO {
     private String jobName;
     private String jobPart;
     private String jobLocation;
-
     private String eduName;
     private String eduMajor;
     private String eduLevel;
@@ -62,10 +61,6 @@ public class MatchThumbnailResponseDTO {
         private String eduName;
         private String eduMajor;
         private String eduLevel;
-
-        private String meet;
-        private String period;
-        private String appealDetail;
     }
 
     public static MatchThumbnailResponseDTO of(Match match, Member member) {
@@ -86,7 +81,7 @@ public class MatchThumbnailResponseDTO {
                 .status(match.getStatus())
                 .createdAt(match.getCreatedAt().toString())
                 .dueDate(generateDueDate(match.getCreatedAt()))
-                .images(dto.getImages())
+                .image(dto.getImages() != null ? dto.getImages().get(0) : null)
                 .name(dto.getName())
                 .age(dto.getAge())
                 .address(dto.getAddress())
@@ -107,15 +102,12 @@ public class MatchThumbnailResponseDTO {
                         .eduName(dto.getRecommend().getEduName())
                         .eduMajor(dto.getRecommend().getEduMajor())
                         .eduLevel(dto.getRecommend().getEduLevel())
-                        .meet(dto.getRecommend().getMeet())
-                        .period(dto.getRecommend().getPeriod())
-                        .appealDetail(dto.getRecommend().getAppealDetail())
                         .build())
                 .build();
     }
 
     private static long generateDueDate(LocalDateTime createdAt) {
-        LocalDateTime endDatetime = LocalDateTime.of(createdAt.toLocalDate().plusDays(7), LocalTime.of(23,59,59));
+        LocalDateTime endDatetime = LocalDateTime.of(createdAt.toLocalDate().plusDays(3), LocalTime.of(23,59,59));
         long dueDate = Duration.between(LocalDateTime.now(), endDatetime).toDays();
         if (dueDate < 0) {
             return 0;
