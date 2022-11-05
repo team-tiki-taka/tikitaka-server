@@ -22,17 +22,6 @@ public class RecommendMemberAcceptAndUpdateRequestDTO {
     @ApiModelProperty
     private MemberUpdateJobRequestDTO job;
 
-//    @NotBlank(message = "직장명을 입력해주세요")
-//    private String jobName;
-//
-//    @ApiModelProperty(example = "개발자")
-//    @NotBlank(message = "직장 부서를 입력해주세요")
-//    private String jobPart;
-//
-//    @ApiModelProperty(example = "판교")
-//    @NotBlank(message = "직장 위치를 입력해주세요")
-//    private String jobLocation;
-
     @ApiModelProperty(example = "CMC 에서")
     @NotBlank(message = "만나게 된 계기를 입력해주세요")
     private String meet;
