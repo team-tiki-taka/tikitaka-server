@@ -148,6 +148,10 @@ public class MemberService {
         Member member = MemberCommonJoinRequestDTO.toCommonMember(phone, dto);
         memberRepository.save(member);
 
+        //내 번호로 받았던 추천서 저장
+        List<Recommend> recommendList = recommendRepository.findAllByReceiverPhone(phone);
+        recommendList.forEach(recommend -> recommend.setReceiver(member));
+
         TokenResponseDTO tokenResponseDTO
                 = jwtTokenProvider.generateToken(new JwtDTO(phone, "ROLE_USER"));
 

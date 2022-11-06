@@ -195,6 +195,15 @@ public class Member extends BaseEntity {
     @Builder.Default
     private List<Card> cards = new ArrayList<>();
 
+
+    public void addRecommend(Recommend recommend) {
+        this.recommends.add(recommend);
+    }
+
+    public void addRecommendReceived(Recommend recommend) {
+        this.recommendReceived.add(recommend);
+    }
+
     public void setDetail(MemberDetail memberDetail) {
         this.detail = memberDetail;
     }
