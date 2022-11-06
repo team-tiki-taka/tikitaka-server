@@ -24,7 +24,7 @@ public class CardController {
 
     @GetMapping
     @ApiOperation(value = "자신이 소유한 모든 카드 썸네일을 가져온다 (AccessToken)")
-    public CommonApiResponse<List<CardOppositeMemberProfileResponseDTO>> getAllCardsByMember(
+    public CommonApiResponse<List<CardThumbnailResponseDTO>> getAllCardsByMember(
             @ApiIgnore @AuthMember Member member
     ) {
         return CommonApiResponse.of(cardService.findAllCard(member));
