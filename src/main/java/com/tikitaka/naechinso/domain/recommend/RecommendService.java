@@ -143,8 +143,7 @@ public class RecommendService {
             throw new BadRequestException(ErrorCode.CANNOT_RECOMMEND_MYSELF);
         }
 
-        //추천사 업데이트
-        recommend.update(dto);
+        recommend.update(sender, dto);
         recommendRepository.save(recommend);
 
         return RecommendResponseDTO.of(recommend);

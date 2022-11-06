@@ -24,9 +24,6 @@ public class CardThumbnailResponseDTO {
     private Boolean isActive;
     private String createdAt;
 
-    @Builder.Default
-    private long dueDate = 0L;
-
     private String image;
     private String name;
     private int age;
@@ -78,7 +75,6 @@ public class CardThumbnailResponseDTO {
                 .targetMemberId(card.getTargetMemberId())
                 .isActive(card.getIsActive())
                 .createdAt(card.getCreatedAt().toString())
-                .dueDate(DateUtil.getDueDay(card.getCreatedAt(), 7L))
                 .image(topImage)
                 .name(dto.getName())
                 .age(dto.getAge())

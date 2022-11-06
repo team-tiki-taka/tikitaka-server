@@ -104,8 +104,12 @@ public class Recommend extends BaseEntity {
     @Column(name = "rec_period")
     private String receiverPeriod;
 
+    public void setReceiver(Member receiver) {
+        this.receiver = receiver;
+    }
 
-    public void update(RecommendAcceptRequestDTO requestDTO) {
+    public void update(Member sender, RecommendAcceptRequestDTO requestDTO) {
+        this.sender = sender;
         this.receiverAppeals = StringUtils.join(requestDTO.getAppeals(), ",");
         this.receiverAppealDetail = requestDTO.getAppealDetail();
         this.receiverMeet = requestDTO.getMeet();
