@@ -35,7 +35,7 @@ public class CardService {
     /**
      * 내가 받았던 모든 카드 기록을 가져온다 (챗봇 썸네일용)
      */
-    public List<CardOppositeMemberProfileResponseDTO> findAllCard(Member authMember){
+    public List<CardThumbnailResponseDTO> findAllCard(Member authMember){
         return cardRepository.findAllByMember(authMember).stream().map(
                 card -> {
                     Member targetMember = memberRepository.findById(card.getTargetMemberId())
@@ -44,7 +44,7 @@ public class CardService {
                     if (targetMember == null) {
                         return null;
                     }
-                    return CardOppositeMemberProfileResponseDTO.of(targetMember);
+                    return CardThumbnailResponseDTO.of(card, targetMember);
                 }
         ).collect(Collectors.toList());
     }

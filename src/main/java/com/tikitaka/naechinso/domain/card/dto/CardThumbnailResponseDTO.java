@@ -27,7 +27,7 @@ public class CardThumbnailResponseDTO {
     @Builder.Default
     private long dueDate = 0L;
 
-    private List<String> images;
+    private String image;
     private String name;
     private int age;
     private String address;
@@ -72,13 +72,14 @@ public class CardThumbnailResponseDTO {
 
         //상대 프로필 dto 에서 가져옴
         MemberOppositeProfileResponseDTO dto = MemberOppositeProfileResponseDTO.of(targetMember);
+        String topImage = targetMember.getDetail().getImages() != null ? targetMember.getDetail().getImages().get(0) : null;
 
         return CardThumbnailResponseDTO.builder()
                 .targetMemberId(card.getTargetMemberId())
                 .isActive(card.getIsActive())
                 .createdAt(card.getCreatedAt().toString())
                 .dueDate(DateUtil.getDueDay(card.getCreatedAt(), 7L))
-                .images(targetMember.getDetail().getImages())
+                .image(topImage)
                 .name(dto.getName())
                 .age(dto.getAge())
                 .address(dto.getAddress())
