@@ -63,12 +63,19 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             "WHERE f.id = :id OR t.id = :id AND m.isExpired = false")
     Optional<Match> findByTargetIdAndIsExpiredFalse(Long id);
 
-    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
+//    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
+//            "FROM Match m " +
+//            "JOIN m.fromMember f JOIN m.toMember t " +
+//            "WHERE (f.id = :id OR t.id = :id) AND m.isExpired = false " +
+//            "AND m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.OPEN")
+//    Boolean existsByTargetIdAndIsExpiredFalseAndStatusIsOpen(Long id);
+
+    @Query("SELECT m " +
             "FROM Match m " +
             "JOIN m.fromMember f JOIN m.toMember t " +
             "WHERE (f.id = :id OR t.id = :id) AND m.isExpired = false " +
             "AND m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.OPEN")
-    Boolean existsByTargetIdAndIsExpiredFalseAndStatusIsOpen(Long id);
+    Optional<Match> findByTargetIdAndIsExpiredFalseAndStatusIsOpen(Long id);
 
     Optional<Match> findByIdAndToMemberAndStatus(Long id, Member member, MatchStatus status);
 

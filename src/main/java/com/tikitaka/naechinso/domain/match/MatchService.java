@@ -202,14 +202,19 @@ public class MatchService {
      * */
     public MatchOpenProfileResponseDTO getOpenProfileById(Member authMember, Long id) {
         //OPEN 상태인 매칭 정보가 없다면 에러
-        if(!matchRepository.existsByTargetIdAndIsExpiredFalseAndStatusIsOpen(id)){
-            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
-        }
+        Match match = matchRepository.findByTargetIdAndIsExpiredFalseAndStatusIsOpen(id)
+                .orElseThrow(() -> new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE));
 
-        Member oppositeMember = memberRepository.findByMember(authMember)
+        Member member = memberRepository.findByMember(authMember)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        return MatchOpenProfileResponseDTO.of(oppositeMember);
+        if (match.getFromMember() != null && match.getFromMember() == member) {
+            return MatchOpenProfileResponseDTO.of(match.getToMember());
+        } else if (match.getToMember() != null && match.getToMember() == member){
+            return MatchOpenProfileResponseDTO.of(match.getFromMember());
+        } else {
+            throw new BadRequestException(ErrorCode.BAD_MATCH_STATUS);
+        }
     }
 
     /**
