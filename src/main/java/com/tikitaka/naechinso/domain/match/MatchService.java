@@ -181,14 +181,20 @@ public class MatchService {
      * */
     public MatchBasicProfileResponseDTO getBasicProfileById(Member authMember, Long id) {
         //관련 매칭 정보가 없으면 403
-        if(!matchRepository.existsByTargetIdAndIsExpiredFalse(id)){
-            throw new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE);
-        }
+        Match match = matchRepository.findByTargetIdAndIsExpiredFalse(id)
+                .orElseThrow(() -> new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE));
 
-        Member oppositeMember = memberRepository.findByMember(authMember)
+        //내정보 가져오기
+        Member member = memberRepository.findByMember(authMember)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        return MatchBasicProfileResponseDTO.of(oppositeMember);
+        if (match.getFromMember() != null && match.getFromMember() == member) {
+            return MatchBasicProfileResponseDTO.of(match.getToMember());
+        } else if (match.getToMember() != null && match.getToMember() == member){
+            return MatchBasicProfileResponseDTO.of(match.getFromMember());
+        } else {
+            throw new BadRequestException(ErrorCode.BAD_MATCH_STATUS);
+        }
     }
 
     /**

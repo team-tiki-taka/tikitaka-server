@@ -51,11 +51,17 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             "AND m.status = com.tikitaka.naechinso.domain.match.constant.MatchStatus.ACCEPTED")
     Optional<Match> findAllByIdAndMemberAndStatusIsAccept(Long id, Member member);
 
-    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
+//    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
+//            "FROM Match m " +
+//            "JOIN m.fromMember f JOIN m.toMember t " +
+//            "WHERE f.id = :id OR t.id = :id AND m.isExpired = false")
+//    Boolean existsByTargetIdAndIsExpiredFalse(Long id);
+
+    @Query("SELECT m " +
             "FROM Match m " +
             "JOIN m.fromMember f JOIN m.toMember t " +
             "WHERE f.id = :id OR t.id = :id AND m.isExpired = false")
-    Boolean existsByTargetIdAndIsExpiredFalse(Long id);
+    Optional<Match> findByTargetIdAndIsExpiredFalse(Long id);
 
     @Query("SELECT CASE WHEN COUNT(m) > 0 THEN 'true' ELSE 'false' END " +
             "FROM Match m " +
