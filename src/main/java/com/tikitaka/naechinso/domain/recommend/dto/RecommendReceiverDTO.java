@@ -29,9 +29,9 @@ public class RecommendReceiverDTO {
             throw new BadRequestException(ErrorCode.RECOMMEND_SENDER_NOT_EXIST);
         }
         return RecommendReceiverDTO.builder()
-                .name(recommend.getSenderName())
-                .gender(recommend.getSenderGender())
-                .age(recommend.getSenderAge())
+                .name(recommend.getReceiverName())
+                .gender(recommend.getReceiverGender())
+                .age(recommend.getReceiverAge())
                 .senderCreditAccepted(recommend.getSender().getEduAccepted() || recommend.getSender().getJobAccepted()  )
                 .build();
     }
