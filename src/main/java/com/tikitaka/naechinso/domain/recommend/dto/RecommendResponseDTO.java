@@ -31,6 +31,8 @@ public class RecommendResponseDTO {
 
     private String period;
 
+    private String senderName;
+
     private Long senderId;
 
     private Long receiverId;
@@ -38,11 +40,14 @@ public class RecommendResponseDTO {
 
     public static RecommendResponseDTO of(Recommend recommend) {
         Long senderId;
+        String senderName;
         Long receiverId;
         if (recommend.getSender() == null) {
             senderId = null;
+            senderName = null;
         } else {
             senderId = recommend.getSender().getId();
+            senderName = recommend.getSenderName();
         }
 
         if (recommend.getReceiver() == null) {
@@ -55,6 +60,7 @@ public class RecommendResponseDTO {
                 .uuid(recommend.getUuid())
                 .phone(recommend.getReceiverPhone())
                 .senderId(senderId)
+                .senderName(senderName)
                 .receiverId(receiverId)
                 .name(recommend.getReceiverName())
                 .gender(recommend.getReceiverGender())

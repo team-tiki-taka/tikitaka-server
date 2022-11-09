@@ -5,6 +5,7 @@ import com.tikitaka.naechinso.domain.member.constant.Role;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.domain.pending.dto.PendingFindResponseDTO;
 import com.tikitaka.naechinso.domain.pending.entity.Pending;
+import com.tikitaka.naechinso.domain.recommend.entity.Recommend;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
