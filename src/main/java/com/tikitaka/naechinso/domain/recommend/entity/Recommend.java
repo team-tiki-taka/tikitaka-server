@@ -53,14 +53,14 @@ public class Recommend extends BaseEntity {
     @Column(name = "mem_age")
     private int senderAge;
 
-    @Column(name = "mem_job_name")
-    private String senderJobName;
-
-    @Column(name = "mem_job_part")
-    private String senderJobPart;
-
-    @Column(name = "mem_job_location")
-    private String senderJobLocation;
+//    @Column(name = "mem_job_name")
+//    private String senderJobName;
+//
+//    @Column(name = "mem_job_part")
+//    private String senderJobPart;
+//
+//    @Column(name = "mem_job_location")
+//    private String senderJobLocation;
 
 
 //    @Column(name = "mem_edu_name")
@@ -110,6 +110,11 @@ public class Recommend extends BaseEntity {
 
     public void update(Member sender, RecommendAcceptRequestDTO requestDTO) {
         this.sender = sender;
+        this.senderPhone = sender.getPhone();
+        this.senderName = sender.getName();
+        this.senderPhone = sender.getPhone();
+        this.senderAge = sender.getAge();
+        this.senderGender = sender.getGender();
         this.receiverAppeals = StringUtils.join(requestDTO.getAppeals(), ",");
         this.receiverAppealDetail = requestDTO.getAppealDetail();
         this.receiverMeet = requestDTO.getMeet();
