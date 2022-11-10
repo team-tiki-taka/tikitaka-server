@@ -11,7 +11,7 @@ public class JwtDTO {
 
     //    private Long id;
     private String phoneNumber;
-    private String authorities;
+    private String role;
 
 //    public JwtDTO(User user) {
 ////        this.id = user.getId();
@@ -20,9 +20,17 @@ public class JwtDTO {
 //        this.authorities = user.getAuthorities().toString();
 //    }
 
+    /* 역할 정보가 없음 (registerToken) */
     public JwtDTO(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         //임시 권한 부여
-        this.authorities = "ROLE_USER";
+        this.role = null;
+    }
+
+    /* 역할 정보가 있음 (accessToken) */
+    public JwtDTO(String phoneNumber, String role) {
+        this.phoneNumber = phoneNumber;
+        //임시 권한 부여
+        this.role = role;
     }
 }

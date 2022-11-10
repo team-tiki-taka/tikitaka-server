@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("local")
-@TestPropertySource(locations="classpath:test.yml")
+@TestPropertySource(locations="classpath:application.yml")
 class NaechinsoApplicationTests {
 
 }

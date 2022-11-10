@@ -1,35 +1,27 @@
 server:
-  port: ${PORT:8080}
+  port: 8080
 
 spring:
   profiles:
-    active: ${SPRING_PROFILE}
-  # .env import
-  config:
-    import: optional:file:.env[.properties]
-    activate:
-      on-profile: local
-  # Using POSTGRESQL
+    active: local
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/tikitaka
+    username: tikitaka
+    password: tikitaka1234
+    redis:
+      host: localhost
+      port: 6379
 
   jpa:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    # local - create
-    # update - dev
-    # none - local
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         database-platform: org.hibernate.dialect.PostgreSQLDialect
-        #        show_sql: true
-        #        format_sql: true
 
   springfox:
     documentation:
@@ -39,3 +31,6 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
+
+jwt:
+  secret-key: example1234

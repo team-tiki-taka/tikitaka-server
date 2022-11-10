@@ -32,12 +32,13 @@ public class SwaggerConfig {
     @Bean
     public Docket swaggerApi() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(swaggerInfo())
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .ignoredParameterTypes(AuthenticationPrincipal.class)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
-                .apiInfo(swaggerInfo()).select()
+                .select()
                 .apis(RequestHandlerSelectors.basePackage("com.tikitaka.naechinso"))
                 .paths(PathSelectors.any())
                 .build();
@@ -49,16 +50,14 @@ public class SwaggerConfig {
                 .build();
     }
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope(
-                "global",
-                "accessEverything"
-        );
+        AuthorizationScope authorizationScope
+                = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
     }
     private ApiKey apiKey() {
-        return new ApiKey("Authorization", "X-AUTH-TOKEN", "header");
+        return new ApiKey("JWT", "Authorization", "header");
     }
     private Set<String> getConsumeContentTypes() {
         Set<String> consumes = new HashSet<>();
@@ -73,4 +72,3 @@ public class SwaggerConfig {
         return produces;
     }
 }
-//swagger: http://localhost:8000/swagger-ui/index.html

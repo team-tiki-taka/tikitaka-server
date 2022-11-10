@@ -2,6 +2,11 @@ server:
   port: 8080
 
 spring:
+  servlet:
+    multipart:
+      #file upload size
+      max-file-size: 10MB
+
   profiles:
     active: local
   # Using POSTGRESQL
@@ -28,6 +33,12 @@ spring:
       swagger:
         use-model-v3: false
 
+fcm:
+  key:
+    path: naechinso-fcm.json
+    scope: https://www.googleapis.com/auth/cloud-platform
+
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
+  com.amazonaws.util.EC2MetadataUtils: error

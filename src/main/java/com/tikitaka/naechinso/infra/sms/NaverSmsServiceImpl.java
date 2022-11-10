@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SmsServiceImpl implements SmsService {
+public class NaverSmsServiceImpl implements NaverSmsService {
     private final WebClient webClient;
     @Value("${naver.sms.access-key}")
     private String accessKey;

@@ -7,6 +7,7 @@ import com.tikitaka.naechinso.global.config.security.jwt.JwtAuthenticationFilter
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +19,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.http.HttpServlet;
+
 /** 인증 및 Security 관련 설정 클래스입니다
  * @author gengminy (220919) */
 @EnableWebSecurity
@@ -26,7 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private static final String[] SwaggerPatterns = {
             "/swagger-resources/**",
-            "/swagger-ui.html",
+            "/swagger-ui/**",
             "/v2/api-docs",
             "/webjars/**"
     };
@@ -54,9 +57,17 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(SwaggerPatterns).permitAll()
+                .antMatchers(HttpMethod.DELETE,"/s3/image/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.POST, "/pending/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.GET, "/pending/find").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/user/**").authenticated()
-                .anyRequest().permitAll()
+                .antMatchers(HttpMethod.GET, "/pending").permitAll()
+                .antMatchers("/test/**").permitAll() ///////////////////////////////////////테스트
+                .antMatchers("/member/join").permitAll()
+                .antMatchers("/").permitAll() //health check
+                .antMatchers("/sms/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/recommend/").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();
 

@@ -1,4 +1,4 @@
-name: beanstalk-springboot-deploy
+name: dev-beanstalk-springboot-deploy
 
 on:
   push:
@@ -25,8 +25,11 @@ jobs:
         run: |
           touch ./src/main/resources/application-dev.yml
           echo "$ENV_PROPERTIES_DEV" > ./src/main/resources/application-dev.yml
+          touch ./src/main/resources/naechinso-fcm.json
+          echo "$FCM_JSON" > ./src/main/resources/naechinso-fcm.json
         env:
           ENV_PROPERTIES_DEV: ${{ secrets.ENV_PROPERTIES_DEV }}
+          FCM_JSON: ${{ secrets.FCM_JSON }}
 
       #Grant gradlew Permission
       - name: Grant execute permission for gradlew

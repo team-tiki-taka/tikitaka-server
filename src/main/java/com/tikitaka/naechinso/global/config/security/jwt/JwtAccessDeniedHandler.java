@@ -1,6 +1,7 @@
 package com.tikitaka.naechinso.global.config.security.jwt;
 
 import com.tikitaka.naechinso.global.error.ErrorCode;
+import com.tikitaka.naechinso.global.error.ErrorResponse;
 import com.tikitaka.naechinso.global.error.exception.ForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,8 +22,19 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
             HttpServletRequest request,
             HttpServletResponse response,
             AccessDeniedException accessDeniedException
-    ) throws IOException, ServletException {
+    ) throws IOException {
         // 필요한 권한이 없이 접근하려 할때 403
-        throw new ForbiddenException(ErrorCode.FORBIDDEN_USER);
+        ErrorCode errorCode = ErrorCode.FORBIDDEN_USER;
+        setResponse(response, errorCode);
     }
+
+    /**
+     * 스프링 시큐티리 예외 커스텀을 위한 함수
+     */
+    private void setResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().print(ErrorResponse.jsonOf(errorCode));
+    }
+
 }
