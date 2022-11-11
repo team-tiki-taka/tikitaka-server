@@ -509,6 +509,148 @@ public class TestController {
         return CommonApiResponse.of(matchList);
     }
 
+    @GetMapping("/test-create-users")
+    @ApiOperation(value = "[*TEST*] 시연 영상을 위한 남자 회원의 레코드 생성 및 엑세스 토큰 반환")
+    public CommonApiResponse<Object> createShowTestRecord() {
+        List<Object> recommenderInfo = Arrays.asList(
+                "01098765432",
+                1998,
+                Gender.W,
+                "김제은",
+                "test-job-001.jpg",
+                "당근마켓",
+                "서비스기획자",
+                "서울시 서초구",
+                "1~3년",
+                "CMC에서 만남",
+                "착함",
+                "패션센스 \uD83E\uDDE5,사랑꾼 \uD83D\uDC97,애교쟁이 \uD83D\uDE18",
+                "자기 일을 진짜 책임감 있게 잘하고 주변을 늘 먼저 생각하는 친구야",
+                "서울시 마포구",
+                "1병",
+                180,
+                "내친소 사용하기",
+                "test_photo_001.png,test_photo_002.png,test_photo_003.png",
+                "반갑습니다 내친소 여러분!",
+                "ESTJ",
+                "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️",
+                "무교",
+                "비흡연자",
+                "다양한 경험과 일상의 대화를 함께하는 연애"
+        ); //추천인
+
+        Member recommender = memberService.findByPhone(memberService.joinCommonMember(
+                (String) recommenderInfo.get(0),
+                MemberCommonJoinRequestDTO.builder()
+                        .age((int) recommenderInfo.get(1))
+                        .gender((Gender) recommenderInfo.get(2))
+                        .name((String) recommenderInfo.get(3))
+                        .acceptsInfo(true)
+                        .acceptsLocation(true)
+                        .acceptsMarketing(true)
+                        .acceptsReligion(true)
+                        .acceptsService(true)
+                        .build()).getPhone());
+        recommender.updateJob(MemberUpdateJobRequestDTO.builder()
+                .jobImage((String) recommenderInfo.get(4))
+                .jobName((String) recommenderInfo.get(5))
+                .jobPart((String) recommenderInfo.get(6))
+                .jobLocation((String) recommenderInfo.get(7))
+                .build());
+        memberRepository.save(recommender);
+
+        final List<List<Object>> memberList = Arrays.asList(
+                Arrays.asList(
+                        "01033333333",
+                        1993,
+                        Gender.M,
+                        "김범수",
+                        "test_job_002.jpg",
+                        "삼성전자",
+                        "서버 개발자",
+                        "서울시 서초구",
+                        "1~3년",
+                        "CMC에서 만났어",
+                        "상대방에게 공감해주고 또 챙겨주는걸 잘 해!",
+                        "\"패션센스 \uD83E\uDDE5\", \"사랑꾼 \uD83D\uDC97\", \"애교쟁이 \uD83D\uDE18\"",
+                        "이 오빠는 진짜 이런 사람이 존재한다고? 싶을 정도로 진짜 상상속에서 튀어나온 사람 유형이었어! 예를들어 나랑 사이드 프로젝트를 하면서 만났는데 남자 여자 생각의 차이가 날 만한 그런 문제에서도 오히려 여자랑 생각이 더 비슷한 느낌이라고 하면 이해가 되려나..? 배려심이 엄청 넘치고 그래서 생각이 다른 사람에 비해서 훨 깊다는 것을 느낀적이 많아! 그리고 얼굴도 잘생기고 목소리도 좋아. 아 그리고 요리도 진짜 잘해 ㅋㅋㅋ 하나 에피소드가 우리집 제사지낸다고 했더니 자기네 집은 명절때 제사 안지내는데 동생이랑 명절 분위기 내고 싶어서 전 굽는대… 나한테는 약간 신선한 충격이었던 에피소드ㅋㅋㅋ",
+                        "서울시 마포구",
+                        "1병",
+                        180,
+                        "테니스, 요리",
+                        "test_photo_001.png,test_photo_002.png,test_photo_003.png",
+                        "반갑습니다 내친소 여러분!",
+                        "ESTJ",
+                        "열정적인 \uD83D\uDD25,지적인 \uD83E\uDDD0,상냥한 ☺️",
+                        "무교",
+                        "비흡연자",
+                        "다양한 경험과 일상의 대화를 함께하는 연애")
+        );
+
+        String accessToken = null;
+
+        for (List<Object> info : memberList) {
+            MemberCommonJoinResponseDTO senderDTO = memberService.joinCommonMember(
+                    (String) info.get(0),
+                    MemberCommonJoinRequestDTO.builder()
+                            .age((int) info.get(1))
+                            .gender((Gender) info.get(2))
+                            .name((String) info.get(3))
+                            .acceptsInfo(true)
+                            .acceptsLocation(true)
+                            .acceptsMarketing(true)
+                            .acceptsReligion(true)
+                            .acceptsService(true)
+                            .build());
+
+            Member member = memberService.findByPhone(senderDTO.getPhone());
+
+            member.updateJob(MemberUpdateJobRequestDTO.builder()
+                    .jobImage((String) recommenderInfo.get(4))
+                    .jobName((String) recommenderInfo.get(5))
+                    .jobPart((String) recommenderInfo.get(6))
+                    .jobLocation((String) recommenderInfo.get(7))
+                    .build());
+
+            memberRepository.save(member);
+            memberRepository.flush();
+
+            recommendService.createRecommend(recommender, RecommendBySenderRequestDTO
+                    .builder()
+                    .phone((String) info.get(0))
+                    .age((int) info.get(1))
+                    .gender((Gender) info.get(2))
+                    .name((String) info.get(3))
+                    .period((String) info.get(8))
+                    .meet((String) info.get(9))
+                    .appeals(List.of(StringUtils.split((String) info.get(11), ",")))
+                    .appealDetail((String) info.get(12))
+                    .build());
+
+            memberDetailRepository.save(
+                    MemberDetail.builder()
+                            .member(member)
+                            .address((String) info.get(13))
+                            .drink((String) info.get(14))
+                            .height((int) info.get(15))
+                            .hobby((String) info.get(16))
+                            .images((String) info.get(17))
+                            .image_accepted(true)
+                            .introduce((String) info.get(18))
+                            .mbti((String) info.get(19))
+                            .personalities((String) info.get(20))
+                            .religion((String) info.get(21))
+                            .smoke((String) info.get(22))
+                            .style((String) info.get(23))
+                            .build()
+            );
+
+            accessToken = senderDTO.getAccessToken();
+        }
+        return CommonApiResponse.of(accessToken);
+    }
+
+
     @DeleteMapping("/drop-all-table")
     @ApiOperation(value = "[*TEST*] 모든 DB 테이블을 초기화")
     public CommonApiResponse<Object> dropAllTable(){
