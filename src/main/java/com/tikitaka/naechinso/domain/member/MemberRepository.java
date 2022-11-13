@@ -18,7 +18,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 //    Optional<Member> findTopByIdNotInAndGenderNotAndDetailNotNull(Collection<Long> ids, Gender gender);
     List<Member> findByIdNotInAndGenderNotAndDetailNotNull(Collection<Long> ids, Gender gender);
-
     @Query("SELECT m FROM Member m WHERE m = :member")
     Optional<Member> findByMember(Member member);
 

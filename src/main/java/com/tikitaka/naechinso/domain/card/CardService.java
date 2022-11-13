@@ -10,6 +10,7 @@ import com.tikitaka.naechinso.domain.member.constant.Gender;
 import com.tikitaka.naechinso.domain.member.entity.Member;
 import com.tikitaka.naechinso.global.error.ErrorCode;
 import com.tikitaka.naechinso.global.error.exception.BadRequestException;
+import com.tikitaka.naechinso.global.error.exception.InternalServerException;
 import com.tikitaka.naechinso.global.error.exception.NotFoundException;
 import com.tikitaka.naechinso.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -73,21 +76,37 @@ public class CardService {
             throw new BadRequestException(ErrorCode.CARD_LIMIT_EXCEED);
         }
 
-        Member member = memberRepository.findByMember(authMember)
+        final Member member = memberRepository.findByMember(authMember)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-        Gender memberGender = member.getGender();
+        final Gender memberGender = member.getGender();
+        final Long memberId = member.getId();
 
-        //이미 존재하는 카드에 담긴 유저 ID들 가져오기
-        List<Long> existTargetMemberIds = member.getCards().stream().map(Card::getTargetMemberId).collect(Collectors.toList());
+        List<Long> existTargetMemberIds = new ArrayList<>();
         existTargetMemberIds.add(member.getId());
+
+        try {
+            //이미 존재하는 카드에 담긴 유저 ID들 가져오기
+            existTargetMemberIds.addAll(member.getCards().stream().map(Card::getTargetMemberId).collect(Collectors.toList()));
+
+            //나를 가리키고 있는 카드를 추천받은 상태이며 활성화되어 있는 상대를 필터링
+            existTargetMemberIds.addAll(cardRepository.findAllByTargetMemberIdAndIsActiveTrue(memberId)
+                    .stream().map(card -> card.getMember().getId()).collect(Collectors.toList()));
+
+            //매칭 상태에 존재하는 카드에 담긴 상대 유저 ID들 필터링
+            existTargetMemberIds.addAll(member.getMatchesFrom().stream().map(match -> match.getFromMember().getId()).collect(Collectors.toList()));
+            existTargetMemberIds.addAll(member.getMatchesTo().stream().map(match -> match.getToMember().getId()).collect(Collectors.toList()));
+        } catch (Exception e) {
+            throw new InternalServerException("멤버 데이터 오류");
+        }
 
         //추천 받았던 적 없는 새로운 추천 상대 리스트
         List<Member> newTargetMemberList = memberRepository.findByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender);
+
         if (newTargetMemberList.isEmpty()) {
             throw new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND);
         }
         //(0 ~ size) 사이의 랜덤 인덱스 멤버 추출
-        Member newTargetMember = newTargetMemberList.get(new Random().nextInt(newTargetMemberList.size()));
+        final Member newTargetMember = newTargetMemberList.get(new Random().nextInt(newTargetMemberList.size()));
 
         Card newCard = Card.builder()
                 .member(member)

@@ -98,7 +98,7 @@ public class Recommend extends BaseEntity {
     @Column(name = "rec_appeals")
     private String receiverAppeals;
 
-    @Column(name = "rec_appeal_detail")
+    @Column(name = "rec_appeal_detail", length = 500)
     private String receiverAppealDetail;
 
     @Column(name = "rec_period")
