@@ -179,14 +179,17 @@ public class MatchService {
     /**
      * 호감 주거나 받은 상대의 프로필 정보를 가져옴
      * */
-    public MatchBasicProfileResponseDTO getBasicProfileById(Member authMember, Long id) {
+    public MatchBasicProfileResponseDTO getBasicProfileById(Member authMember, Long targetId) {
+        //내정보 가져오기
+        final Member member = memberRepository.findByMember(authMember)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        final Long memberId = member.getId();
+
         //관련 매칭 정보가 없으면 403
-        Match match = matchRepository.findByTargetIdAndIsExpiredFalse(id)
+        final Match match = matchRepository.findByFromMemberIdAndToMemberIdAndIsExpiredFalse(memberId, targetId)
                 .orElseThrow(() -> new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE));
 
-        //내정보 가져오기
-        Member member = memberRepository.findByMember(authMember)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
         if (match.getFromMember() != null && match.getFromMember() == member) {
             return MatchBasicProfileResponseDTO.of(match.getToMember());
@@ -200,13 +203,15 @@ public class MatchService {
     /**
      * 호감 주거나 받은 상대의 프로필 정보를 가져옴
      * */
-    public MatchOpenProfileResponseDTO getOpenProfileById(Member authMember, Long id) {
-        //OPEN 상태인 매칭 정보가 없다면 에러
-        Match match = matchRepository.findByTargetIdAndIsExpiredFalseAndStatusIsOpen(id)
-                .orElseThrow(() -> new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE));
-
-        Member member = memberRepository.findByMember(authMember)
+    public MatchOpenProfileResponseDTO getOpenProfileById(Member authMember, Long targetId) {
+        final Member member = memberRepository.findByMember(authMember)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        final Long memberId = member.getId();
+
+        //OPEN 상태인 매칭 정보가 없다면 에러
+        final Match match = matchRepository.findByTargetIdAndIsExpiredFalseAndStatusIsOpen(memberId, targetId)
+                .orElseThrow(() -> new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE));
 
         if (match.getFromMember() != null && match.getFromMember() == member) {
             return MatchOpenProfileResponseDTO.of(match.getToMember());
@@ -224,7 +229,7 @@ public class MatchService {
      */
     public List<MatchThumbnailResponseDTO> findAllByToMember(Member authMember) {
         return matchRepository.findAllByToMemberNotComplete(authMember).stream()
-                .map(match -> MatchThumbnailResponseDTO.of(match, authMember))
+                .map(match -> MatchThumbnailResponseDTO.of(match, match.getFromMember()))
                 .collect(Collectors.toList());
     }
 
@@ -235,7 +240,7 @@ public class MatchService {
      */
     public List<MatchThumbnailResponseDTO> findAllByFromMember(Member authMember) {
         return matchRepository.findAllByFromMemberNotComplete(authMember).stream()
-                .map(match -> MatchThumbnailResponseDTO.of(match, authMember))
+                .map(match -> MatchThumbnailResponseDTO.of(match, match.getToMember()))
                 .collect(Collectors.toList());
     }
 
