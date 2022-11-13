@@ -66,9 +66,8 @@ public class MatchThumbnailResponseDTO {
     public static MatchThumbnailResponseDTO of(Match match, Member member) {
         Member targetMember;
 
-        //매칭 주체에 따라 상대의 정보를 가져옴
-        if (member.equals(match.getToMember())) {
-            System.out.println("member.equals(match.getToMember()) = " + member.equals(match.getToMember()));
+        //member 에 해당하는 상대의 정보를 가져옴
+        if (member.equals(match.getFromMember())) {
             targetMember = match.getFromMember();
         } else {
             targetMember = match.getToMember();
