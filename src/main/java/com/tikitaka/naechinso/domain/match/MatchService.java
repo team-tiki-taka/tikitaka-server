@@ -251,7 +251,14 @@ public class MatchService {
      */
     public List<MatchThumbnailResponseDTO> findAllByMatchComplete(Member authMember) {
         return matchRepository.findAllByMemberComplete(authMember).stream()
-                .map(match -> MatchThumbnailResponseDTO.of(match, authMember))
+                .map(match -> {
+                    //내가 보낸 호감의 상대
+                    if (match.getFromMember().getId().equals(authMember.getId()))
+                        return MatchThumbnailResponseDTO.of(match, match.getToMember());
+                    //내가 받은 호감의 상대
+                    else
+                        return MatchThumbnailResponseDTO.of(match, match.getFromMember());
+                })
                 .collect(Collectors.toList());
     }
 
