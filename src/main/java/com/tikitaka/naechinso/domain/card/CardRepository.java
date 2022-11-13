@@ -22,10 +22,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     List<Card> findAllByIsActiveTrue();
 
-    @Query("select c.targetMemberId " +
-            "from Card c " +
-            "where c.targetMemberId <> :id")
-    List<Long> findTargetIdsByIdNot(Long id);
+    List<Card> findAllByTargetMemberIdAndIsActiveTrue(Long id);
 
     @Query("select new com.tikitaka.naechinso.domain.card.dto.CardResponseDTO(c.targetMemberId, c.isActive, c.createdAt) " +
             "from Card c " +
