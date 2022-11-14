@@ -75,7 +75,7 @@ public class MatchService {
             log.error("푸시 알림 전송에 실패했습니다 - {}", e.getMessage());
         }
 
-        return MatchResponseDTO.of(match);
+        return MatchResponseDTO.of(match, authMember);
     }
 
     /**
@@ -107,7 +107,7 @@ public class MatchService {
             }
         }
 
-        return MatchResponseDTO.of(match);
+        return MatchResponseDTO.of(match, authMember);
     }
 
     /**
@@ -139,7 +139,7 @@ public class MatchService {
             }
         }
 
-        return MatchResponseDTO.of(match);
+        return MatchResponseDTO.of(match, authMember);
     }
 
     /**
@@ -172,7 +172,7 @@ public class MatchService {
             log.error("푸시 알림 전송에 실패했습니다 - {}", e.getMessage());
         }
 
-        return MatchResponseDTO.of(match);
+        return MatchResponseDTO.of(match, authMember);
     }
 
 
