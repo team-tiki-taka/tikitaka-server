@@ -99,8 +99,14 @@ public class CardService {
             throw new InternalServerException("멤버 데이터 오류");
         }
 
+        ///// 임시 정책으로 제거합니다 //////
         //추천 받았던 적 없는 새로운 추천 상대 리스트
-        List<Member> newTargetMemberList = memberRepository.findByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender);
+//        List<Member> newTargetMemberList = memberRepository.findByIdNotInAndGenderNotAndDetailNotNull(existTargetMemberIds, memberGender);
+        ///// 임시 정책으로 제거합니다 //////
+
+        ///// 임시 정책 (성별에 관계없이 가져옴) //////
+        List<Member> newTargetMemberList = memberRepository.findByIdNotInAndDetailNotNull(existTargetMemberIds);
+        ///// 임시 정책 (성별에 관계없이 가져옴) //////
 
         if (newTargetMemberList.isEmpty()) {
             throw new NotFoundException(ErrorCode.RANDOM_USER_NOT_FOUND);
