@@ -190,7 +190,6 @@ public class MatchService {
         final Match match = matchRepository.findByFromMemberIdAndToMemberIdAndIsExpiredFalse(memberId, targetId)
                 .orElseThrow(() -> new ForbiddenException(ErrorCode.FORBIDDEN_PROFILE));
 
-
         if (match.getFromMember() != null && match.getFromMember() == member) {
             return MatchBasicProfileResponseDTO.of(match.getToMember());
         } else if (match.getToMember() != null && match.getToMember() == member){
