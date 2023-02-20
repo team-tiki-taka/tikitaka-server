@@ -1,6 +1,4 @@
-# 내친소 <img src="https://user-images.githubusercontent.com/72291860/201523284-cef894f2-395c-4c42-af5d-ae55b542bcd3.png" align=left width=100>
-
-> 진짜 친구가 해주는 소개팅 내친소 • <b>백엔드</b> 레포지토리
+<b>백엔드</b> 레포지토리
 
 <br>
 
@@ -18,13 +16,6 @@
 3. UI를 채팅처럼 구성하여 실제 친구에게 소개받는 느낌을 제공
 4. 매일 최대 3번까지 무작위로 상대를 추천
 5. 서로 호감을 주고 받으면 상대방의 번호 오픈 가능
-
-
-<br/><br/>
-
-
-## 📢 Design
-- [Figma](https://www.figma.com/file/LBEuhZ1wr3HAm7UQqU3PeR/gui?node-id=1%3A11&t=25N71wMCUAaYgrR6-0)
 
 
 <br/><br/>
@@ -60,11 +51,6 @@
 
 
 <br/> -->
-
-
-## 📝 ERD
-
-![image](https://user-images.githubusercontent.com/72291860/201525336-3340ad90-e6d2-4866-ac95-914d913230e7.png)
 
 
 <br/>
