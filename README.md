@@ -2,9 +2,6 @@
 
 <br>
 
-![image](https://user-images.githubusercontent.com/72291860/201526173-8c88304d-cd18-4b3c-8244-2944262e6211.png)
-
-
 <br/>
 
 
