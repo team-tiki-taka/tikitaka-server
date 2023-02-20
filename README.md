@@ -59,7 +59,7 @@
 └─src
    ├─main
    │  ├─resources
-   │  └─java/com.tikitaka.naechinso
+   │  └─java/com.tikitaka.tikitaka
    │      ├─domain
    │      │  ├─card
    │      │  ├─match
@@ -86,7 +86,7 @@
    │          ├─notification
    │          └─sms
    └─test
-      └─java/com.tikitaka.naechinso/unit
+      └─java/com.tikitaka.tikitaka/unit
       ├─controller
       └─services
 ```

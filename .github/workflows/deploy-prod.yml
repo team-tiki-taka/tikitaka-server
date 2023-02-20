@@ -25,8 +25,8 @@ jobs:
         run: |
           touch ./src/main/resources/application-prod.yml
           echo "$ENV_PROPERTIES_PROD" > ./src/main/resources/application-prod.yml
-          touch ./src/main/resources/naechinso-fcm.json
-          echo "$FCM_JSON" > ./src/main/resources/naechinso-fcm.json          
+          touch ./src/main/resources/tikitaka-fcm.json
+          echo "$FCM_JSON" > ./src/main/resources/tikitaka-fcm.json
         env:
           ENV_PROPERTIES_PROD: ${{ secrets.ENV_PROPERTIES_PROD }}
           FCM_JSON: ${{ secrets.FCM_JSON }}          
